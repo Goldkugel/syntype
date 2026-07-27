@@ -1,0 +1,36 @@
+[2026-07-27 02:00:12] ============================================================
+[2026-07-27 02:00:12] =                 Classifying the Synonyms                 =
+[2026-07-27 02:00:12] ============================================================
+[2026-07-27 02:00:12] Reading file 'transform.reduced.csv'.
+[2026-07-27 02:00:12] Reading file 'transform.reduced.csv' completed.
+[2026-07-27 02:00:17] Write Prompts to file.
+[2026-07-27 02:00:17] Writing in temporary file...
+[2026-07-27 02:00:17] Writing file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_raw_Qwen3-4B-Instruct-2507.csv.tmp'.
+[2026-07-27 02:00:17] Writing file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_raw_Qwen3-4B-Instruct-2507.csv.tmp' completed.
+[2026-07-27 02:00:17] Writing in temporary file completed. Replacing old data with new data...
+[2026-07-27 02:00:17] Old data replaced with new data.
+[2026-07-27 02:00:17] Set up the LLM (Qwen3-4B-Instruct-2507)...
+[2026-07-27 02:00:17] Available: True
+[2026-07-27 02:00:17] Device count: 1
+[2026-07-27 02:00:17] Max Num batched Tokens: 16384
+[2026-07-27 02:00:17] Max new Tokens: 2048
+[2026-07-27 02:00:17] Temperature: 0.01
+[2026-07-27 02:00:17] Max Model Length: 8192
+[2026-07-27 02:00:17] Few-Shot (Zero-Shot): False
+[2026-07-27 02:00:17] Chain-Of-Thoughts: False
+[2026-07-27 02:00:17] Add Definitions to Prompt: True
+[2026-07-27 02:00:17] Add Comment to Prompt: True
+[2026-07-27 02:00:17] Add Parents to Prompt: False
+[2026-07-27 02:00:17] Add Children to Prompt: False
+[2026-07-27 02:00:17] GPUs: '0'
+[2026-07-27 02:00:49] Set up of LLM complete.
+[2026-07-27 02:00:49] (1) Generating.
+[2026-07-27 02:00:49] 207 prompts added [Index: 0 - 206]. Start generating responses...
+[2026-07-27 02:00:51] Writing in temporary file...
+[2026-07-27 02:00:51] Writing file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_raw_Qwen3-4B-Instruct-2507.csv.tmp'.
+[2026-07-27 02:00:51] Writing file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_raw_Qwen3-4B-Instruct-2507.csv.tmp' completed.
+[2026-07-27 02:00:51] Writing in temporary file completed. Replacing old data with new data...
+[2026-07-27 02:00:51] Old data replaced with new data.
+[2026-07-27 02:00:51] ============================================================
+[2026-07-27 02:00:51] =             Synonyms Classified [Minutes: 0]             =
+[2026-07-27 02:00:51] ============================================================

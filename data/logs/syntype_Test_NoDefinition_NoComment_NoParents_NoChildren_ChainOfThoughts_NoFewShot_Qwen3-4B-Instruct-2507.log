@@ -1,0 +1,50 @@
+[2026-07-27 01:11:51] ============================================================
+[2026-07-27 01:11:51] =                 Classifying the Synonyms                 =
+[2026-07-27 01:11:51] ============================================================
+[2026-07-27 01:11:51] Reading file 'transform.reduced.csv'.
+[2026-07-27 01:11:51] Reading file 'transform.reduced.csv' completed.
+[2026-07-27 01:11:56] Write Prompts to file.
+[2026-07-27 01:11:56] Writing in temporary file...
+[2026-07-27 01:11:56] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_ChainOfThoughts_NoFewShot_raw_Qwen3-4B-Instruct-2507.csv.tmp'.
+[2026-07-27 01:11:56] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_ChainOfThoughts_NoFewShot_raw_Qwen3-4B-Instruct-2507.csv.tmp' completed.
+[2026-07-27 01:11:56] Writing in temporary file completed. Replacing old data with new data...
+[2026-07-27 01:11:56] Old data replaced with new data.
+[2026-07-27 01:11:56] Set up the LLM (Qwen3-4B-Instruct-2507)...
+[2026-07-27 01:11:56] Available: True
+[2026-07-27 01:11:56] Device count: 1
+[2026-07-27 01:11:56] Max Num batched Tokens: 16384
+[2026-07-27 01:11:56] Max new Tokens: 2048
+[2026-07-27 01:11:56] Temperature: 0.01
+[2026-07-27 01:11:56] Max Model Length: 8192
+[2026-07-27 01:11:56] Few-Shot (Zero-Shot): False
+[2026-07-27 01:11:56] Chain-Of-Thoughts: True
+[2026-07-27 01:11:56] Add Definitions to Prompt: False
+[2026-07-27 01:11:56] Add Comment to Prompt: False
+[2026-07-27 01:11:56] Add Parents to Prompt: False
+[2026-07-27 01:11:56] Add Children to Prompt: False
+[2026-07-27 01:11:56] GPUs: '0'
+[2026-07-27 01:12:27] Set up of LLM complete.
+[2026-07-27 01:12:27] (1) Generating.
+[2026-07-27 01:12:27] 207 prompts added [Index: 0 - 206]. Start generating responses...
+[2026-07-27 01:13:02] Writing in temporary file...
+[2026-07-27 01:13:02] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_ChainOfThoughts_NoFewShot_raw_Qwen3-4B-Instruct-2507.csv.tmp'.
+[2026-07-27 01:13:03] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_ChainOfThoughts_NoFewShot_raw_Qwen3-4B-Instruct-2507.csv.tmp' completed.
+[2026-07-27 01:13:03] Writing in temporary file completed. Replacing old data with new data...
+[2026-07-27 01:13:03] Old data replaced with new data.
+[2026-07-27 01:13:03] (2) Generating.
+[2026-07-27 01:13:03] 207 prompts added [Index: 0 - 206]. Start generating responses...
+[2026-07-27 01:14:16] Writing in temporary file...
+[2026-07-27 01:14:16] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_ChainOfThoughts_NoFewShot_raw_Qwen3-4B-Instruct-2507.csv.tmp'.
+[2026-07-27 01:14:16] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_ChainOfThoughts_NoFewShot_raw_Qwen3-4B-Instruct-2507.csv.tmp' completed.
+[2026-07-27 01:14:16] Writing in temporary file completed. Replacing old data with new data...
+[2026-07-27 01:14:16] Old data replaced with new data.
+[2026-07-27 01:14:16] (3) Generating.
+[2026-07-27 01:14:16] 207 prompts added [Index: 0 - 206]. Start generating responses...
+[2026-07-27 01:14:40] Writing in temporary file...
+[2026-07-27 01:14:40] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_ChainOfThoughts_NoFewShot_raw_Qwen3-4B-Instruct-2507.csv.tmp'.
+[2026-07-27 01:14:40] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_ChainOfThoughts_NoFewShot_raw_Qwen3-4B-Instruct-2507.csv.tmp' completed.
+[2026-07-27 01:14:40] Writing in temporary file completed. Replacing old data with new data...
+[2026-07-27 01:14:40] Old data replaced with new data.
+[2026-07-27 01:14:40] ============================================================
+[2026-07-27 01:14:40] =             Synonyms Classified [Minutes: 2]             =
+[2026-07-27 01:14:40] ============================================================

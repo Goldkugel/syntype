@@ -1,0 +1,36 @@
+[2026-07-27 02:13:14] ============================================================
+[2026-07-27 02:13:14] =                 Classifying the Synonyms                 =
+[2026-07-27 02:13:14] ============================================================
+[2026-07-27 02:13:14] Reading file 'transform.reduced.csv'.
+[2026-07-27 02:13:14] Reading file 'transform.reduced.csv' completed.
+[2026-07-27 02:13:19] Write Prompts to file.
+[2026-07-27 02:13:19] Writing in temporary file...
+[2026-07-27 02:13:19] Writing file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_FewShot_raw_medgemma-4b-it.csv.tmp'.
+[2026-07-27 02:13:19] Writing file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_FewShot_raw_medgemma-4b-it.csv.tmp' completed.
+[2026-07-27 02:13:19] Writing in temporary file completed. Replacing old data with new data...
+[2026-07-27 02:13:19] Old data replaced with new data.
+[2026-07-27 02:13:19] Set up the LLM (medgemma-4b-it)...
+[2026-07-27 02:13:19] Available: True
+[2026-07-27 02:13:19] Device count: 1
+[2026-07-27 02:13:19] Max Num batched Tokens: 16384
+[2026-07-27 02:13:19] Max new Tokens: 2048
+[2026-07-27 02:13:19] Temperature: 0.01
+[2026-07-27 02:13:19] Max Model Length: 8192
+[2026-07-27 02:13:19] Few-Shot (Zero-Shot): True
+[2026-07-27 02:13:19] Chain-Of-Thoughts: False
+[2026-07-27 02:13:19] Add Definitions to Prompt: True
+[2026-07-27 02:13:19] Add Comment to Prompt: True
+[2026-07-27 02:13:19] Add Parents to Prompt: True
+[2026-07-27 02:13:19] Add Children to Prompt: True
+[2026-07-27 02:13:19] GPUs: '0'
+[2026-07-27 02:14:10] Set up of LLM complete.
+[2026-07-27 02:14:10] (1) Generating.
+[2026-07-27 02:14:10] 207 prompts added [Index: 0 - 206]. Start generating responses...
+[2026-07-27 02:14:12] Writing in temporary file...
+[2026-07-27 02:14:13] Writing file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_FewShot_raw_medgemma-4b-it.csv.tmp'.
+[2026-07-27 02:14:13] Writing file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_FewShot_raw_medgemma-4b-it.csv.tmp' completed.
+[2026-07-27 02:14:13] Writing in temporary file completed. Replacing old data with new data...
+[2026-07-27 02:14:13] Old data replaced with new data.
+[2026-07-27 02:14:13] ============================================================
+[2026-07-27 02:14:13] =             Synonyms Classified [Minutes: 0]             =
+[2026-07-27 02:14:13] ============================================================
