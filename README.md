@@ -1,2 +1,2 @@
-# synclass
-This repository contains the Python code to classify the semantic class and source type of human phenotype ontology concept's synonyms.
+# syntype
+This repository contains the Python code to classify the source type of human phenotype ontology concepts' synonyms.
