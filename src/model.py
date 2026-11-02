@@ -64,17 +64,19 @@ class Model:
         joinString = '\', \''
         log(f"GPUs: '{joinString.join(gpu_id.split(','))}'")
 
-        # Initialize vLLM engine
-        self.llm = LLM(
-            model=model,
-            # Number of GPUs used for tensor parallelism
-            tensor_parallel_size=len(gpu_id.split(",")),
-            max_model_len=max_model_len,
-            # Enable expert parallelism only for specific models
-            enable_expert_parallel=(
+        llm_kwargs = {
+            "model": model,
+            "tensor_parallel_size": len(gpu_id.split(",")),
+            "max_model_len": max_model_len,
+            "enable_expert_parallel": (
                 modelID == "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8"
-            )
-        )
+            ),
+        }
+
+        if "mistral" in model.lower():
+            llm_kwargs["tokenizer_mode"] = "mistral"
+
+        self.llm = LLM(**llm_kwargs)
 
         # Sampling configuration for text generation
         self.sampling_params = SamplingParams(

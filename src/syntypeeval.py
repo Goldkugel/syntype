@@ -11,7 +11,6 @@ import math
 sys.dont_write_bytecode = True
 
 # Import necessary modules and configuration settings
-from model      import *
 from utils      import *
 from config     import *
 
@@ -24,9 +23,17 @@ startTime = time.time()
 exitIfFileNotExist(inputFileClassEvaluation)
 
 classifiedComplete = readCSV(inputFileClassEvaluation)
+prefixes = ["nan", "RO", "core#site"]
 
+# Keep rows that do NOT start with any prefix in the list
+classifiedComplete = classifiedComplete[~classifiedComplete[hpoidColumn].str.startswith(tuple(prefixes))]
+classifiedComplete = classifiedComplete[~classifiedComplete[hpoidColumn].isna()]
+classifiedComplete.loc[classifiedComplete[typeColumn] == directSynonymType, typeColumn] = expertSynonymType
+classifiedComplete = classifiedComplete[classifiedComplete[typeColumn].isin(synonymTypes)].reset_index(drop = True)
 
-
+for index, row in classifiedComplete.iterrows():
+    if row[typeColumn] == directSynonymType:
+        classifiedComplete.loc[index, typeColumn] = expertSynonymType
 
 
 
@@ -69,7 +76,7 @@ color_map = {
 
 
 
-
+"""
 # Ploting Similarity distributions and threshold calculation.
 if reduceToTestIDs or forceDrawAdditionalPlots:
     classified = classifiedComplete[classifiedComplete[systemColumn] == systems[0]].copy().reset_index(drop = True)
@@ -95,8 +102,8 @@ if reduceToTestIDs or forceDrawAdditionalPlots:
                 plt.figure(figsize=(8, 5))
 
                 palette = {
-                        exactSynonymClass : colors[0],
-                        relatedSynonymClass : colors[1]
+                        expertSynonymType : colors[0],
+                        laypersonSynonymType : colors[1]
                     }
 
                 # Draw density curves for each class
@@ -104,7 +111,7 @@ if reduceToTestIDs or forceDrawAdditionalPlots:
                     data=classified,
                     x=column,
                     palette=palette,
-                    hue=classified[classColumn],
+                    hue=classified[typeColumn],
                     common_norm=False,   # keeps each class independent
                     fill=False           # set True if you want filled curves
                 )
@@ -150,12 +157,12 @@ if reduceToTestIDs or forceDrawAdditionalPlots:
                         TP = sum((
                             classified[column] <= i
                                 ) & (
-                            classified[classColumn] == relatedSynonymClass
+                            classified[typeColumn] == laypersonSynonymType
                         ))
                         FP = sum((
                             classified[column] <= i
                                 ) & (
-                            classified[classColumn] != relatedSynonymClass
+                            classified[typeColumn] != laypersonSynonymType
                         ))
 
                         if TP + FP > 0:
@@ -166,12 +173,12 @@ if reduceToTestIDs or forceDrawAdditionalPlots:
                         TP = sum((
                             classified[column] >= i
                                 ) & (
-                            classified[classColumn] == exactSynonymClass
+                            classified[typeColumn] == expertSynonymType
                         ))
                         FP = sum((
                             classified[column] >= i
                                 ) & (
-                            classified[classColumn] != exactSynonymClass
+                            classified[typeColumn] != expertSynonymType
                         ))
 
                         if TP + FP > 0:
@@ -187,7 +194,7 @@ if reduceToTestIDs or forceDrawAdditionalPlots:
                 plt.figure()
                 plt.plot(x1, y1, label = "F1 Score (Related Threshold)", 
                     color = "red")
-                plt.plot(x2, y2, label = "F1 Score (Exact Threshold)",   
+                plt.plot(x2, y2, label = "F1 Score (Expert Threshold)",   
                     color = "blue")
                 
                 x1 = np.array(x1)
@@ -224,7 +231,7 @@ if reduceToTestIDs or forceDrawAdditionalPlots:
                     p = 100 * float(math.floor(roundFactor * c / len(classified.index)))  / roundFactor
 
                     plt.scatter(max_x, max_y, s = 200, marker = 'x', color = "blue", zorder = 100, label = "(" + str(max_x) + ", " + str(max_y) + ") (Count: " + str(c) + ", " + str(p) + "%)")
-                    log(f"Suggested Threshold for Class {quote(exactSynonymClass)}, Metric {quote(similarityMetric)}, and Model {quote(embeddingModel)}: {str(max_x)} with F1 of {max_y} classifying {str(p)}% of the data." )
+                    log(f"Suggested Threshold for Class {quote(expertSynonymType)}, Metric {quote(similarityMetric)}, and Model {quote(embeddingModel)}: {str(max_x)} with F1 of {max_y} classifying {str(p)}% of the data." )
 
                 plt.xlabel("Threshold")
                 plt.ylabel("F1 Score")
@@ -236,15 +243,301 @@ if reduceToTestIDs or forceDrawAdditionalPlots:
 
                 plt.legend(loc = "lower left", ncol = 1)
                 plt.savefig(outputFileClassEmbeddingEval, dpi = 300, bbox_inches = "tight")
+"""
+
+threshold = 0.442
+column    = similarityColumnPrefix.format(sapBERT,         cosineSimilarity)
+
+data = classifiedComplete[classifiedComplete[systemColumn] == systems[0]].copy()
+data = data[data[typeColumn].isin(synonymTypes)].copy()
+
+data["y_pred"] = data[column].apply(
+    lambda x: laypersonSynonymType if x <= threshold else expertSynonymType
+)
+
+y_true = data[typeColumn]
+y_pred = data["y_pred"]
+
+accuracy = accuracy_score(y_true, y_pred)
+
+precision, recall, f1, support = precision_recall_fscore_support(
+    y_true, y_pred, average=None, zero_division=0,
+    labels=[laypersonSynonymType, expertSynonymType]
+)
+
+macro_p, macro_r, macro_f1, _ = precision_recall_fscore_support(
+    y_true, y_pred, average="macro", zero_division=0
+)
+
+log(f"Overall Accuracy: {accuracy:.4f}")
+log(f"Macro Precision:  {macro_p:.4f}")
+log(f"Macro Recall:     {macro_r:.4f}")
+log(f"Macro F1:         {macro_f1:.4f}")
+
+for i, label in enumerate([laypersonSynonymType, expertSynonymType]):
+    log(f"[{label}] Precision: {precision[i]:.4f}, "
+        f"Recall: {recall[i]:.4f}, "
+        f"F1: {f1[i]:.4f}, "
+        f"Support: {support[i]}")
 
 
+
+classified_backup = classifiedComplete.copy()
+# Ploting Similarity distributions and threshold calculation.
+if reduceToTestIDs or forceDrawAdditionalPlots:
+    classified = readCSV(outputFileTransformed)
+
+    classified = classified[~classified[hpoidColumn].isna()]
+
+    for index, row in classified.iterrows():
+        if row[typeColumn] == directSynonymType:
+            classified.loc[index, typeColumn] = expertSynonymType
+
+    #classified = classifiedComplete[classifiedComplete[systemColumn] == systems[0]].copy().reset_index(drop = True)
+
+    for embeddingModel in embeddingModels.keys():
+        for similarityMetric in similarityMetrics:
+            column = similarityColumnPrefix.format(embeddingModel, similarityMetric)
+
+            total      = len(classified[classified[typeColumn].isin(synonymTypes)])
+            thresholds = np.linspace(similarityEvaluationLowerBound,
+                                    similarityEvaluationUperBound,
+                                    similarityEvaluationParts)
+
+            accuracies = []
+
+            for i in thresholds:
+                # <=i → layperson, >i → expert
+                predictedLayperson = classified[column] <= i
+                correct = (
+                    ( predictedLayperson & (classified[typeColumn] == laypersonSynonymType)) |
+                    (~predictedLayperson & (classified[typeColumn] == expertSynonymType))
+                )
+                accuracies.append(correct.sum() / total if total > 0 else np.nan)
+
+            accuracies = np.array(accuracies)
+
+            best_idx       = np.nanargmax(accuracies)
+            best_threshold = thresholds[best_idx]
+            best_accuracy  = accuracies[best_idx]
+
+            log(f"[{embeddingModel} | {similarityMetric}] "
+                f"Best Threshold: {best_threshold:.4f} "
+                f"→ Accuracy: {best_accuracy:.4f}")
+
+            # --- Precision, Recall, F1 at best threshold ---
+            classified_synonyms = classified[classified[typeColumn].isin(synonymTypes)].copy()
+
+            y_true = classified_synonyms[typeColumn]
+            y_pred = (classified_synonyms[column].apply(
+                lambda x: laypersonSynonymType if x <= best_threshold else expertSynonymType
+            ))
+
+            precision, recall, f1, support = precision_recall_fscore_support(
+                y_true, y_pred, average=None, zero_division=0,
+                labels=[laypersonSynonymType, expertSynonymType]
+            )
+
+            for i, label in enumerate([laypersonSynonymType, expertSynonymType]):
+                log(f"[{embeddingModel} | {similarityMetric} | {label}] "
+                    f"Precision: {precision[i]:.4f}, "
+                    f"Recall: {recall[i]:.4f}, "
+                    f"F1: {f1[i]:.4f}, "
+                    f"Support: {support[i]}")
+
+            macro_p, macro_r, macro_f1, _ = precision_recall_fscore_support(
+                y_true, y_pred, average="macro", zero_division=0
+            )
+            log(f"[{embeddingModel} | {similarityMetric} | macro] "
+                f"Precision: {macro_p:.4f}, "
+                f"Recall: {macro_r:.4f}, "
+                f"F1: {macro_f1:.4f}")
+
+            outputFileClassEmbeddingEval              = os.path.join(
+                dataDir,        
+                outputFolderName,
+                outputFolderNameClassEmbedding,
+                outputFileNameClassEmbeddingEvaluation.format(column)
+            )
+
+            outputFileClassSimilarityEval              = os.path.join(
+                dataDir,        
+                outputFolderName,
+                outputFolderNameClassEmbedding,
+                outputFileNameClassSimilarityEvaluation.format(column)
+            )
+
+            if column in classified.columns and (not os.path.isfile(outputFileClassSimilarityEval) or forceDrawAdditionalPlots):
+                plt.figure(figsize=(8, 5))
+
+                palette = {
+                        expertSynonymType : colors[0],
+                        laypersonSynonymType : colors[1]
+                    }
+
+                # Draw density curves for each class
+                sns.kdeplot(
+                    data=classified,
+                    x=column,
+                    palette=palette,
+                    hue=classified[typeColumn],
+                    common_norm=False,   # keeps each class independent
+                    fill=False           # set True if you want filled curves
+                )
+
+                plt.xlabel("Distance")
+                plt.ylabel("Density")
+                plt.title("Density Curves of Distance by Class")
+                plt.yticks(np.linspace(0, 1, 6))
+                plt.xticks(np.linspace(similarityEvaluationLowerBound, similarityEvaluationUperBound, 9))
+                plt.xlim(similarityEvaluationLowerBound, similarityEvaluationUperBound)
+                
+                handles = [
+                    Line2D([0], [0], color=color, lw=2, label=cls)
+                    for cls, color in palette.items()
+                ]
+
+                plt.legend(handles=handles, title="Class")
+
+                plt.grid(axis = "both")
+
+                plt.tight_layout()
+                plt.savefig(outputFileClassSimilarityEval, dpi = 300, bbox_inches = "tight")
+
+
+            if column in classified.columns and (not os.path.isfile(outputFileClassEmbeddingEval) or forceDrawAdditionalPlots):
+                log(f"Plotting {similarityMetric} for Model {embeddingModel}...")
+
+                x1 = []
+                y1 = []
+                x2 = []
+                y2 = []
+
+                total = len(classified)
+                
+                with newProgress() as progress:
+                    
+                    task = newTask(progress, similarityEvaluationParts, "Evaluating")
+
+                    for i in np.linspace(similarityEvaluationLowerBound, 
+                                        similarityEvaluationUperBound, 
+                                        similarityEvaluationParts):
+                        x1.append(i)
+                        x2.append(i)
+
+                        # Accuracy for layperson threshold (<=i means layperson, >i means expert)
+                        predictedLayperson  = classified[column] <= i
+                        predictedExpert     = ~predictedLayperson
+                        correct1 = (
+                            (predictedLayperson & (classified[typeColumn] == laypersonSynonymType)) |
+                            (predictedExpert    & (classified[typeColumn] == expertSynonymType))
+                        )
+                        y1.append(correct1.sum() / total if total > 0 else np.nan)
+
+                        # Accuracy for expert threshold (>=i means expert, <i means layperson)
+                        predictedExpert2    = classified[column] >= i
+                        predictedLayperson2 = ~predictedExpert2
+                        correct2 = (
+                            (predictedExpert2    & (classified[typeColumn] == expertSynonymType)) |
+                            (predictedLayperson2 & (classified[typeColumn] == laypersonSynonymType))
+                        )
+                        y2.append(correct2.sum() / total if total > 0 else np.nan)
+
+                        progress.update(task, advance = 1)
+        
+                    progress.refresh()
+
+                # Create the plot
+                plt.figure()
+                plt.plot(x1, y1, label = "Accuracy (Layperson Threshold)", 
+                    color = "red")
+                plt.plot(x2, y2, label = "Accuracy (Expert Threshold)",   
+                    color = "blue")
+                
+                x1 = np.array(x1)
+                y1 = np.array(y1)
+                x2 = np.array(x2)
+                y2 = np.array(y2)
+
+                x1 = x1[y1 < 1]
+                y1 = y1[y1 < 1]
+
+                x2 = x2[y2 < 1]
+                y2 = y2[y2 < 1]
+
+                roundFactor = float(math.pow(10, len(str(similarityEvaluationParts)) - 1))
+
+                if not np.all(np.isnan(y1)):
+                    max_index = np.nanargmax(y1)
+                    max_x = math.ceil(roundFactor * x1[max_index]) / roundFactor
+                    max_y = math.ceil(roundFactor * y1[max_index]) / roundFactor
+
+                    c = sum(classified[column] <= max_x)
+                    p = 100 * float(math.floor(roundFactor * c / len(classified.index))) / roundFactor
+
+                    plt.scatter(max_x, max_y, s = 200, marker = 'x', color = "red", zorder = 100, label = "(" + str(max_x) + ", " + str(max_y) + ") (Count: " + str(c) + ", " + str(p) + "%)")
+                    log(f"Suggested Threshold for Class {quote(laypersonSynonymType)}, Metric {quote(similarityMetric)}, and Model {quote(embeddingModel)}: {str(max_x)} with Accuracy of {max_y} classifying {str(p)}% of the data.")
+
+                if not np.all(np.isnan(y2)):
+                    max_index = np.nanargmax(y2)
+                    max_x = math.ceil(roundFactor * x2[max_index]) / roundFactor
+                    max_y = math.ceil(roundFactor * y2[max_index]) / roundFactor
+
+                    c = sum(classified[column] >= max_x)
+                    p = 100 * float(math.floor(roundFactor * c / len(classified.index)))  / roundFactor
+
+                    plt.scatter(max_x, max_y, s = 200, marker = 'x', color = "blue", zorder = 100, label = "(" + str(max_x) + ", " + str(max_y) + ") (Count: " + str(c) + ", " + str(p) + "%)")
+                    log(f"Suggested Threshold for Class {quote(expertSynonymType)}, Metric {quote(similarityMetric)}, and Model {quote(embeddingModel)}: {str(max_x)} with Accuracy of {max_y} classifying {str(p)}% of the data.")
+
+                plt.xlabel("Threshold")
+                plt.ylabel("Accuracy")
+                plt.title(f"Normalized {similarityMetric.capitalize()}-Distance for Model {quote(embeddingModel)}")
+                plt.grid(axis = "both")
+
+                plt.yticks(np.linspace(0, 1.0, 11))
+                plt.xticks(np.linspace(similarityEvaluationLowerBound, similarityEvaluationUperBound, 17))
+
+                plt.legend(loc = "lower left", ncol = 1)
+                plt.savefig(outputFileClassEmbeddingEval, dpi = 300, bbox_inches = "tight")
+
+
+
+data = classifiedComplete[classifiedComplete[typeColumn].isin(synonymTypes)].copy()
+
+data["correct"] = data[answerColumn] == data[typeColumn]
+
+llm_stats = data.groupby([hpoidColumn, contentColumn, typeColumn]).agg(
+    llm_count     = (systemColumn, "nunique"),
+    correct_count = ("correct",    "sum")
+).reset_index()
+
+log(f"Total unique synonyms found: {len(llm_stats)}")
+
+for synonymType in sorted(llm_stats[typeColumn].unique()):
+    subset_type = llm_stats[llm_stats[typeColumn] == synonymType]
+    total_type  = len(subset_type)
+    p_type      = 100 * total_type / len(llm_stats)
+
+    log(f"\n  Type '{synonymType}': {total_type} synonyms ({p_type:.2f}% of all)")
+
+    for k in sorted(subset_type["llm_count"].unique()):
+        subset = subset_type[subset_type["llm_count"] == k]
+        total  = len(subset)
+        p      = 100 * total / total_type
+
+        log(f"    {k} LLM(s): {total} synonyms ({p:.2f}%)")
+
+        for c in range(k + 1):
+            count = (subset["correct_count"] == c).sum()
+            p_c   = 100 * count / total if total > 0 else 0
+            log(f"      {c}/{k} correct: {count} synonyms ({p_c:.2f}%)")
 
 
 
 
 # Plot Gold Counts
 classified = classifiedComplete[classifiedComplete[systemColumn] == systems[0]].copy().drop([answerColumn, systemColumn], axis = 1).drop_duplicates().reset_index(drop = True)
-classes = Counter(classified[classColumn])
+classes = Counter(classified[typeColumn])
 
 # Prepare data for plotting
 labels = list(classes.keys())
@@ -265,9 +558,9 @@ for bar in bars:
         va = 'bottom'
     )
 
-plt.xlabel("Semantic Class")
+plt.xlabel("Source Type")
 plt.ylabel("Count")
-plt.title("Count of Semantic Classes")
+plt.title("Count of Source Types")
 plt.grid(axis = "both")
 plt.show()
 plt.savefig(outputFileClassGoldCounts, dpi = 300, bbox_inches = "tight")
@@ -278,7 +571,7 @@ plt.savefig(outputFileClassGoldCounts, dpi = 300, bbox_inches = "tight")
 
 
 # Plot Classification Counts
-classifiedComplete = classifiedComplete[classifiedComplete[classColumn].isin(synonymClasses)].copy().reset_index(drop = True)
+classifiedComplete = classifiedComplete[classifiedComplete[typeColumn].isin(synonymTypes)].copy().reset_index(drop = True)
 
 # Count occurrences per system and classification
 classified = classifiedComplete
@@ -290,9 +583,9 @@ ax = counts.plot(kind = "bar", figsize = (3 * len(systems), 4), width = 0.8)
 for container in ax.containers:
     ax.bar_label(container, padding = 3)
 
-plt.xlabel("Classified Semantic Class")
+plt.xlabel("Classified Synonym Type")
 plt.ylabel("Count")
-plt.title("Count of Classified Semantic Class")
+plt.title("Count of Classified Synonym Type")
 plt.xticks(rotation = 0)
 plt.grid(axis = "both")
 plt.show()
@@ -307,7 +600,6 @@ def ontologySubplot(data : pd.DataFrame = None, startString : str = "", outputFi
 
     result = {}
 
-
     systems = list(set(data[systemColumn].tolist()))
     for system in systems:
         systemData = classified[classified[systemColumn] == system]
@@ -315,57 +607,61 @@ def ontologySubplot(data : pd.DataFrame = None, startString : str = "", outputFi
         systemResults = {}
 
         if systemData is not None and len(systemData.index) > 0:
-            for synonymClasse in synonymClasses:
+            for synonymClasse in synonymTypes:
                 
                 systemClassResults = {
                     precisionLabel  : 0,
                     recallLabel     : 0,
-                    f1ScoreLabel    : 0
+                    f1ScoreLabel    : 0,
+                    accuracyLabel   : 0   # NEW
                 }
 
                 if len(systemData[systemData[answerColumn] == 
                     synonymClasse].index) > 0:
 
-                    systemClassResults[precisionLabel] = \
-                        len(systemData[
-                                (systemData[classColumn] == synonymClasse
-                                    ) & (
-                                systemData[answerColumn] == synonymClasse)
-                            ].index
-                        ) / (
-                            len(systemData[systemData[answerColumn] == 
-                                synonymClasse].index) 
-                        )
-                    
-                    systemClassResults[recallLabel] = \
-                        len(systemData[
-                                (systemData[classColumn] == synonymClasse
-                                    ) & (
-                                systemData[answerColumn] == synonymClasse)
-                            ].index
-                        ) / (
-                            len(systemData[systemData[classColumn] == 
-                                synonymClasse].index) 
-                        )
-                        
-                    if systemClassResults[recallLabel] > 0 or systemClassResults[precisionLabel] > 0:
-                        systemClassResults[f1ScoreLabel] = \
-                            2 * systemClassResults[precisionLabel] * \
-                            systemClassResults[recallLabel] / (
-                            systemClassResults[recallLabel] + 
-                            systemClassResults[precisionLabel])
-                    else:
-                        systemClassResults[f1ScoreLabel] = 0
+                    tp = len(systemData[
+                            (systemData[typeColumn] == synonymClasse) & 
+                            (systemData[answerColumn] == synonymClasse)
+                        ].index)
+                    fp = len(systemData[
+                            (systemData[typeColumn] != synonymClasse) & 
+                            (systemData[answerColumn] == synonymClasse)
+                        ].index)
+                    fn = len(systemData[
+                            (systemData[typeColumn] == synonymClasse) & 
+                            (systemData[answerColumn] != synonymClasse)
+                        ].index)
+                    tn = len(systemData[
+                            (systemData[typeColumn] != synonymClasse) & 
+                            (systemData[answerColumn] != synonymClasse)
+                        ].index)
+                    t = len(systemData[
+                        (systemData[typeColumn] == systemData[answerColumn])
+                    ])
+
+                    total = tp + fp + fn + tn
+
+                    systemClassResults[precisionLabel] = tp / (tp + fp) if (tp + fp) > 0 else 0
+                    systemClassResults[recallLabel]    = tp / (tp + fn) if (tp + fn) > 0 else 0
+
+                    p = systemClassResults[precisionLabel]
+                    r = systemClassResults[recallLabel]
+                    systemClassResults[f1ScoreLabel]   = 2 * p * r / (p + r) if (p + r) > 0 else 0
+
+                    # NEW: accuracy = (TP + TN) / total
+                    systemClassResults[accuracyLabel]  = t / total if total > 0 else 0
+
                 else:
                     systemClassResults[f1ScoreLabel]    = 0
                     systemClassResults[recallLabel]     = 0
                     systemClassResults[precisionLabel]  = 0
+                    systemClassResults[accuracyLabel]   = 0   # NEW
 
                 systemResults[synonymClasse] = systemClassResults
 
         result[system] = systemResults
 
-    metrics = [f1ScoreLabel, recallLabel, precisionLabel]
+    metrics = [f1ScoreLabel, recallLabel, precisionLabel, accuracyLabel]   # NEW: added accuracyLabel
     systems = list(result.keys())
     classes = list(next(iter(result.values())).keys())
 
@@ -375,7 +671,7 @@ def ontologySubplot(data : pd.DataFrame = None, startString : str = "", outputFi
     fig, axes = plt.subplots(
         nrows = len(metrics),
         ncols = len(classes),
-        figsize = (3 * len(metrics), 2 * len(classes)),
+        figsize = (3 * len(metrics), 2 * len(classes)),   # width scales with metrics count
         sharey = True
     )
 
@@ -388,7 +684,7 @@ def ontologySubplot(data : pd.DataFrame = None, startString : str = "", outputFi
         handles,
         systems,
         loc = "lower center",
-        ncol = int(len(systems) / 2 if len(systems) >= 2 else 1 ),
+        ncol = int(len(systems) / 2 if len(systems) >= 2 else 1),
         frameon = False
     )
 
@@ -410,7 +706,7 @@ def ontologySubplot(data : pd.DataFrame = None, startString : str = "", outputFi
                     h = bar.get_height()
                     ax.text(
                         bar.get_x() + bar.get_width() / 2,
-                        h + 0.01,              # small vertical offset
+                        h + 0.01,
                         f"{h:.2f}",
                         ha = "center",
                         va = "bottom",
@@ -431,11 +727,11 @@ def ontologySubplot(data : pd.DataFrame = None, startString : str = "", outputFi
     plt.savefig(outputFile, dpi = 300, bbox_inches = "tight")
 
 # Plot evaluation on different ontologies.
-ontologySubplot(classifiedComplete, "",        outputFileClassRecallPrecisionF1,     "Semantic Class Classification Performance of LLM Systems")
-ontologySubplot(classifiedComplete, "HP:",     outputFileClassEvaluationExactHPO,    "Semantic Class Classification Performance of LLM Systems (HPO only)")
-ontologySubplot(classifiedComplete, "UBERON:", outputFileClassEvaluationExactUBERON, "Semantic Class Classification Performance of LLM Systems (UBERON only)")
-ontologySubplot(classifiedComplete, "GO:",     outputFileClassEvaluationExactGO,     "Semantic Class Classification Performance of LLM Systems (GO only)")
-ontologySubplot(classifiedComplete, "CHEBI:",  outputFileClassEvaluationExactCHEBI,  "Semantic Class Classification Performance of LLM Systems (CHEBI only)")
+ontologySubplot(classifiedComplete, "",        outputFileClassRecallPrecisionF1,     "Synonym Type Classification Performance of LLM Systems")
+#ontologySubplot(classifiedComplete, "HP:",     outputFileClassEvaluationExpertHPO,    "Synonym Type Classification Performance of LLM Systems (HPO only)")
+#ontologySubplot(classifiedComplete, "UBERON:", outputFileClassEvaluationExpertUBERON, "Synonym Type Classification Performance of LLM Systems (UBERON only)")
+#ontologySubplot(classifiedComplete, "GO:",     outputFileClassEvaluationExpertGO,     "Synonym Type Classification Performance of LLM Systems (GO only)")
+#ontologySubplot(classifiedComplete, "CHEBI:",  outputFileClassEvaluationExpertCHEBI,  "Synonym Type Classification Performance of LLM Systems (CHEBI only)")
 
 
 
@@ -445,19 +741,19 @@ ontologySubplot(classifiedComplete, "CHEBI:",  outputFileClassEvaluationExactCHE
 
 combinedEvaluationData = classifiedComplete.copy()
 
-combinedEvaluationData["embeddingRelated"] = [0] * len(combinedEvaluationData.index)
-for relatedThresholds in embeddingThresholdsRelated.keys():
-    if relatedThresholds in combinedEvaluationData.columns:
-        combinedEvaluationData.loc[combinedEvaluationData[relatedThresholds] <= embeddingThresholdsRelated[relatedThresholds], "embeddingRelated"] += 1
+combinedEvaluationData["embeddingLayperson"] = [0] * len(combinedEvaluationData.index)
+for laypersonThresholds in embeddingThresholdsLayperson.keys():
+    if laypersonThresholds in combinedEvaluationData.columns:
+        combinedEvaluationData.loc[combinedEvaluationData[laypersonThresholds] <= embeddingThresholdsLayperson[laypersonThresholds], "embeddingLayperson"] += 1
     else:
-        log(f"{relatedThresholds} not found in Columns of Data.")
+        log(f"{laypersonThresholds} not found in Columns of Data.")
 
-combinedEvaluationData["embeddingExact"] = [0] * len(combinedEvaluationData.index)
-for exactThresholds in embeddingThresholdsExact.keys():
-    if exactThresholds in combinedEvaluationData.columns:
-        combinedEvaluationData.loc[combinedEvaluationData[exactThresholds] >= embeddingThresholdsExact[exactThresholds], "embeddingExact"] += 1
+combinedEvaluationData["embeddingExpert"] = [0] * len(combinedEvaluationData.index)
+for expertThresholds in embeddingThresholdsExpert.keys():
+    if expertThresholds in combinedEvaluationData.columns:
+        combinedEvaluationData.loc[combinedEvaluationData[expertThresholds] >= embeddingThresholdsExpert[expertThresholds], "embeddingExpert"] += 1
     else:
-        log(f"{relatedThresholds} not found in Columns of Data.")
+        log(f"{expertThresholds} not found in Columns of Data.")
 
 
 
@@ -466,16 +762,16 @@ for exactThresholds in embeddingThresholdsExact.keys():
 
 combinedEvaluationAbsoluteData = combinedEvaluationData[combinedEvaluationData[systemColumn] == systems[0]].copy()
 combinedEvaluationAbsoluteData["embeddingCorrect"] = (
-    ((combinedEvaluationData["embeddingRelated"] > 0) & (combinedEvaluationData["embeddingExact"] == 0) & (combinedEvaluationData[classColumn] == relatedSynonymClass)) |
-    ((combinedEvaluationData["embeddingExact"] > 0) & (combinedEvaluationData["embeddingRelated"] == 0) & (combinedEvaluationData[classColumn] == exactSynonymClass))
+    ((combinedEvaluationData["embeddingLayperson"] > 0) & (combinedEvaluationData["embeddingExpert"] == 0) & (combinedEvaluationData[typeColumn] == laypersonSynonymType)) |
+    ((combinedEvaluationData["embeddingExpert"] > 0) & (combinedEvaluationData["embeddingLayperson"] == 0) & (combinedEvaluationData[typeColumn] == expertSynonymType))
 )
 
 
-discrepanciesCount = len(combinedEvaluationData[(combinedEvaluationData['embeddingRelated'] > 0) & (combinedEvaluationData['embeddingExact'] > 0)].index)
+discrepanciesCount = len(combinedEvaluationData[(combinedEvaluationData['embeddingLayperson'] > 0) & (combinedEvaluationData['embeddingExpert'] > 0)].index)
 log(f"Discrepancies for Embedding Answers: {discrepanciesCount}")
 
-embeddingRelatedAnswer = combinedEvaluationAbsoluteData[combinedEvaluationAbsoluteData["embeddingRelated"] > 0]
-embeddingExactAnswer   = combinedEvaluationAbsoluteData[combinedEvaluationAbsoluteData["embeddingExact"]   > 0]
+embeddingLaypersonAnswer = combinedEvaluationAbsoluteData[combinedEvaluationAbsoluteData["embeddingLayperson"] > 0]
+embeddingExpertAnswer   = combinedEvaluationAbsoluteData[combinedEvaluationAbsoluteData["embeddingExpert"]   > 0]
 
 
 
@@ -483,7 +779,7 @@ embeddingExactAnswer   = combinedEvaluationAbsoluteData[combinedEvaluationAbsolu
 
 
 # Group by votes and correctness, then count occurrences
-grouped = embeddingRelatedAnswer.groupby(["embeddingRelated", 'embeddingCorrect']).size().unstack(fill_value=0)
+grouped = embeddingLaypersonAnswer.groupby(["embeddingLayperson", 'embeddingCorrect']).size().unstack(fill_value=0)
 
 # Ensure both columns exist (in case one category is missing)
 grouped = grouped.reindex(columns=[False, True], fill_value=0)
@@ -501,13 +797,13 @@ plt.bar(grouped.index, grouped['Wrong'], label='Wrong', color='red')
 plt.bar(grouped.index, grouped['Correct'],
         bottom=grouped['Wrong'], label='Correct', color='blue')
 
-plt.xlabel('Number of Absolute-"Related" Votes')
+plt.xlabel('Number of Absolute-"Layperson" Votes')
 plt.ylabel('Frequency')
 plt.title('Vote Distribution (Correct vs Wrong)')
 plt.grid(axis = "both")
 plt.legend()
 
-plt.savefig(outputFileClassEmbeddingRelatedAbsolute, dpi = 300, bbox_inches = "tight")
+plt.savefig(outputFileClassEmbeddingLaypersonAbsolute, dpi = 300, bbox_inches = "tight")
 
 
 
@@ -515,7 +811,7 @@ plt.savefig(outputFileClassEmbeddingRelatedAbsolute, dpi = 300, bbox_inches = "t
 
 
 # Group by votes and correctness, then count occurrences
-grouped = embeddingExactAnswer.groupby(["embeddingExact", 'embeddingCorrect']).size().unstack(fill_value=0)
+grouped = embeddingExpertAnswer.groupby(["embeddingExpert", 'embeddingCorrect']).size().unstack(fill_value=0)
 
 # Ensure both columns exist (in case one category is missing)
 grouped = grouped.reindex(columns=[False, True], fill_value=0)
@@ -533,13 +829,13 @@ plt.bar(grouped.index, grouped['Wrong'], label='Wrong', color='red')
 plt.bar(grouped.index, grouped['Correct'],
         bottom=grouped['Wrong'], label='Correct', color='blue')
 
-plt.xlabel('Number of Absolute-"Exact" Votes')
+plt.xlabel('Number of Absolute-"Expert" Votes')
 plt.ylabel('Frequency')
 plt.title('Vote Distribution (Correct vs Wrong)')
 plt.grid(axis = "both")
 plt.legend()
 
-plt.savefig(outputFileClassEmbeddingExactAbsolute, dpi = 300, bbox_inches = "tight")
+plt.savefig(outputFileClassEmbeddingExpertAbsolute, dpi = 300, bbox_inches = "tight")
 
 
 
@@ -548,12 +844,12 @@ plt.savefig(outputFileClassEmbeddingExactAbsolute, dpi = 300, bbox_inches = "tig
 
 combinedEvaluationRelaxedData = combinedEvaluationData[combinedEvaluationData[systemColumn] == systems[0]].copy()
 combinedEvaluationRelaxedData["embeddingCorrect"] = (
-    ((combinedEvaluationData["embeddingRelated"] > 0) & (combinedEvaluationData[classColumn] == relatedSynonymClass)) |
-    ((combinedEvaluationData["embeddingExact"] > 0)   & (combinedEvaluationData[classColumn] == exactSynonymClass))
+    ((combinedEvaluationData["embeddingLayperson"] > 0) & (combinedEvaluationData[typeColumn] == laypersonSynonymType)) |
+    ((combinedEvaluationData["embeddingExpert"] > 0)   & (combinedEvaluationData[typeColumn] == expertSynonymType))
 )
 
-embeddingRelatedAnswer = combinedEvaluationRelaxedData[combinedEvaluationRelaxedData["embeddingRelated"] > 0]
-embeddingExactAnswer   = combinedEvaluationRelaxedData[combinedEvaluationRelaxedData["embeddingExact"]   > 0]
+embeddingLaypersonAnswer = combinedEvaluationRelaxedData[combinedEvaluationRelaxedData["embeddingLayperson"] > 0]
+embeddingExpertAnswer   = combinedEvaluationRelaxedData[combinedEvaluationRelaxedData["embeddingExpert"]   > 0]
 
 
 
@@ -561,7 +857,7 @@ embeddingExactAnswer   = combinedEvaluationRelaxedData[combinedEvaluationRelaxed
 
 
 # Group by votes and correctness, then count occurrences
-grouped = embeddingRelatedAnswer.groupby(["embeddingRelated", 'embeddingCorrect']).size().unstack(fill_value=0)
+grouped = embeddingLaypersonAnswer.groupby(["embeddingLayperson", 'embeddingCorrect']).size().unstack(fill_value=0)
 
 # Ensure both columns exist (in case one category is missing)
 grouped = grouped.reindex(columns=[False, True], fill_value=0)
@@ -579,13 +875,13 @@ plt.bar(grouped.index, grouped['Wrong'], label='Wrong', color='red')
 plt.bar(grouped.index, grouped['Correct'],
         bottom=grouped['Wrong'], label='Correct', color='blue')
 
-plt.xlabel('Number of Relaxed-"Related" Votes')
+plt.xlabel('Number of Relaxed-"Layperson" Votes')
 plt.ylabel('Frequency')
 plt.title('Vote Distribution (Correct vs Wrong)')
 plt.grid(axis = "both")
 plt.legend()
 
-plt.savefig(outputFileClassEmbeddingRelatedRelaxed, dpi = 300, bbox_inches = "tight")
+plt.savefig(outputFileClassEmbeddingLaypersonRelaxed, dpi = 300, bbox_inches = "tight")
 
 
 
@@ -593,7 +889,7 @@ plt.savefig(outputFileClassEmbeddingRelatedRelaxed, dpi = 300, bbox_inches = "ti
 
 
 # Group by votes and correctness, then count occurrences
-grouped = embeddingExactAnswer.groupby(["embeddingExact", 'embeddingCorrect']).size().unstack(fill_value=0)
+grouped = embeddingExpertAnswer.groupby(["embeddingExpert", 'embeddingCorrect']).size().unstack(fill_value=0)
 
 # Ensure both columns exist (in case one category is missing)
 grouped = grouped.reindex(columns=[False, True], fill_value=0)
@@ -611,13 +907,13 @@ plt.bar(grouped.index, grouped['Wrong'], label='Wrong', color='red')
 plt.bar(grouped.index, grouped['Correct'],
         bottom=grouped['Wrong'], label='Correct', color='blue')
 
-plt.xlabel('Number of Relaxed-"Exact" Votes')
+plt.xlabel('Number of Relaxed-"Expert" Votes')
 plt.ylabel('Frequency')
 plt.title('Vote Distribution (Correct vs Wrong)')
 plt.grid(axis = "both")
 plt.legend()
 
-plt.savefig(outputFileClassEmbeddingExactRelaxed, dpi = 300, bbox_inches = "tight")
+plt.savefig(outputFileClassEmbeddingExpertRelaxed, dpi = 300, bbox_inches = "tight")
 
 
 
@@ -625,23 +921,23 @@ plt.savefig(outputFileClassEmbeddingExactRelaxed, dpi = 300, bbox_inches = "tigh
 
 
 for index, row in combinedEvaluationData.iterrows():
-    if row["embeddingRelated"] > row["embeddingExact"]:
-        combinedEvaluationData.loc[index, answerColumn] = relatedSynonymClass
-    elif row["embeddingRelated"] < row["embeddingExact"]:
-        combinedEvaluationData.loc[index, answerColumn] = exactSynonymClass
+    if row["embeddingLayperson"] > row["embeddingExpert"]:
+        combinedEvaluationData.loc[index, answerColumn] = laypersonSynonymType
+    elif row["embeddingLayperson"] < row["embeddingExpert"]:
+        combinedEvaluationData.loc[index, answerColumn] = expertSynonymType
 
-embeddingData = combinedEvaluationData[(combinedEvaluationData[systemColumn] == systems[0]) & ((combinedEvaluationData["embeddingRelated"] > 0) | (combinedEvaluationData["embeddingExact"] > 0))].copy().reset_index(drop=True)
+embeddingData = combinedEvaluationData[(combinedEvaluationData[systemColumn] == systems[0]) & ((combinedEvaluationData["embeddingLayperson"] > 0) | (combinedEvaluationData["embeddingExpert"] > 0))].copy().reset_index(drop=True)
 
-ontologySubplot(combinedEvaluationData, "",        outputFileCombinedEvaluationRelaxed,     "Semantic Class Classification Performance of combined Approach")
-
-
+ontologySubplot(combinedEvaluationData, "",        outputFileCombinedEvaluationRelaxed,     "Synonym Type Classification Performance of combined Approach")
 
 
 
 
-embeddingData['correct'] = embeddingData[answerColumn] == embeddingData[classColumn]
 
-y_true = embeddingData[classColumn]
+
+embeddingData['correct'] = embeddingData[answerColumn] == embeddingData[typeColumn]
+
+y_true = embeddingData[typeColumn]
 y_pred = embeddingData[answerColumn]
 
 accuracy = accuracy_score(y_true, y_pred)
@@ -652,7 +948,7 @@ total = len(embeddingData.index)
 correct = embeddingData['correct'].sum()
 incorrect = total - correct
 
-class_performance = embeddingData.groupby(classColumn)['correct'].agg(['sum', 'count'])
+class_performance = embeddingData.groupby(typeColumn)['correct'].agg(['sum', 'count'])
 class_performance['accuracy'] = class_performance['sum'] / class_performance['count']
 
 plt.figure()
@@ -669,14 +965,14 @@ for bar in bars:
         va='bottom'
     )
 
-plt.title('Overall Semantic Class Classification Performance')
+plt.title('Overall Synonym Type Classification Performance')
 plt.xlabel('Outcome')
 plt.ylabel('Count')
 plt.grid(axis = "both")
 plt.savefig(outputFileClassEmbeddingOutcomeCounts, dpi = 300, bbox_inches = "tight")
 
 precision, recall, f1, support = precision_recall_fscore_support(
-    y_true, y_pred, average=None
+    y_true, y_pred, average=None, zero_division=0
 )
 
 plt.figure()
@@ -709,61 +1005,71 @@ plt.savefig(outputFileClassEmbeddingPerformance, dpi = 300, bbox_inches = "tight
 
 combinedEvaluationData = classifiedComplete.copy()
 
-combinedEvaluationData["embeddingRelated"] = [0.0] * len(combinedEvaluationData.index)
-for relatedThresholds in embeddingThresholdsRelated.keys():
-    if relatedThresholds in combinedEvaluationData.columns:
-        combinedEvaluationData.loc[combinedEvaluationData[relatedThresholds] <= embeddingThresholdsRelated[relatedThresholds], "embeddingRelated"] += (1.0 / len(embeddingThresholdsRelated.keys()))
+combinedEvaluationData["embeddingLayperson"] = [0.0] * len(combinedEvaluationData.index)
+for laypersonThresholds in embeddingThresholdsLayperson.keys():
+    if laypersonThresholds in combinedEvaluationData.columns:
+        combinedEvaluationData.loc[combinedEvaluationData[laypersonThresholds] <= embeddingThresholdsLayperson[laypersonThresholds], "embeddingLayperson"] += (1.0 / len(embeddingThresholdsLayperson.keys()))
     else:
-        log(f"{relatedThresholds} not found in Columns of Data.")
+        log(f"{laypersonThresholds} not found in Columns of Data.")
 
-combinedEvaluationData["embeddingExact"] = [0.0] * len(combinedEvaluationData.index)
-for exactThresholds in embeddingThresholdsExact.keys():
-    if exactThresholds in combinedEvaluationData.columns:
-        combinedEvaluationData.loc[combinedEvaluationData[exactThresholds] >= embeddingThresholdsExact[exactThresholds], "embeddingExact"] += (1.0 / len(embeddingThresholdsExact.keys()))
+combinedEvaluationData["embeddingExpert"] = [0.0] * len(combinedEvaluationData.index)
+for expertThresholds in embeddingThresholdsExpert.keys():
+    if expertThresholds in combinedEvaluationData.columns:
+        combinedEvaluationData.loc[combinedEvaluationData[expertThresholds] >= embeddingThresholdsExpert[expertThresholds], "embeddingExpert"] += (1.0 / len(embeddingThresholdsExpert.keys()))
     else:
-        log(f"{relatedThresholds} not found in Columns of Data.")
+        log(f"{expertThresholds} not found in Columns of Data.")
+
+for col, thresh in embeddingThresholdsLayperson.items():
+    if col in combinedEvaluationData.columns:
+        pct_below = (combinedEvaluationData[col] <= thresh).mean() * 100
+        print(f"{col}: threshold={thresh:.3f}, "
+              f"min={combinedEvaluationData[col].min():.3f}, "
+              f"max={combinedEvaluationData[col].max():.3f}, "
+              f"rows below threshold={pct_below:.1f}%")
+    else:
+        print(f"{col}: NOT FOUND in columns")
 
 unsureCount = 0
 for index, row in combinedEvaluationData.iterrows():
-    if row[classColumn] in synonymClasses:
-        if row["embeddingRelated"] > 0 and row["embeddingExact"] < (1.0 / len(embeddingThresholdsExact.keys())):
-            combinedEvaluationData.loc[index, answerColumn] = relatedSynonymClass
-        elif row["embeddingRelated"] < (1.0 / len(embeddingThresholdsRelated.keys())) and row["embeddingExact"] > 0:
-            combinedEvaluationData.loc[index, answerColumn] = exactSynonymClass
-        elif row["embeddingExact"] > 0 and row[answerColumn] == exactSynonymClass:
-            combinedEvaluationData.loc[index, answerColumn] = exactSynonymClass
-        elif row["embeddingRelated"] > 0 and row[answerColumn] == relatedSynonymClass:
-            combinedEvaluationData.loc[index, answerColumn] = relatedSynonymClass
+    if row[typeColumn] in synonymTypes:
+        if row["embeddingLayperson"] > 0 and row["embeddingExpert"] < (1.0 / len(embeddingThresholdsExpert.keys())):
+            combinedEvaluationData.loc[index, answerColumn] = laypersonSynonymType
+        elif row["embeddingLayperson"] < (1.0 / len(embeddingThresholdsLayperson.keys())) and row["embeddingExpert"] > 0:
+            combinedEvaluationData.loc[index, answerColumn] = expertSynonymType
+        elif row["embeddingExpert"] > 0 and row[answerColumn] == expertSynonymType:
+            combinedEvaluationData.loc[index, answerColumn] = expertSynonymType
+        elif row["embeddingLayperson"] > 0 and row[answerColumn] == laypersonSynonymType:
+            combinedEvaluationData.loc[index, answerColumn] = laypersonSynonymType
         else:
             unsureCount += 1
     
 log(f"Unsure Count: {unsureCount}")
-ontologySubplot(combinedEvaluationData, "",        outputFileCombinedEvaluationAbsolute,     "Semantic Class Classification Performance of combined Approach")
+ontologySubplot(combinedEvaluationData, "",        outputFileCombinedEvaluationAbsolute,     "Synonym Type Classification Performance of combined Approach")
 
 
 combinedEvaluationData = classifiedComplete.copy()
 
-combinedEvaluationData["embeddingRelated"] = [0] * len(combinedEvaluationData.index)
-for relatedThresholds in embeddingThresholdsRelated.keys():
-    if relatedThresholds in combinedEvaluationData.columns:
-        combinedEvaluationData.loc[combinedEvaluationData[relatedThresholds] <= embeddingThresholdsRelated[relatedThresholds], "embeddingRelated"] += 1
+combinedEvaluationData["embeddingLayperson"] = [0] * len(combinedEvaluationData.index)
+for laypersonThresholds in embeddingThresholdsLayperson.keys():
+    if laypersonThresholds in combinedEvaluationData.columns:
+        combinedEvaluationData.loc[combinedEvaluationData[laypersonThresholds] <= embeddingThresholdsLayperson[laypersonThresholds], "embeddingLayperson"] += 1
     else:
-        log(f"{relatedThresholds} not found in Columns of Data.")
+        log(f"{laypersonThresholds} not found in Columns of Data.")
 
-combinedEvaluationData["embeddingExact"] = [0] * len(combinedEvaluationData.index)
-for exactThresholds in embeddingThresholdsExact.keys():
-    if exactThresholds in combinedEvaluationData.columns:
-        combinedEvaluationData.loc[combinedEvaluationData[exactThresholds] >= embeddingThresholdsExact[exactThresholds], "embeddingExact"] += 1
+combinedEvaluationData["embeddingExpert"] = [0] * len(combinedEvaluationData.index)
+for expertThresholds in embeddingThresholdsExpert.keys():
+    if expertThresholds in combinedEvaluationData.columns:
+        combinedEvaluationData.loc[combinedEvaluationData[expertThresholds] >= embeddingThresholdsExpert[expertThresholds], "embeddingExpert"] += 1
     else:
-        log(f"{relatedThresholds} not found in Columns of Data.")
+        log(f"{expertThresholds} not found in Columns of Data.")
 
 unsureCount = 0
 for index, row in combinedEvaluationData.iterrows():
-    if row[classColumn] in synonymClasses:
-        if row["embeddingRelated"] > 0 or row["embeddingExact"] > 0:
-            if row["embeddingRelated"] > row["embeddingExact"]:
-                combinedEvaluationData.loc[index, answerColumn] = relatedSynonymClass
-            elif row["embeddingRelated"] < row["embeddingExact"]:
-                combinedEvaluationData.loc[index, answerColumn] = exactSynonymClass
+    if row[typeColumn] in synonymTypes:
+        if row["embeddingLayperson"] > 0 or row["embeddingExpert"] > 0:
+            if row["embeddingLayperson"] > row["embeddingExpert"]:
+                combinedEvaluationData.loc[index, answerColumn] = laypersonSynonymType
+            elif row["embeddingLayperson"] < row["embeddingExpert"]:
+                combinedEvaluationData.loc[index, answerColumn] = expertSynonymType
 
-ontologySubplot(combinedEvaluationData, "",        outputFileCombinedEvaluationAbsolute2,     "Semantic Class Classification Performance of combined Approach")
+ontologySubplot(combinedEvaluationData, "",        outputFileCombinedEvaluationAbsolute2,     "Synonym Type Classification Performance of combined Approach")

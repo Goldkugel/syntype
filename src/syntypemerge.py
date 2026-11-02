@@ -42,6 +42,8 @@ else:
         task = newTask(progress, len(inputFileClassMerged), 
             "Processing Files")
 
+        print(inputFileClassMerged)
+
         for file in sorted(inputFileClassMerged):
             dataframes.append(pd.read_csv(file))
             progress.update(task, advance = 1)
@@ -55,6 +57,8 @@ else:
     merged_df = pd.concat(dataframes, ignore_index = True)
     merged_df = merged_df.reset_index(drop = True)
     log("Data merged.")
+
+    merged_df = merged_df.loc[:, ~merged_df.columns.str.startswith(('user', 'assistant'))]
 
     # --------------------------------------------------------------------------
     # Persist transformed data to disk.

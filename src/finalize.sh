@@ -24,19 +24,19 @@ MODELS=(
 
 clear
 
-for MODEL in "${MODELS[@]}"; do
-  python3 ./syntypeformat.py "$MODEL" "$MODE" "$CoT" "$FS" "" "" "" ""
-  python3 ./syntypeformat.py "$MODEL" "$MODE" "$CoT" "$FS" "$DEFINITION" "" "" ""
-  python3 ./syntypeformat.py "$MODEL" "$MODE" "$CoT" "$FS" "$DEFINITION" "" "$CHILDREN" "$PARENTS"
-  python3 ./syntypeformat.py "$MODEL" "$MODE" "$CoT" "$FS" "$DEFINITION" "$COMMENT" "$CHILDREN" "$PARENTS"
-  python3 ./syntypeformat.py "$MODEL" "$MODE" "$CoT" "$FS" "$DEFINITION" "$COMMENT" "" ""
-done
+#for MODEL in "${MODELS[@]}"; do
+#  python3 ./syntypeformat.py "$MODEL" "$MODE" "$CoT" "$FS" "" "" "" ""
+#  python3 ./syntypeformat.py "$MODEL" "$MODE" "$CoT" "$FS" "$DEFINITION" "" "" ""
+#  python3 ./syntypeformat.py "$MODEL" "$MODE" "$CoT" "$FS" "$DEFINITION" "" "$CHILDREN" "$PARENTS"
+#  python3 ./syntypeformat.py "$MODEL" "$MODE" "$CoT" "$FS" "$DEFINITION" "$COMMENT" "$CHILDREN" "$PARENTS"
+#  python3 ./syntypeformat.py "$MODEL" "$MODE" "$CoT" "$FS" "$DEFINITION" "$COMMENT" "" ""
+#done
 
-python3 ./syntypemerge.py "" "$MODE" "$CoT" "$FS" "" "" "" ""
-python3 ./syntypemerge.py "" "$MODE" "$CoT" "$FS" "$DEFINITION" "" "" ""
-python3 ./syntypemerge.py "" "$MODE" "$CoT" "$FS" "$DEFINITION" "" "$CHILDREN" "$PARENTS"
-python3 ./syntypemerge.py "" "$MODE" "$CoT" "$FS" "$DEFINITION" "$COMMENT" "$CHILDREN" "$PARENTS"
-python3 ./syntypemerge.py "" "$MODE" "$CoT" "$FS" "$DEFINITION" "$COMMENT" "" ""
+#python3 ./syntypemerge.py "" "$MODE" "$CoT" "$FS" "" "" "" ""
+#python3 ./syntypemerge.py "" "$MODE" "$CoT" "$FS" "$DEFINITION" "" "" ""
+#python3 ./syntypemerge.py "" "$MODE" "$CoT" "$FS" "$DEFINITION" "" "$CHILDREN" "$PARENTS"
+#python3 ./syntypemerge.py "" "$MODE" "$CoT" "$FS" "$DEFINITION" "$COMMENT" "$CHILDREN" "$PARENTS"
+#python3 ./syntypemerge.py "" "$MODE" "$CoT" "$FS" "$DEFINITION" "$COMMENT" "" ""
 
 python3 ./syntypeeval.py "" "$MODE" "$CoT" "$FS" "" "" "" ""
 python3 ./syntypeeval.py "" "$MODE" "$CoT" "$FS" "$DEFINITION" "" "" ""

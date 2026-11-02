@@ -1,3 +1,12 @@
+data/input/hp.owl
+data/output/transform/*.csv
+data/output/merge/*.csv
+data/output/type/*.csv
+data/output/format/*.csv
+src/test.ipynb
+*.err
+*.out
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -56,7 +65,7 @@ cover/
 *.pot
 
 # Django stuff:
-*.log
+#*.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal

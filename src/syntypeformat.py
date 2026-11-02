@@ -33,7 +33,7 @@ classified    = readCSV(inputFileClassFormatted)
 
 
 
-classified[confidenceColumn] = [-1] * len(classified.index)
+classified[confidenceColumn] = [-1.0] * len(classified.index)
 
 with newProgress() as progress:
 
@@ -41,7 +41,7 @@ with newProgress() as progress:
     for index in range(0, len(classified.index)):
         classified.loc[index, answerColumn], \
             classified.loc[index, confidenceColumn] = \
-            formatAnswerClassification(str(classified[answerColumn][index]))
+            formatAnswerClassificationType(str(classified[answerColumn][index]))
         progress.advance(task, advance = 1)
 
     progress.refresh()
@@ -60,6 +60,7 @@ log("Logging incorrect classified Synonyms...")
 gold   = readCSV(inputFileClass)
 labels = gold[gold[classColumn] == labelClass].copy().reset_index(drop = True)
 count  = 0
+ignore = 0
 
 for index, row in classified.iterrows():
     # It should log, when:
@@ -69,19 +70,25 @@ for index, row in classified.iterrows():
     # This way all "exact" and "related" terms classified the wrong way are
     # being logged.
     #
-    if (str(row[answerColumn]).lower() == undefinedSynonymType.lower() or
-        (str(row[answerColumn]).lower() != str(row[classColumn]).lower()) and
-        (str(row[answerColumn]).lower() in synonymClasses or
-        str(row[classColumn]).lower() in synonymClasses)):
-        log("Label: " \
-            f"{applyFormat(getElements(labels, row[hpoidColumn], labelClass))}" \
-            f", Synonym: {quote(row[contentColumn])}, " \
-            f"Correct: {quote(row[classColumn])}, Classified: " \
-            f"{quote(row[answerColumn])}", cmdline = False)
-        count = count + 1
+    correct = row[typeColumn]
+    if pd.isna(correct) or correct == directSynonymType:
+        correct = expertSynonymType
 
-log(f"Incorrect Classifications: {count}")
-log(f"Correct Classifications:   {len(classified.index) - count}")
+    if correct.lower() in synonymTypes:
+        if (str(row[answerColumn]).lower() == undefinedSynonymType.lower() or
+            (str(row[answerColumn]).lower() != correct.lower()) and
+            (str(row[answerColumn]).lower() in synonymTypes)):
+            log("Label: " \
+                f"{applyFormat(getElements(labels, row[hpoidColumn], labelClass))}" \
+                f", Synonym: {quote(row[contentColumn])}, " \
+                f"Correct: {correct}, Classified: " \
+                f"{quote(row[answerColumn])}", cmdline = False)
+            count = count + 1
+    else:
+        ignore = ignore + 1
+
+log(f"Incorrect Classifications: {count} (Ignored: {ignore})")
+log(f"Correct Classifications:   {len(classified.index) - count - ignore}")
 log("Logging competed.")
 
 

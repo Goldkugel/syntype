@@ -31,6 +31,10 @@ synonyms = None
 # If already saved data is available.
 if isFile(outputFileClass):
     synonyms = readCSV(outputFileClass)
+
+    if answerColumn not in synonyms.columns:
+        synonyms[answerColumn] = [""] * len(synonyms.index)
+
 else:
     # Only proceed if formatted input data exists
     exitIfFileNotExist(inputFileClass)
@@ -98,7 +102,7 @@ else:
         progress.refresh()
 
         synonyms["{}{}".format(userRole, 1)]  = messages
-        synonyms["{}{}".format(modelRole, 1)] = [""] * len(synonyms.index)
+        
 
         # Here the other prompts for the Chain-Of-Thoughts approach are added.
         # The Few-Shot approach is incorporated directl into the prompts.
@@ -115,11 +119,13 @@ else:
 
             progress.refresh()
 
+            synonyms["{}{}".format(modelRole, 1)] = [""] * len(synonyms.index)
             synonyms["{}{}".format(userRole, 2)]  = messages
             synonyms["{}{}".format(modelRole, 2)] = [""] * len(synonyms.index)
             synonyms["{}{}".format(userRole, 3)]  = [sourceClassificationPrompt3()] * len(synonyms.index)
-            synonyms[answerColumn]                = [""] * len(synonyms.index)
 
+        
+        synonyms[answerColumn] = [""] * len(synonyms.index)
         synonyms[systemColumn] = [modelName] * len(synonyms.index)
         log("Write Prompts to file.")
         writeHugeCSV(synonyms, outputFileClass)
@@ -136,6 +142,8 @@ def structuredGeneration(data : pd.DataFrame = None, sourceColumn : str = "",
     if data is not None:
         # Copy data.
         ret = data.copy()
+
+        ret[targetColumn] = ret[targetColumn].astype("string")
 
         # Determining where to start generating. 
         answers = ret[targetColumn].tolist()
@@ -185,18 +193,14 @@ def structuredGeneration(data : pd.DataFrame = None, sourceColumn : str = "",
 
     return ret
 
-
-
-# ------------------------------------------------------------------------------
-# Classification of synonyms.
-# ------------------------------------------------------------------------------
-
-log(f"(1) Generating.")
-synonyms = structuredGeneration(synonyms, "{}{}".format(userRole, 1), [], [], "{}{}".format(modelRole, 1), outputFileClass)
-
 # Here the other prompts for the Chain-Of-Thoughts approach are added.
 # The Few-Shot approach is incorporated directl into the prompts.
 if chainOfThoughts:
+
+    log(f"(1) Generating.")
+    synonyms = structuredGeneration(synonyms, "{}{}".format(userRole, 1), 
+        [], [], "{}{}".format(modelRole, 1), outputFileClass)
+
     log(f"(2) Generating.")
     synonyms = structuredGeneration(synonyms, "{}{}".format(userRole, 2), 
         ["{}{}".format(userRole, 1), "{}{}".format(modelRole, 1)], 
@@ -209,7 +213,8 @@ if chainOfThoughts:
         [userRole, modelRole, userRole, modelRole], 
         answerColumn, outputFileClass)
 else:
-    synonyms = synonyms.rename(columns={"{}{}".format(modelRole, 1): answerColumn})
+    log(f"Generating.")
+    synonyms = structuredGeneration(synonyms, "{}{}".format(userRole, 1), [], [], answerColumn, outputFileClass)
 
 # For time tracking.
 minutes         = int((time.time() - startTime) // 60)

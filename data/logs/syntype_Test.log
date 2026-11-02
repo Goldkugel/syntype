@@ -1,0 +1,712 @@
+[2026-08-07 12:47:21] ============================================================
+[2026-08-07 12:47:21] =            Merging Generated Classifications             =
+[2026-08-07 12:47:21] ============================================================
+[2026-08-07 12:47:21] Reading files...
+[2026-08-07 12:47:21] Files read.
+[2026-08-07 12:47:21] Merging Data...
+[2026-08-07 12:47:21] Data merged.
+[2026-08-07 12:47:21] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-07 12:47:21] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-07 12:47:21] Merged 6 files into 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-07 12:47:21] ============================================================
+[2026-08-07 12:47:21] =                 Data Merged [Minutes: 0]                 =
+[2026-08-07 12:47:21] ============================================================
+[2026-08-07 12:47:23] ============================================================
+[2026-08-07 12:47:23] =            Merging Generated Classifications             =
+[2026-08-07 12:47:23] ============================================================
+[2026-08-07 12:47:23] Reading files...
+[2026-08-07 12:47:24] Files read.
+[2026-08-07 12:47:24] Merging Data...
+[2026-08-07 12:47:24] Data merged.
+[2026-08-07 12:47:24] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-07 12:47:24] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-07 12:47:24] Merged 6 files into 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-07 12:47:24] ============================================================
+[2026-08-07 12:47:24] =                 Data Merged [Minutes: 0]                 =
+[2026-08-07 12:47:24] ============================================================
+[2026-08-07 12:47:26] ============================================================
+[2026-08-07 12:47:26] =            Merging Generated Classifications             =
+[2026-08-07 12:47:26] ============================================================
+[2026-08-07 12:47:26] Reading files...
+[2026-08-07 12:47:26] Files read.
+[2026-08-07 12:47:26] Merging Data...
+[2026-08-07 12:47:26] Data merged.
+[2026-08-07 12:47:26] Writing file 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-07 12:47:26] Writing file 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-07 12:47:26] Merged 6 files into 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-07 12:47:26] ============================================================
+[2026-08-07 12:47:26] =                 Data Merged [Minutes: 0]                 =
+[2026-08-07 12:47:26] ============================================================
+[2026-08-07 12:47:28] ============================================================
+[2026-08-07 12:47:28] =            Merging Generated Classifications             =
+[2026-08-07 12:47:28] ============================================================
+[2026-08-07 12:47:28] Reading files...
+[2026-08-07 12:47:28] Files read.
+[2026-08-07 12:47:28] Merging Data...
+[2026-08-07 12:47:28] Data merged.
+[2026-08-07 12:47:28] Writing file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-07 12:47:29] Writing file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-07 12:47:29] Merged 6 files into 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-07 12:47:29] ============================================================
+[2026-08-07 12:47:29] =                 Data Merged [Minutes: 0]                 =
+[2026-08-07 12:47:29] ============================================================
+[2026-08-07 12:47:31] ============================================================
+[2026-08-07 12:47:31] =            Merging Generated Classifications             =
+[2026-08-07 12:47:31] ============================================================
+[2026-08-07 12:47:31] Reading files...
+[2026-08-07 12:47:31] Files read.
+[2026-08-07 12:47:31] Merging Data...
+[2026-08-07 12:47:31] Data merged.
+[2026-08-07 12:47:31] Writing file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-07 12:47:31] Writing file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-07 12:47:31] Merged 6 files into 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-07 12:47:31] ============================================================
+[2026-08-07 12:47:31] =                 Data Merged [Minutes: 0]                 =
+[2026-08-07 12:47:31] ============================================================
+[2026-08-07 12:48:04] ============================================================
+[2026-08-07 12:48:04] =     Evaluating the Results of Synonym Classification     =
+[2026-08-07 12:48:04] ============================================================
+[2026-08-07 12:48:04] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-07 12:48:04] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-07 12:48:04] 1 ontologies found.
+[2026-08-07 12:48:04] Found 1242 entries in HPO for ontology 'HP'.
+[2026-08-07 12:48:04] Found Systems: "Mistral-7B-Instruct-v0.2", "Mistral-Small-3.1-24B-Instruct-2503", "Qwen3-30B-A3B-Instruct-2507-FP8", "Qwen3-4B-Instruct-2507", "medgemma-27b-text-it", "medgemma-4b-it"
+[2026-08-07 12:48:04] Classified Synonyms: 1242 (~207 per system)
+[2026-08-07 12:48:04] Plotting cosine for Model BioClinicalBERT...
+[2026-08-07 12:48:09] Suggested Threshold for Class "related", Metric "cosine", and Model "BioClinicalBERT": -0.713 with F1 of 0.572 classifying 4.8% of the data.
+[2026-08-07 12:48:09] Suggested Threshold for Class "exact", Metric "cosine", and Model "BioClinicalBERT": 0.109 with F1 of 0.973 classifying 18.3% of the data.
+[2026-08-07 12:48:09] Plotting euclidean for Model BioClinicalBERT...
+[2026-08-07 12:48:14] Suggested Threshold for Class "related", Metric "euclidean", and Model "BioClinicalBERT": -0.83 with F1 of 0.572 classifying 4.8% of the data.
+[2026-08-07 12:48:14] Suggested Threshold for Class "exact", Metric "euclidean", and Model "BioClinicalBERT": -0.347 with F1 of 0.973 classifying 18.3% of the data.
+[2026-08-07 12:48:15] Plotting manhattan for Model BioClinicalBERT...
+[2026-08-07 12:48:20] Suggested Threshold for Class "related", Metric "manhattan", and Model "BioClinicalBERT": -0.395 with F1 of 0.524 classifying 29.9% of the data.
+[2026-08-07 12:48:20] Suggested Threshold for Class "exact", Metric "manhattan", and Model "BioClinicalBERT": -0.359 with F1 of 0.973 classifying 18.3% of the data.
+[2026-08-07 12:48:21] Plotting angular for Model BioClinicalBERT...
+[2026-08-07 12:48:25] Suggested Threshold for Class "related", Metric "angular", and Model "BioClinicalBERT": -0.838 with F1 of 0.572 classifying 4.8% of the data.
+[2026-08-07 12:48:25] Suggested Threshold for Class "exact", Metric "angular", and Model "BioClinicalBERT": -0.062 with F1 of 0.973 classifying 18.3% of the data.
+[2026-08-07 12:48:26] Plotting cosine for Model SapBERT...
+[2026-08-07 12:48:31] Suggested Threshold for Class "related", Metric "cosine", and Model "SapBERT": 0.087 with F1 of 0.564 classifying 24.6% of the data.
+[2026-08-07 12:48:31] Suggested Threshold for Class "exact", Metric "cosine", and Model "SapBERT": 0.087 with F1 of 0.943 classifying 26.5% of the data.
+[2026-08-07 12:48:31] Plotting euclidean for Model SapBERT...
+[2026-08-07 12:48:36] Suggested Threshold for Class "related", Metric "euclidean", and Model "SapBERT": -0.407 with F1 of 0.572 classifying 24.1% of the data.
+[2026-08-07 12:48:36] Suggested Threshold for Class "exact", Metric "euclidean", and Model "SapBERT": -0.407 with F1 of 0.944 classifying 27.0% of the data.
+[2026-08-07 12:48:37] Plotting manhattan for Model SapBERT...
+[2026-08-07 12:48:42] Suggested Threshold for Class "related", Metric "manhattan", and Model "SapBERT": -0.411 with F1 of 0.589 classifying 23.1% of the data.
+[2026-08-07 12:48:42] Suggested Threshold for Class "exact", Metric "manhattan", and Model "SapBERT": -0.411 with F1 of 0.946 classifying 28.0% of the data.
+[2026-08-07 12:48:42] Plotting angular for Model SapBERT...
+[2026-08-07 12:48:47] Suggested Threshold for Class "related", Metric "angular", and Model "SapBERT": -0.093 with F1 of 0.564 classifying 24.6% of the data.
+[2026-08-07 12:48:47] Suggested Threshold for Class "exact", Metric "angular", and Model "SapBERT": -0.093 with F1 of 0.943 classifying 26.5% of the data.
+[2026-08-07 12:48:47] Plotting cosine for Model ClinicalBERT...
+[2026-08-07 12:48:52] Suggested Threshold for Class "related", Metric "cosine", and Model "ClinicalBERT": -0.515 with F1 of 0.598 classifying 22.7% of the data.
+[2026-08-07 12:48:52] Suggested Threshold for Class "exact", Metric "cosine", and Model "ClinicalBERT": -0.331 with F1 of 0.979 classifying 22.7% of the data.
+[2026-08-07 12:48:53] Plotting euclidean for Model ClinicalBERT...
+[2026-08-07 12:48:58] Suggested Threshold for Class "related", Metric "euclidean", and Model "ClinicalBERT": -0.509 with F1 of 0.546 classifying 30.9% of the data.
+[2026-08-07 12:48:58] Suggested Threshold for Class "exact", Metric "euclidean", and Model "ClinicalBERT": -0.509 with F1 of 0.976 classifying 20.2% of the data.
+[2026-08-07 12:48:58] Plotting manhattan for Model ClinicalBERT...
+[2026-08-07 12:49:03] Suggested Threshold for Class "related", Metric "manhattan", and Model "ClinicalBERT": -0.492 with F1 of 0.546 classifying 30.9% of the data.
+[2026-08-07 12:49:03] Suggested Threshold for Class "exact", Metric "manhattan", and Model "ClinicalBERT": -0.492 with F1 of 0.976 classifying 20.2% of the data.
+[2026-08-07 12:49:04] Plotting angular for Model ClinicalBERT...
+[2026-08-07 12:49:08] Suggested Threshold for Class "related", Metric "angular", and Model "ClinicalBERT": -0.612 with F1 of 0.598 classifying 22.7% of the data.
+[2026-08-07 12:49:08] Suggested Threshold for Class "exact", Metric "angular", and Model "ClinicalBERT": -0.451 with F1 of 0.979 classifying 21.7% of the data.
+[2026-08-07 12:49:09] Plotting cosine for Model BioBERT...
+[2026-08-07 12:49:14] Suggested Threshold for Class "related", Metric "cosine", and Model "BioBERT": -1.535 with F1 of 0.667 classifying 1.9% of the data.
+[2026-08-07 12:49:14] Suggested Threshold for Class "exact", Metric "cosine", and Model "BioBERT": -0.092 with F1 of 0.979 classifying 22.7% of the data.
+[2026-08-07 12:49:14] Plotting euclidean for Model BioBERT...
+[2026-08-07 12:49:19] Suggested Threshold for Class "related", Metric "euclidean", and Model "BioBERT": -1.069 with F1 of 0.667 classifying 1.9% of the data.
+[2026-08-07 12:49:19] Suggested Threshold for Class "exact", Metric "euclidean", and Model "BioBERT": -0.479 with F1 of 0.979 classifying 22.7% of the data.
+[2026-08-07 12:49:20] Plotting manhattan for Model BioBERT...
+[2026-08-07 12:49:24] Suggested Threshold for Class "related", Metric "manhattan", and Model "BioBERT": -0.852 with F1 of 0.667 classifying 1.9% of the data.
+[2026-08-07 12:49:24] Suggested Threshold for Class "exact", Metric "manhattan", and Model "BioBERT": -0.44 with F1 of 0.979 classifying 22.7% of the data.
+[2026-08-07 12:49:25] Plotting angular for Model BioBERT...
+[2026-08-07 12:49:30] Suggested Threshold for Class "related", Metric "angular", and Model "BioBERT": -1.488 with F1 of 0.667 classifying 1.9% of the data.
+[2026-08-07 12:49:30] Suggested Threshold for Class "exact", Metric "angular", and Model "BioBERT": -0.278 with F1 of 0.979 classifying 22.7% of the data.
+[2026-08-07 12:49:30] Plotting cosine for Model UMLSBERT...
+[2026-08-07 12:49:35] Suggested Threshold for Class "related", Metric "cosine", and Model "UMLSBERT": -0.654 with F1 of 0.686 classifying 11.1% of the data.
+[2026-08-07 12:49:35] Suggested Threshold for Class "exact", Metric "cosine", and Model "UMLSBERT": 0.265 with F1 of 0.98 classifying 23.6% of the data.
+[2026-08-07 12:49:36] Plotting euclidean for Model UMLSBERT...
+[2026-08-07 12:54:22] ============================================================
+[2026-08-07 12:54:22] =            Merging Generated Classifications             =
+[2026-08-07 12:54:22] ============================================================
+[2026-08-07 12:54:22] Reading files...
+[2026-08-07 12:54:22] Files read.
+[2026-08-07 12:54:22] Merging Data...
+[2026-08-07 12:54:22] Data merged.
+[2026-08-07 12:54:22] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-07 12:54:22] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-07 12:54:22] Merged 6 files into 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-07 12:54:22] ============================================================
+[2026-08-07 12:54:22] =                 Data Merged [Minutes: 0]                 =
+[2026-08-07 12:54:22] ============================================================
+[2026-08-07 12:54:24] ============================================================
+[2026-08-07 12:54:24] =            Merging Generated Classifications             =
+[2026-08-07 12:54:24] ============================================================
+[2026-08-07 12:54:24] Reading files...
+[2026-08-07 12:54:24] Files read.
+[2026-08-07 12:54:24] Merging Data...
+[2026-08-07 12:54:24] Data merged.
+[2026-08-07 12:54:24] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-07 12:54:24] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-07 12:54:24] Merged 6 files into 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-07 12:54:24] ============================================================
+[2026-08-07 12:54:24] =                 Data Merged [Minutes: 0]                 =
+[2026-08-07 12:54:24] ============================================================
+[2026-08-07 12:54:26] ============================================================
+[2026-08-07 12:54:26] =            Merging Generated Classifications             =
+[2026-08-07 12:54:26] ============================================================
+[2026-08-07 12:54:26] Reading files...
+[2026-08-07 12:54:26] Files read.
+[2026-08-07 12:54:26] Merging Data...
+[2026-08-07 12:54:26] Data merged.
+[2026-08-07 12:54:26] Writing file 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-07 12:54:26] Writing file 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-07 12:54:26] Merged 6 files into 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-07 12:54:26] ============================================================
+[2026-08-07 12:54:26] =                 Data Merged [Minutes: 0]                 =
+[2026-08-07 12:54:26] ============================================================
+[2026-08-07 12:54:28] ============================================================
+[2026-08-07 12:54:28] =            Merging Generated Classifications             =
+[2026-08-07 12:54:28] ============================================================
+[2026-08-07 12:54:28] Reading files...
+[2026-08-07 12:54:28] Files read.
+[2026-08-07 12:54:28] Merging Data...
+[2026-08-07 12:54:28] Data merged.
+[2026-08-07 12:54:28] Writing file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-07 12:54:28] Writing file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-07 12:54:28] Merged 6 files into 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-07 12:54:28] ============================================================
+[2026-08-07 12:54:28] =                 Data Merged [Minutes: 0]                 =
+[2026-08-07 12:54:28] ============================================================
+[2026-08-07 12:54:31] ============================================================
+[2026-08-07 12:54:31] =            Merging Generated Classifications             =
+[2026-08-07 12:54:31] ============================================================
+[2026-08-07 12:54:31] Reading files...
+[2026-08-07 12:54:31] Files read.
+[2026-08-07 12:54:31] Merging Data...
+[2026-08-07 12:54:31] Data merged.
+[2026-08-07 12:54:31] Writing file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-07 12:54:31] Writing file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-07 12:54:31] Merged 6 files into 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-07 12:54:31] ============================================================
+[2026-08-07 12:54:31] =                 Data Merged [Minutes: 0]                 =
+[2026-08-07 12:54:31] ============================================================
+[2026-08-07 12:54:52] ============================================================
+[2026-08-07 12:54:52] =     Evaluating the Results of Synonym Classification     =
+[2026-08-07 12:54:52] ============================================================
+[2026-08-07 12:54:52] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-07 12:54:52] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-07 12:54:52] 1 ontologies found.
+[2026-08-07 12:54:52] Found 1242 entries in HPO for ontology 'HP'.
+[2026-08-07 12:54:52] Found Systems: "Mistral-7B-Instruct-v0.2", "Mistral-Small-3.1-24B-Instruct-2503", "Qwen3-30B-A3B-Instruct-2507-FP8", "Qwen3-4B-Instruct-2507", "medgemma-27b-text-it", "medgemma-4b-it"
+[2026-08-07 12:54:52] Classified Synonyms: 1242 (~207 per system)
+[2026-08-07 12:54:52] Plotting euclidean for Model UMLSBERT...
+[2026-08-07 12:54:57] Suggested Threshold for Class "related", Metric "euclidean", and Model "UMLSBERT": -0.215 with F1 of 0.595 classifying 25.1% of the data.
+[2026-08-07 12:54:57] Suggested Threshold for Class "exact", Metric "euclidean", and Model "UMLSBERT": -0.096 with F1 of 0.98 classifying 23.6% of the data.
+[2026-08-07 12:54:58] Plotting manhattan for Model UMLSBERT...
+[2026-08-07 13:04:26] ============================================================
+[2026-08-07 13:04:26] =            Merging Generated Classifications             =
+[2026-08-07 13:04:26] ============================================================
+[2026-08-07 13:04:26] Reading files...
+[2026-08-07 13:04:26] Files read.
+[2026-08-07 13:04:26] Merging Data...
+[2026-08-07 13:04:26] Data merged.
+[2026-08-07 13:04:26] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-07 13:04:26] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-07 13:04:26] Merged 6 files into 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-07 13:04:26] ============================================================
+[2026-08-07 13:04:26] =                 Data Merged [Minutes: 0]                 =
+[2026-08-07 13:04:26] ============================================================
+[2026-08-07 13:04:28] ============================================================
+[2026-08-07 13:04:28] =            Merging Generated Classifications             =
+[2026-08-07 13:04:28] ============================================================
+[2026-08-07 13:04:28] Reading files...
+[2026-08-07 13:04:28] Files read.
+[2026-08-07 13:04:28] Merging Data...
+[2026-08-07 13:04:28] Data merged.
+[2026-08-07 13:04:28] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-07 13:04:28] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-07 13:04:28] Merged 6 files into 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-07 13:04:28] ============================================================
+[2026-08-07 13:04:28] =                 Data Merged [Minutes: 0]                 =
+[2026-08-07 13:04:28] ============================================================
+[2026-08-07 13:04:30] ============================================================
+[2026-08-07 13:04:30] =            Merging Generated Classifications             =
+[2026-08-07 13:04:30] ============================================================
+[2026-08-07 13:04:30] Reading files...
+[2026-08-07 13:04:31] Files read.
+[2026-08-07 13:04:31] Merging Data...
+[2026-08-07 13:04:31] Data merged.
+[2026-08-07 13:04:31] Writing file 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-07 13:04:31] Writing file 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-07 13:04:31] Merged 6 files into 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-07 13:04:31] ============================================================
+[2026-08-07 13:04:31] =                 Data Merged [Minutes: 0]                 =
+[2026-08-07 13:04:31] ============================================================
+[2026-08-07 13:04:33] ============================================================
+[2026-08-07 13:04:33] =            Merging Generated Classifications             =
+[2026-08-07 13:04:33] ============================================================
+[2026-08-07 13:04:33] Reading files...
+[2026-08-07 13:04:33] Files read.
+[2026-08-07 13:04:33] Merging Data...
+[2026-08-07 13:04:33] Data merged.
+[2026-08-07 13:04:33] Writing file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-07 13:04:33] Writing file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-07 13:04:33] Merged 6 files into 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-07 13:04:33] ============================================================
+[2026-08-07 13:04:33] =                 Data Merged [Minutes: 0]                 =
+[2026-08-07 13:04:33] ============================================================
+[2026-08-07 13:04:35] ============================================================
+[2026-08-07 13:04:35] =            Merging Generated Classifications             =
+[2026-08-07 13:04:35] ============================================================
+[2026-08-07 13:04:35] Reading files...
+[2026-08-07 13:04:35] Files read.
+[2026-08-07 13:04:35] Merging Data...
+[2026-08-07 13:04:35] Data merged.
+[2026-08-07 13:04:35] Writing file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-07 13:04:35] Writing file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-07 13:04:35] Merged 6 files into 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-07 13:04:35] ============================================================
+[2026-08-07 13:04:35] =                 Data Merged [Minutes: 0]                 =
+[2026-08-07 13:04:35] ============================================================
+[2026-08-07 13:05:15] ============================================================
+[2026-08-07 13:05:15] =     Evaluating the Results of Synonym Classification     =
+[2026-08-07 13:05:15] ============================================================
+[2026-08-07 13:05:15] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-07 13:05:15] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-07 13:05:15] 1 ontologies found.
+[2026-08-07 13:05:15] Found 1242 entries in HPO for ontology 'HP'.
+[2026-08-07 13:05:15] Found Systems: "Mistral-7B-Instruct-v0.2", "Mistral-Small-3.1-24B-Instruct-2503", "Qwen3-30B-A3B-Instruct-2507-FP8", "Qwen3-4B-Instruct-2507", "medgemma-27b-text-it", "medgemma-4b-it"
+[2026-08-07 13:05:15] Classified Synonyms: 1242 (~207 per system)
+[2026-08-07 13:05:15] Plotting manhattan for Model UMLSBERT...
+[2026-08-07 13:05:19] Suggested Threshold for Class "related", Metric "manhattan", and Model "UMLSBERT": -0.34 with F1 of 0.62 classifying 23.6% of the data.
+[2026-08-07 13:05:19] Suggested Threshold for Class "exact", Metric "manhattan", and Model "UMLSBERT": -0.227 with F1 of 0.98 classifying 23.6% of the data.
+[2026-08-07 13:05:20] Plotting angular for Model UMLSBERT...
+[2026-08-10 09:16:11] ============================================================
+[2026-08-10 09:16:11] =            Merging Generated Classifications             =
+[2026-08-10 09:16:11] ============================================================
+[2026-08-10 09:16:11] Reading files...
+[2026-08-10 09:16:11] Files read.
+[2026-08-10 09:16:11] Merging Data...
+[2026-08-10 09:16:11] Data merged.
+[2026-08-10 09:16:11] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:16:12] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:16:12] Merged 6 files into 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-10 09:16:12] ============================================================
+[2026-08-10 09:16:12] =                 Data Merged [Minutes: 0]                 =
+[2026-08-10 09:16:12] ============================================================
+[2026-08-10 09:16:15] ============================================================
+[2026-08-10 09:16:15] =            Merging Generated Classifications             =
+[2026-08-10 09:16:15] ============================================================
+[2026-08-10 09:16:15] Reading files...
+[2026-08-10 09:16:15] Files read.
+[2026-08-10 09:16:15] Merging Data...
+[2026-08-10 09:16:15] Data merged.
+[2026-08-10 09:16:15] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:16:15] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:16:15] Merged 6 files into 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-10 09:16:15] ============================================================
+[2026-08-10 09:16:15] =                 Data Merged [Minutes: 0]                 =
+[2026-08-10 09:16:15] ============================================================
+[2026-08-10 09:16:18] ============================================================
+[2026-08-10 09:16:18] =            Merging Generated Classifications             =
+[2026-08-10 09:16:18] ============================================================
+[2026-08-10 09:16:18] Reading files...
+[2026-08-10 09:16:18] Files read.
+[2026-08-10 09:16:18] Merging Data...
+[2026-08-10 09:16:18] Data merged.
+[2026-08-10 09:16:18] Writing file 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:16:18] Writing file 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:16:18] Merged 6 files into 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-10 09:16:18] ============================================================
+[2026-08-10 09:16:18] =                 Data Merged [Minutes: 0]                 =
+[2026-08-10 09:16:18] ============================================================
+[2026-08-10 09:16:22] ============================================================
+[2026-08-10 09:16:22] =            Merging Generated Classifications             =
+[2026-08-10 09:16:22] ============================================================
+[2026-08-10 09:16:22] Reading files...
+[2026-08-10 09:16:22] Files read.
+[2026-08-10 09:16:22] Merging Data...
+[2026-08-10 09:16:22] Data merged.
+[2026-08-10 09:16:22] Writing file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:16:22] Writing file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:16:22] Merged 6 files into 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-10 09:16:22] ============================================================
+[2026-08-10 09:16:22] =                 Data Merged [Minutes: 0]                 =
+[2026-08-10 09:16:22] ============================================================
+[2026-08-10 09:16:25] ============================================================
+[2026-08-10 09:16:25] =            Merging Generated Classifications             =
+[2026-08-10 09:16:25] ============================================================
+[2026-08-10 09:16:25] Reading files...
+[2026-08-10 09:16:25] Files read.
+[2026-08-10 09:16:25] Merging Data...
+[2026-08-10 09:16:25] Data merged.
+[2026-08-10 09:16:25] Writing file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:16:25] Writing file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:16:25] Merged 6 files into 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-10 09:16:25] ============================================================
+[2026-08-10 09:16:25] =                 Data Merged [Minutes: 0]                 =
+[2026-08-10 09:16:25] ============================================================
+[2026-08-10 09:16:40] ============================================================
+[2026-08-10 09:16:40] =     Evaluating the Results of Synonym Classification     =
+[2026-08-10 09:16:40] ============================================================
+[2026-08-10 09:16:40] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:16:40] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:18:36] ============================================================
+[2026-08-10 09:18:36] =     Evaluating the Results of Synonym Classification     =
+[2026-08-10 09:18:36] ============================================================
+[2026-08-10 09:18:36] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:18:36] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:21:33] ============================================================
+[2026-08-10 09:21:33] =     Evaluating the Results of Synonym Classification     =
+[2026-08-10 09:21:33] ============================================================
+[2026-08-10 09:21:33] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:21:33] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:21:33] 1 ontologies found.
+[2026-08-10 09:21:33] Found 1242 entries in HPO for ontology 'HP'.
+[2026-08-10 09:21:33] Found Systems: "Mistral-7B-Instruct-v0.2", "Mistral-Small-3.1-24B-Instruct-2503", "Qwen3-30B-A3B-Instruct-2507-FP8", "Qwen3-4B-Instruct-2507", "medgemma-27b-text-it", "medgemma-4b-it"
+[2026-08-10 09:21:33] Classified Synonyms: 1242 (~207 per system)
+[2026-08-10 09:21:33] Plotting angular for Model UMLSBERT...
+[2026-08-10 09:21:41] Suggested Threshold for Class "related", Metric "angular", and Model "UMLSBERT": -2.194 with F1 of 0.667 classifying 0.9% of the data.
+[2026-08-10 09:21:41] Suggested Threshold for Class "expert", Metric "angular", and Model "UMLSBERT": -0.443 with F1 of 0.871 classifying 33.8% of the data.
+[2026-08-10 09:24:41] ============================================================
+[2026-08-10 09:24:41] =     Evaluating the Results of Synonym Classification     =
+[2026-08-10 09:24:41] ============================================================
+[2026-08-10 09:24:41] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:24:41] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:24:41] 1 ontologies found.
+[2026-08-10 09:24:41] Found 1110 entries in HPO for ontology 'HP'.
+[2026-08-10 09:24:41] Found Systems: "Mistral-7B-Instruct-v0.2", "Mistral-Small-3.1-24B-Instruct-2503", "Qwen3-30B-A3B-Instruct-2507-FP8", "Qwen3-4B-Instruct-2507", "medgemma-27b-text-it", "medgemma-4b-it"
+[2026-08-10 09:24:41] Classified Synonyms: 1110 (~185 per system)
+[2026-08-10 09:24:41] Plotting cosine for Model SciBERT...
+[2026-08-10 09:24:49] Suggested Threshold for Class "related", Metric "cosine", and Model "SciBERT": -1.449 with F1 of 0.667 classifying 1.0% of the data.
+[2026-08-10 09:24:49] Suggested Threshold for Class "expert", Metric "cosine", and Model "SciBERT": 0.595 with F1 of 0.924 classifying 3.7% of the data.
+[2026-08-10 09:24:50] Plotting euclidean for Model SciBERT...
+[2026-08-10 09:24:57] Suggested Threshold for Class "related", Metric "euclidean", and Model "SciBERT": -0.862 with F1 of 0.667 classifying 1.0% of the data.
+[2026-08-10 09:24:57] Suggested Threshold for Class "expert", Metric "euclidean", and Model "SciBERT": 0.316 with F1 of 0.924 classifying 3.7% of the data.
+[2026-08-10 09:24:58] Plotting manhattan for Model SciBERT...
+[2026-08-10 09:25:05] Suggested Threshold for Class "related", Metric "manhattan", and Model "SciBERT": -0.775 with F1 of 0.667 classifying 1.0% of the data.
+[2026-08-10 09:25:05] Suggested Threshold for Class "expert", Metric "manhattan", and Model "SciBERT": 0.244 with F1 of 0.924 classifying 3.7% of the data.
+[2026-08-10 09:25:06] Plotting angular for Model SciBERT...
+[2026-08-10 09:25:13] Suggested Threshold for Class "related", Metric "angular", and Model "SciBERT": -1.372 with F1 of 0.667 classifying 1.0% of the data.
+[2026-08-10 09:25:13] Suggested Threshold for Class "expert", Metric "angular", and Model "SciBERT": 0.499 with F1 of 0.924 classifying 3.7% of the data.
+[2026-08-10 09:25:14] Plotting cosine for Model SapUMLSBERT...
+[2026-08-10 09:25:21] Suggested Threshold for Class "related", Metric "cosine", and Model "SapUMLSBERT": -0.977 with F1 of 0.646 classifying 11.3% of the data.
+[2026-08-10 09:25:21] Suggested Threshold for Class "expert", Metric "cosine", and Model "SapUMLSBERT": -0.35 with F1 of 0.844 classifying 25.9% of the data.
+[2026-08-10 09:25:22] Plotting euclidean for Model SapUMLSBERT...
+[2026-08-10 09:25:30] Suggested Threshold for Class "related", Metric "euclidean", and Model "SapUMLSBERT": -0.815 with F1 of 0.643 classifying 10.2% of the data.
+[2026-08-10 09:25:30] Suggested Threshold for Class "expert", Metric "euclidean", and Model "SapUMLSBERT": -0.457 with F1 of 0.841 classifying 21.6% of the data.
+[2026-08-10 09:25:31] Plotting manhattan for Model SapUMLSBERT...
+[2026-08-10 09:25:38] Suggested Threshold for Class "related", Metric "manhattan", and Model "SapUMLSBERT": -0.681 with F1 of 0.646 classifying 11.3% of the data.
+[2026-08-10 09:25:38] Suggested Threshold for Class "expert", Metric "manhattan", and Model "SapUMLSBERT": -0.443 with F1 of 0.846 classifying 22.1% of the data.
+[2026-08-10 09:25:39] Plotting angular for Model SapUMLSBERT...
+[2026-08-10 09:25:48] Suggested Threshold for Class "related", Metric "angular", and Model "SapUMLSBERT": -1.02 with F1 of 0.646 classifying 11.3% of the data.
+[2026-08-10 09:25:48] Suggested Threshold for Class "expert", Metric "angular", and Model "SapUMLSBERT": -0.496 with F1 of 0.844 classifying 25.9% of the data.
+[2026-08-10 09:25:49] Plotting cosine for Model medCPT...
+[2026-08-10 09:25:57] Suggested Threshold for Class "related", Metric "cosine", and Model "medCPT": -1.944 with F1 of 0.667 classifying 1.0% of the data.
+[2026-08-10 09:25:57] Suggested Threshold for Class "expert", Metric "cosine", and Model "medCPT": 0.927 with F1 of 0.91 classifying 3.2% of the data.
+[2026-08-10 09:25:58] Plotting euclidean for Model medCPT...
+[2026-08-10 09:26:05] Suggested Threshold for Class "related", Metric "euclidean", and Model "medCPT": -0.936 with F1 of 0.667 classifying 1.0% of the data.
+[2026-08-10 09:26:05] Suggested Threshold for Class "expert", Metric "euclidean", and Model "medCPT": 0.593 with F1 of 0.91 classifying 3.2% of the data.
+[2026-08-10 09:26:06] Plotting manhattan for Model medCPT...
+[2026-08-10 09:26:13] Suggested Threshold for Class "related", Metric "manhattan", and Model "medCPT": -0.673 with F1 of 0.667 classifying 1.0% of the data.
+[2026-08-10 09:26:13] Suggested Threshold for Class "expert", Metric "manhattan", and Model "medCPT": 0.292 with F1 of 0.91 classifying 3.2% of the data.
+[2026-08-10 09:26:14] Plotting angular for Model medCPT...
+[2026-08-10 09:26:21] Suggested Threshold for Class "related", Metric "angular", and Model "medCPT": -1.686 with F1 of 0.667 classifying 1.0% of the data.
+[2026-08-10 09:26:21] Suggested Threshold for Class "expert", Metric "angular", and Model "medCPT": 0.976 with F1 of 0.91 classifying 3.2% of the data.
+[2026-08-10 09:26:22] Plotting cosine for Model PubMedBERT...
+[2026-08-10 09:26:30] Suggested Threshold for Class "related", Metric "cosine", and Model "PubMedBERT": -1.125 with F1 of 0.667 classifying 1.0% of the data.
+[2026-08-10 09:26:30] Suggested Threshold for Class "expert", Metric "cosine", and Model "PubMedBERT": 0.701 with F1 of 0.883 classifying 10.2% of the data.
+[2026-08-10 09:26:30] Plotting euclidean for Model PubMedBERT...
+[2026-08-10 09:26:38] Suggested Threshold for Class "related", Metric "euclidean", and Model "PubMedBERT": -0.765 with F1 of 0.64 classifying 9.1% of the data.
+[2026-08-10 09:26:38] Suggested Threshold for Class "expert", Metric "euclidean", and Model "PubMedBERT": 0.379 with F1 of 0.883 classifying 10.2% of the data.
+[2026-08-10 09:26:39] Plotting manhattan for Model PubMedBERT...
+[2026-08-10 09:26:45] Suggested Threshold for Class "related", Metric "manhattan", and Model "PubMedBERT": -0.735 with F1 of 0.667 classifying 1.6% of the data.
+[2026-08-10 09:26:45] Suggested Threshold for Class "expert", Metric "manhattan", and Model "PubMedBERT": -0.028 with F1 of 0.878 classifying 17.2% of the data.
+[2026-08-10 09:26:46] Plotting angular for Model PubMedBERT...
+[2026-08-10 09:26:53] Suggested Threshold for Class "related", Metric "angular", and Model "PubMedBERT": -1.15 with F1 of 0.667 classifying 1.0% of the data.
+[2026-08-10 09:26:53] Suggested Threshold for Class "expert", Metric "angular", and Model "PubMedBERT": 0.646 with F1 of 0.883 classifying 10.2% of the data.
+[2026-08-10 09:26:54] Plotting cosine for Model BioLinkBERT...
+[2026-08-10 09:27:00] Suggested Threshold for Class "related", Metric "cosine", and Model "BioLinkBERT": -1.327 with F1 of 0.616 classifying 4.8% of the data.
+[2026-08-10 09:27:00] Suggested Threshold for Class "expert", Metric "cosine", and Model "BioLinkBERT": 0.635 with F1 of 0.91 classifying 3.2% of the data.
+[2026-08-10 09:27:01] Plotting euclidean for Model BioLinkBERT...
+[2026-08-10 09:27:08] Suggested Threshold for Class "related", Metric "euclidean", and Model "BioLinkBERT": -0.858 with F1 of 0.667 classifying 1.0% of the data.
+[2026-08-10 09:27:08] Suggested Threshold for Class "expert", Metric "euclidean", and Model "BioLinkBERT": 0.223 with F1 of 0.91 classifying 3.2% of the data.
+[2026-08-10 09:27:09] Plotting manhattan for Model BioLinkBERT...
+[2026-08-10 09:27:16] Suggested Threshold for Class "related", Metric "manhattan", and Model "BioLinkBERT": -0.112 with F1 of 0.667 classifying 1.0% of the data.
+[2026-08-10 09:27:16] Suggested Threshold for Class "expert", Metric "manhattan", and Model "BioLinkBERT": 0.0 with F1 of 0.91 classifying 3.2% of the data.
+[2026-08-10 09:27:17] Plotting angular for Model BioLinkBERT...
+[2026-08-10 09:27:24] Suggested Threshold for Class "related", Metric "angular", and Model "BioLinkBERT": -1.307 with F1 of 0.616 classifying 4.8% of the data.
+[2026-08-10 09:27:24] Suggested Threshold for Class "expert", Metric "angular", and Model "BioLinkBERT": 0.579 with F1 of 0.91 classifying 3.2% of the data.
+[2026-08-10 09:27:27] Discrepancies for Embedding Answers: 0
+[2026-08-10 09:40:31] ============================================================
+[2026-08-10 09:40:31] =     Evaluating the Results of Synonym Classification     =
+[2026-08-10 09:40:31] ============================================================
+[2026-08-10 09:40:31] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:40:31] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:40:31] 1 ontologies found.
+[2026-08-10 09:40:31] Found 1110 entries in HPO for ontology 'HP'.
+[2026-08-10 09:40:31] Found Systems: "Mistral-7B-Instruct-v0.2", "Mistral-Small-3.1-24B-Instruct-2503", "Qwen3-30B-A3B-Instruct-2507-FP8", "Qwen3-4B-Instruct-2507", "medgemma-27b-text-it", "medgemma-4b-it"
+[2026-08-10 09:40:31] Classified Synonyms: 1110 (~185 per system)
+[2026-08-10 09:40:34] Discrepancies for Embedding Answers: 0
+[2026-08-10 09:41:32] ============================================================
+[2026-08-10 09:41:32] =     Evaluating the Results of Synonym Classification     =
+[2026-08-10 09:41:32] ============================================================
+[2026-08-10 09:41:32] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:41:32] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:41:32] 1 ontologies found.
+[2026-08-10 09:41:32] Found 1110 entries in HPO for ontology 'HP'.
+[2026-08-10 09:41:32] Found Systems: "Mistral-7B-Instruct-v0.2", "Mistral-Small-3.1-24B-Instruct-2503", "Qwen3-30B-A3B-Instruct-2507-FP8", "Qwen3-4B-Instruct-2507", "medgemma-27b-text-it", "medgemma-4b-it"
+[2026-08-10 09:41:32] Classified Synonyms: 1110 (~185 per system)
+[2026-08-10 09:41:35] Discrepancies for Embedding Answers: 0
+[2026-08-10 09:41:38] Unsure Count: 0
+[2026-08-10 09:43:00] ============================================================
+[2026-08-10 09:43:00] =     Evaluating the Results of Synonym Classification     =
+[2026-08-10 09:43:00] ============================================================
+[2026-08-10 09:43:00] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:43:00] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:43:01] 1 ontologies found.
+[2026-08-10 09:43:01] Found 1110 entries in HPO for ontology 'HP'.
+[2026-08-10 09:43:01] Found Systems: "Mistral-7B-Instruct-v0.2", "Mistral-Small-3.1-24B-Instruct-2503", "Qwen3-30B-A3B-Instruct-2507-FP8", "Qwen3-4B-Instruct-2507", "medgemma-27b-text-it", "medgemma-4b-it"
+[2026-08-10 09:43:01] Classified Synonyms: 1110 (~185 per system)
+[2026-08-10 09:43:04] Discrepancies for Embedding Answers: 0
+[2026-08-10 09:43:07] Unsure Count: 0
+[2026-08-10 09:43:40] ============================================================
+[2026-08-10 09:43:40] =     Evaluating the Results of Synonym Classification     =
+[2026-08-10 09:43:40] ============================================================
+[2026-08-10 09:43:40] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:43:40] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:43:40] 1 ontologies found.
+[2026-08-10 09:43:40] Found 1110 entries in HPO for ontology 'HP'.
+[2026-08-10 09:43:40] Found Systems: "Mistral-7B-Instruct-v0.2", "Mistral-Small-3.1-24B-Instruct-2503", "Qwen3-30B-A3B-Instruct-2507-FP8", "Qwen3-4B-Instruct-2507", "medgemma-27b-text-it", "medgemma-4b-it"
+[2026-08-10 09:43:40] Classified Synonyms: 1110 (~185 per system)
+[2026-08-10 09:43:43] Discrepancies for Embedding Answers: 0
+[2026-08-10 09:43:46] Unsure Count: 0
+[2026-08-10 09:48:03] ============================================================
+[2026-08-10 09:48:03] =            Merging Generated Classifications             =
+[2026-08-10 09:48:03] ============================================================
+[2026-08-10 09:48:03] Reading files...
+[2026-08-10 09:48:03] Files read.
+[2026-08-10 09:48:03] Merging Data...
+[2026-08-10 09:48:03] Data merged.
+[2026-08-10 09:48:03] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:48:03] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:48:03] Merged 6 files into 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-10 09:48:03] ============================================================
+[2026-08-10 09:48:03] =                 Data Merged [Minutes: 0]                 =
+[2026-08-10 09:48:03] ============================================================
+[2026-08-10 09:48:06] ============================================================
+[2026-08-10 09:48:06] =            Merging Generated Classifications             =
+[2026-08-10 09:48:06] ============================================================
+[2026-08-10 09:48:06] Reading files...
+[2026-08-10 09:48:06] Files read.
+[2026-08-10 09:48:06] Merging Data...
+[2026-08-10 09:48:06] Data merged.
+[2026-08-10 09:48:06] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:48:06] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:48:06] Merged 6 files into 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-10 09:48:06] ============================================================
+[2026-08-10 09:48:06] =                 Data Merged [Minutes: 0]                 =
+[2026-08-10 09:48:06] ============================================================
+[2026-08-10 09:48:10] ============================================================
+[2026-08-10 09:48:10] =            Merging Generated Classifications             =
+[2026-08-10 09:48:10] ============================================================
+[2026-08-10 09:48:10] Reading files...
+[2026-08-10 09:48:10] Files read.
+[2026-08-10 09:48:10] Merging Data...
+[2026-08-10 09:48:10] Data merged.
+[2026-08-10 09:48:10] Writing file 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:48:10] Writing file 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:48:10] Merged 6 files into 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-10 09:48:10] ============================================================
+[2026-08-10 09:48:10] =                 Data Merged [Minutes: 0]                 =
+[2026-08-10 09:48:10] ============================================================
+[2026-08-10 09:48:13] ============================================================
+[2026-08-10 09:48:13] =            Merging Generated Classifications             =
+[2026-08-10 09:48:13] ============================================================
+[2026-08-10 09:48:13] Reading files...
+[2026-08-10 09:48:13] Files read.
+[2026-08-10 09:48:13] Merging Data...
+[2026-08-10 09:48:13] Data merged.
+[2026-08-10 09:48:13] Writing file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:48:14] Writing file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:48:14] Merged 6 files into 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-10 09:48:14] ============================================================
+[2026-08-10 09:48:14] =                 Data Merged [Minutes: 0]                 =
+[2026-08-10 09:48:14] ============================================================
+[2026-08-10 09:48:17] ============================================================
+[2026-08-10 09:48:17] =            Merging Generated Classifications             =
+[2026-08-10 09:48:17] ============================================================
+[2026-08-10 09:48:17] Reading files...
+[2026-08-10 09:48:17] Files read.
+[2026-08-10 09:48:17] Merging Data...
+[2026-08-10 09:48:17] Data merged.
+[2026-08-10 09:48:17] Writing file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:48:17] Writing file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:48:17] Merged 6 files into 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-10 09:48:17] ============================================================
+[2026-08-10 09:48:17] =                 Data Merged [Minutes: 0]                 =
+[2026-08-10 09:48:17] ============================================================
+[2026-08-10 09:48:28] ============================================================
+[2026-08-10 09:48:28] =     Evaluating the Results of Synonym Classification     =
+[2026-08-10 09:48:28] ============================================================
+[2026-08-10 09:48:28] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:48:28] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:48:29] 1 ontologies found.
+[2026-08-10 09:48:29] Found 396 entries in HPO for ontology 'HP'.
+[2026-08-10 09:48:29] Found Systems: "Mistral-7B-Instruct-v0.2", "Mistral-Small-3.1-24B-Instruct-2503", "Qwen3-30B-A3B-Instruct-2507-FP8", "Qwen3-4B-Instruct-2507", "medgemma-27b-text-it", "medgemma-4b-it"
+[2026-08-10 09:48:29] Classified Synonyms: 396 (~66 per system)
+[2026-08-10 09:48:42] ============================================================
+[2026-08-10 09:48:42] =     Evaluating the Results of Synonym Classification     =
+[2026-08-10 09:48:42] ============================================================
+[2026-08-10 09:48:42] Reading file 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:48:42] Reading file 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:48:42] 1 ontologies found.
+[2026-08-10 09:48:42] Found 396 entries in HPO for ontology 'HP'.
+[2026-08-10 09:48:42] Found Systems: "Mistral-7B-Instruct-v0.2", "Mistral-Small-3.1-24B-Instruct-2503", "Qwen3-30B-A3B-Instruct-2507-FP8", "Qwen3-4B-Instruct-2507", "medgemma-27b-text-it", "medgemma-4b-it"
+[2026-08-10 09:48:42] Classified Synonyms: 396 (~66 per system)
+[2026-08-10 09:48:55] ============================================================
+[2026-08-10 09:48:55] =     Evaluating the Results of Synonym Classification     =
+[2026-08-10 09:48:55] ============================================================
+[2026-08-10 09:48:55] Reading file 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:48:55] Reading file 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:48:55] 1 ontologies found.
+[2026-08-10 09:48:55] Found 396 entries in HPO for ontology 'HP'.
+[2026-08-10 09:48:55] Found Systems: "Mistral-7B-Instruct-v0.2", "Mistral-Small-3.1-24B-Instruct-2503", "Qwen3-30B-A3B-Instruct-2507-FP8", "Qwen3-4B-Instruct-2507", "medgemma-27b-text-it", "medgemma-4b-it"
+[2026-08-10 09:48:55] Classified Synonyms: 396 (~66 per system)
+[2026-08-10 09:49:08] ============================================================
+[2026-08-10 09:49:08] =     Evaluating the Results of Synonym Classification     =
+[2026-08-10 09:49:08] ============================================================
+[2026-08-10 09:49:08] Reading file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:49:08] Reading file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:49:08] 1 ontologies found.
+[2026-08-10 09:49:08] Found 396 entries in HPO for ontology 'HP'.
+[2026-08-10 09:49:08] Found Systems: "Mistral-7B-Instruct-v0.2", "Mistral-Small-3.1-24B-Instruct-2503", "Qwen3-30B-A3B-Instruct-2507-FP8", "Qwen3-4B-Instruct-2507", "medgemma-27b-text-it", "medgemma-4b-it"
+[2026-08-10 09:49:08] Classified Synonyms: 396 (~66 per system)
+[2026-08-10 09:49:23] ============================================================
+[2026-08-10 09:49:23] =     Evaluating the Results of Synonym Classification     =
+[2026-08-10 09:49:23] ============================================================
+[2026-08-10 09:49:23] Reading file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:49:23] Reading file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:49:23] 1 ontologies found.
+[2026-08-10 09:49:23] Found 396 entries in HPO for ontology 'HP'.
+[2026-08-10 09:49:23] Found Systems: "Mistral-7B-Instruct-v0.2", "Mistral-Small-3.1-24B-Instruct-2503", "Qwen3-30B-A3B-Instruct-2507-FP8", "Qwen3-4B-Instruct-2507", "medgemma-27b-text-it", "medgemma-4b-it"
+[2026-08-10 09:49:23] Classified Synonyms: 396 (~66 per system)
+[2026-08-10 09:52:33] ============================================================
+[2026-08-10 09:52:33] =            Merging Generated Classifications             =
+[2026-08-10 09:52:33] ============================================================
+[2026-08-10 09:52:33] Reading files...
+[2026-08-10 09:52:33] Files read.
+[2026-08-10 09:52:33] Merging Data...
+[2026-08-10 09:52:33] Data merged.
+[2026-08-10 09:52:33] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:52:33] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:52:33] Merged 6 files into 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-10 09:52:33] ============================================================
+[2026-08-10 09:52:33] =                 Data Merged [Minutes: 0]                 =
+[2026-08-10 09:52:33] ============================================================
+[2026-08-10 09:52:37] ============================================================
+[2026-08-10 09:52:37] =            Merging Generated Classifications             =
+[2026-08-10 09:52:37] ============================================================
+[2026-08-10 09:52:37] Reading files...
+[2026-08-10 09:52:37] Files read.
+[2026-08-10 09:52:37] Merging Data...
+[2026-08-10 09:52:37] Data merged.
+[2026-08-10 09:52:37] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:52:37] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:52:37] Merged 6 files into 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-10 09:52:37] ============================================================
+[2026-08-10 09:52:37] =                 Data Merged [Minutes: 0]                 =
+[2026-08-10 09:52:37] ============================================================
+[2026-08-10 09:52:41] ============================================================
+[2026-08-10 09:52:41] =            Merging Generated Classifications             =
+[2026-08-10 09:52:41] ============================================================
+[2026-08-10 09:52:41] Reading files...
+[2026-08-10 09:52:41] Files read.
+[2026-08-10 09:52:41] Merging Data...
+[2026-08-10 09:52:41] Data merged.
+[2026-08-10 09:52:41] Writing file 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:52:41] Writing file 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:52:41] Merged 6 files into 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-10 09:52:41] ============================================================
+[2026-08-10 09:52:41] =                 Data Merged [Minutes: 0]                 =
+[2026-08-10 09:52:41] ============================================================
+[2026-08-10 09:52:45] ============================================================
+[2026-08-10 09:52:45] =            Merging Generated Classifications             =
+[2026-08-10 09:52:45] ============================================================
+[2026-08-10 09:52:45] Reading files...
+[2026-08-10 09:52:45] Files read.
+[2026-08-10 09:52:45] Merging Data...
+[2026-08-10 09:52:45] Data merged.
+[2026-08-10 09:52:45] Writing file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:52:45] Writing file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:52:45] Merged 6 files into 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-10 09:52:45] ============================================================
+[2026-08-10 09:52:45] =                 Data Merged [Minutes: 0]                 =
+[2026-08-10 09:52:45] ============================================================
+[2026-08-10 09:52:48] ============================================================
+[2026-08-10 09:52:48] =            Merging Generated Classifications             =
+[2026-08-10 09:52:48] ============================================================
+[2026-08-10 09:52:48] Reading files...
+[2026-08-10 09:52:49] Files read.
+[2026-08-10 09:52:49] Merging Data...
+[2026-08-10 09:52:49] Data merged.
+[2026-08-10 09:52:49] Writing file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:52:49] Writing file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:52:49] Merged 6 files into 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'
+[2026-08-10 09:52:49] ============================================================
+[2026-08-10 09:52:49] =                 Data Merged [Minutes: 0]                 =
+[2026-08-10 09:52:49] ============================================================
+[2026-08-10 09:53:01] ============================================================
+[2026-08-10 09:53:01] =     Evaluating the Results of Synonym Classification     =
+[2026-08-10 09:53:01] ============================================================
+[2026-08-10 09:53:01] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:53:01] Reading file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:53:01] 1 ontologies found.
+[2026-08-10 09:53:01] Found 396 entries in HPO for ontology 'HP'.
+[2026-08-10 09:53:01] Found Systems: "Mistral-7B-Instruct-v0.2", "Mistral-Small-3.1-24B-Instruct-2503", "Qwen3-30B-A3B-Instruct-2507-FP8", "Qwen3-4B-Instruct-2507", "medgemma-27b-text-it", "medgemma-4b-it"
+[2026-08-10 09:53:01] Classified Synonyms: 396 (~66 per system)
+[2026-08-10 09:53:03] Discrepancies for Embedding Answers: 0
+[2026-08-10 09:53:06] Unsure Count: 0
+[2026-08-10 09:53:20] ============================================================
+[2026-08-10 09:53:20] =     Evaluating the Results of Synonym Classification     =
+[2026-08-10 09:53:20] ============================================================
+[2026-08-10 09:53:20] Reading file 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:53:20] Reading file 'type_Test_Definition_NoComment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:53:20] 1 ontologies found.
+[2026-08-10 09:53:20] Found 396 entries in HPO for ontology 'HP'.
+[2026-08-10 09:53:20] Found Systems: "Mistral-7B-Instruct-v0.2", "Mistral-Small-3.1-24B-Instruct-2503", "Qwen3-30B-A3B-Instruct-2507-FP8", "Qwen3-4B-Instruct-2507", "medgemma-27b-text-it", "medgemma-4b-it"
+[2026-08-10 09:53:20] Classified Synonyms: 396 (~66 per system)
+[2026-08-10 09:53:23] Discrepancies for Embedding Answers: 0
+[2026-08-10 09:53:25] Unsure Count: 0
+[2026-08-10 09:53:39] ============================================================
+[2026-08-10 09:53:39] =     Evaluating the Results of Synonym Classification     =
+[2026-08-10 09:53:39] ============================================================
+[2026-08-10 09:53:39] Reading file 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:53:39] Reading file 'type_Test_Definition_NoComment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:53:39] 1 ontologies found.
+[2026-08-10 09:53:39] Found 396 entries in HPO for ontology 'HP'.
+[2026-08-10 09:53:39] Found Systems: "Mistral-7B-Instruct-v0.2", "Mistral-Small-3.1-24B-Instruct-2503", "Qwen3-30B-A3B-Instruct-2507-FP8", "Qwen3-4B-Instruct-2507", "medgemma-27b-text-it", "medgemma-4b-it"
+[2026-08-10 09:53:39] Classified Synonyms: 396 (~66 per system)
+[2026-08-10 09:53:42] Discrepancies for Embedding Answers: 0
+[2026-08-10 09:53:45] Unsure Count: 0
+[2026-08-10 09:54:00] ============================================================
+[2026-08-10 09:54:00] =     Evaluating the Results of Synonym Classification     =
+[2026-08-10 09:54:00] ============================================================
+[2026-08-10 09:54:00] Reading file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:54:00] Reading file 'type_Test_Definition_Comment_Parents_Children_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:54:00] 1 ontologies found.
+[2026-08-10 09:54:00] Found 396 entries in HPO for ontology 'HP'.
+[2026-08-10 09:54:00] Found Systems: "Mistral-7B-Instruct-v0.2", "Mistral-Small-3.1-24B-Instruct-2503", "Qwen3-30B-A3B-Instruct-2507-FP8", "Qwen3-4B-Instruct-2507", "medgemma-27b-text-it", "medgemma-4b-it"
+[2026-08-10 09:54:00] Classified Synonyms: 396 (~66 per system)
+[2026-08-10 09:54:02] Discrepancies for Embedding Answers: 0
+[2026-08-10 09:54:05] Unsure Count: 0
+[2026-08-10 09:54:19] ============================================================
+[2026-08-10 09:54:19] =     Evaluating the Results of Synonym Classification     =
+[2026-08-10 09:54:19] ============================================================
+[2026-08-10 09:54:19] Reading file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv'.
+[2026-08-10 09:54:19] Reading file 'type_Test_Definition_Comment_NoParents_NoChildren_NoChainOfThoughts_NoFewShot_merged_classes.csv' completed.
+[2026-08-10 09:54:19] 1 ontologies found.
+[2026-08-10 09:54:19] Found 396 entries in HPO for ontology 'HP'.
+[2026-08-10 09:54:19] Found Systems: "Mistral-7B-Instruct-v0.2", "Mistral-Small-3.1-24B-Instruct-2503", "Qwen3-30B-A3B-Instruct-2507-FP8", "Qwen3-4B-Instruct-2507", "medgemma-27b-text-it", "medgemma-4b-it"
+[2026-08-10 09:54:19] Classified Synonyms: 396 (~66 per system)
+[2026-08-10 09:54:21] Discrepancies for Embedding Answers: 0
+[2026-08-10 09:54:24] Unsure Count: 0

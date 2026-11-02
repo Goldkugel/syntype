@@ -16,4 +16,12 @@ COMMENT="$6"
 CHILDREN="$7"
 PARENTS="$8"
 
+# Prioritize virtual environment libraries over system CUDA/NCCL modules
+export LD_LIBRARY_PATH=/home/pallaoro/user/install/envs/gpu/lib/python3.12/site-packages/nvidia/nccl/lib:$LD_LIBRARY_PATH
+
+# Fully disable FlashInfer JIT compilation and force vLLM to use standard PyTorch/FlashAttention
+export FLASHINFER_ENABLE_JIT=0
+export VLLM_USE_FLASHINFER=0
+export VLLM_USE_FLASHINFER_SAMPLER=0
+
 python3 ./syntype.py "$MODEL" "$MODE" "$CoT" "$FS" "$DEFINITION" "$COMMENT" "$CHILDREN" "$PARENTS"

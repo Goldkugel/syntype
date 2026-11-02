@@ -1,0 +1,50 @@
+[2026-08-03 14:19:36] ============================================================
+[2026-08-03 14:19:36] =                 Classifying the Synonyms                 =
+[2026-08-03 14:19:36] ============================================================
+[2026-08-03 14:19:36] Reading file 'transform.reduced.csv'.
+[2026-08-03 14:19:36] Reading file 'transform.reduced.csv' completed.
+[2026-08-03 14:19:41] Write Prompts to file.
+[2026-08-03 14:19:41] Writing in temporary file...
+[2026-08-03 14:19:41] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_ChainOfThoughts_NoFewShot_raw_Mistral-Small-3.1-24B-Instruct-2503.csv.tmp'.
+[2026-08-03 14:19:41] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_ChainOfThoughts_NoFewShot_raw_Mistral-Small-3.1-24B-Instruct-2503.csv.tmp' completed.
+[2026-08-03 14:19:42] Writing in temporary file completed. Replacing old data with new data...
+[2026-08-03 14:19:42] Old data replaced with new data.
+[2026-08-03 14:19:42] Set up the LLM (Mistral-Small-3.1-24B-Instruct-2503)...
+[2026-08-03 14:19:42] Available: True
+[2026-08-03 14:19:42] Device count: 2
+[2026-08-03 14:19:42] Max Num batched Tokens: 16384
+[2026-08-03 14:19:42] Max new Tokens: 2048
+[2026-08-03 14:19:43] Temperature: 0.01
+[2026-08-03 14:19:43] Max Model Length: 8192
+[2026-08-03 14:19:43] Few-Shot (Zero-Shot): False
+[2026-08-03 14:19:43] Chain-Of-Thoughts: True
+[2026-08-03 14:19:43] Add Definitions to Prompt: True
+[2026-08-03 14:19:43] Add Comment to Prompt: False
+[2026-08-03 14:19:43] Add Parents to Prompt: False
+[2026-08-03 14:19:43] Add Children to Prompt: False
+[2026-08-03 14:19:44] GPUs: '0', '1'
+[2026-08-03 14:20:58] Set up of LLM complete.
+[2026-08-03 14:20:58] (1) Generating.
+[2026-08-03 14:20:58] 207 prompts added [Index: 0 - 206]. Start generating responses...
+[2026-08-03 14:21:56] Writing in temporary file...
+[2026-08-03 14:21:56] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_ChainOfThoughts_NoFewShot_raw_Mistral-Small-3.1-24B-Instruct-2503.csv.tmp'.
+[2026-08-03 14:21:56] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_ChainOfThoughts_NoFewShot_raw_Mistral-Small-3.1-24B-Instruct-2503.csv.tmp' completed.
+[2026-08-03 14:21:56] Writing in temporary file completed. Replacing old data with new data...
+[2026-08-03 14:21:56] Old data replaced with new data.
+[2026-08-03 14:21:56] (2) Generating.
+[2026-08-03 14:21:56] 207 prompts added [Index: 0 - 206]. Start generating responses...
+[2026-08-03 14:23:26] Writing in temporary file...
+[2026-08-03 14:23:26] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_ChainOfThoughts_NoFewShot_raw_Mistral-Small-3.1-24B-Instruct-2503.csv.tmp'.
+[2026-08-03 14:23:26] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_ChainOfThoughts_NoFewShot_raw_Mistral-Small-3.1-24B-Instruct-2503.csv.tmp' completed.
+[2026-08-03 14:23:26] Writing in temporary file completed. Replacing old data with new data...
+[2026-08-03 14:23:26] Old data replaced with new data.
+[2026-08-03 14:23:26] (3) Generating.
+[2026-08-03 14:23:26] 207 prompts added [Index: 0 - 206]. Start generating responses...
+[2026-08-03 14:24:00] Writing in temporary file...
+[2026-08-03 14:24:00] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_ChainOfThoughts_NoFewShot_raw_Mistral-Small-3.1-24B-Instruct-2503.csv.tmp'.
+[2026-08-03 14:24:00] Writing file 'type_Test_Definition_NoComment_NoParents_NoChildren_ChainOfThoughts_NoFewShot_raw_Mistral-Small-3.1-24B-Instruct-2503.csv.tmp' completed.
+[2026-08-03 14:24:00] Writing in temporary file completed. Replacing old data with new data...
+[2026-08-03 14:24:00] Old data replaced with new data.
+[2026-08-03 14:24:00] ============================================================
+[2026-08-03 14:24:00] =             Synonyms Classified [Minutes: 4]             =
+[2026-08-03 14:24:00] ============================================================

@@ -1,0 +1,36 @@
+[2026-08-03 14:56:29] ============================================================
+[2026-08-03 14:56:29] =                 Classifying the Synonyms                 =
+[2026-08-03 14:56:29] ============================================================
+[2026-08-03 14:56:29] Reading file 'transform.reduced.csv'.
+[2026-08-03 14:56:29] Reading file 'transform.reduced.csv' completed.
+[2026-08-03 14:56:34] Write Prompts to file.
+[2026-08-03 14:56:34] Writing in temporary file...
+[2026-08-03 14:56:34] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_FewShot_raw_medgemma-27b-text-it.csv.tmp'.
+[2026-08-03 14:56:34] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_FewShot_raw_medgemma-27b-text-it.csv.tmp' completed.
+[2026-08-03 14:56:34] Writing in temporary file completed. Replacing old data with new data...
+[2026-08-03 14:56:34] Old data replaced with new data.
+[2026-08-03 14:56:34] Set up the LLM (medgemma-27b-text-it)...
+[2026-08-03 14:56:34] Available: True
+[2026-08-03 14:56:34] Device count: 2
+[2026-08-03 14:56:34] Max Num batched Tokens: 16384
+[2026-08-03 14:56:34] Max new Tokens: 2048
+[2026-08-03 14:56:34] Temperature: 0.01
+[2026-08-03 14:56:34] Max Model Length: 8192
+[2026-08-03 14:56:34] Few-Shot (Zero-Shot): True
+[2026-08-03 14:56:34] Chain-Of-Thoughts: False
+[2026-08-03 14:56:34] Add Definitions to Prompt: False
+[2026-08-03 14:56:34] Add Comment to Prompt: False
+[2026-08-03 14:56:34] Add Parents to Prompt: False
+[2026-08-03 14:56:34] Add Children to Prompt: False
+[2026-08-03 14:56:34] GPUs: '0', '1'
+[2026-08-03 14:58:18] Set up of LLM complete.
+[2026-08-03 14:58:18] (1) Generating.
+[2026-08-03 14:58:18] 207 prompts added [Index: 0 - 206]. Start generating responses...
+[2026-08-03 15:01:03] Writing in temporary file...
+[2026-08-03 15:01:03] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_FewShot_raw_medgemma-27b-text-it.csv.tmp'.
+[2026-08-03 15:01:03] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_FewShot_raw_medgemma-27b-text-it.csv.tmp' completed.
+[2026-08-03 15:01:03] Writing in temporary file completed. Replacing old data with new data...
+[2026-08-03 15:01:03] Old data replaced with new data.
+[2026-08-03 15:01:03] ============================================================
+[2026-08-03 15:01:03] =             Synonyms Classified [Minutes: 4]             =
+[2026-08-03 15:01:03] ============================================================

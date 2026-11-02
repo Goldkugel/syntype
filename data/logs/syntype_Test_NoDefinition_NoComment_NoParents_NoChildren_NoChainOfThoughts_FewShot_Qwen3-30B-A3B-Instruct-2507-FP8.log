@@ -1,0 +1,36 @@
+[2026-08-03 14:51:52] ============================================================
+[2026-08-03 14:51:52] =                 Classifying the Synonyms                 =
+[2026-08-03 14:51:52] ============================================================
+[2026-08-03 14:51:52] Reading file 'transform.reduced.csv'.
+[2026-08-03 14:51:52] Reading file 'transform.reduced.csv' completed.
+[2026-08-03 14:51:57] Write Prompts to file.
+[2026-08-03 14:51:57] Writing in temporary file...
+[2026-08-03 14:51:57] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_FewShot_raw_Qwen3-30B-A3B-Instruct-2507-FP8.csv.tmp'.
+[2026-08-03 14:51:57] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_FewShot_raw_Qwen3-30B-A3B-Instruct-2507-FP8.csv.tmp' completed.
+[2026-08-03 14:51:57] Writing in temporary file completed. Replacing old data with new data...
+[2026-08-03 14:51:57] Old data replaced with new data.
+[2026-08-03 14:51:57] Set up the LLM (Qwen3-30B-A3B-Instruct-2507-FP8)...
+[2026-08-03 14:51:57] Available: True
+[2026-08-03 14:51:57] Device count: 2
+[2026-08-03 14:51:57] Max Num batched Tokens: 16384
+[2026-08-03 14:51:57] Max new Tokens: 2048
+[2026-08-03 14:51:57] Temperature: 0.01
+[2026-08-03 14:51:57] Max Model Length: 8192
+[2026-08-03 14:51:57] Few-Shot (Zero-Shot): True
+[2026-08-03 14:51:57] Chain-Of-Thoughts: False
+[2026-08-03 14:51:57] Add Definitions to Prompt: False
+[2026-08-03 14:51:57] Add Comment to Prompt: False
+[2026-08-03 14:51:57] Add Parents to Prompt: False
+[2026-08-03 14:51:57] Add Children to Prompt: False
+[2026-08-03 14:51:57] GPUs: '0', '1'
+[2026-08-03 14:53:26] Set up of LLM complete.
+[2026-08-03 14:53:26] (1) Generating.
+[2026-08-03 14:53:26] 207 prompts added [Index: 0 - 206]. Start generating responses...
+[2026-08-03 14:53:28] Writing in temporary file...
+[2026-08-03 14:53:28] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_FewShot_raw_Qwen3-30B-A3B-Instruct-2507-FP8.csv.tmp'.
+[2026-08-03 14:53:28] Writing file 'type_Test_NoDefinition_NoComment_NoParents_NoChildren_NoChainOfThoughts_FewShot_raw_Qwen3-30B-A3B-Instruct-2507-FP8.csv.tmp' completed.
+[2026-08-03 14:53:28] Writing in temporary file completed. Replacing old data with new data...
+[2026-08-03 14:53:28] Old data replaced with new data.
+[2026-08-03 14:53:28] ============================================================
+[2026-08-03 14:53:28] =             Synonyms Classified [Minutes: 1]             =
+[2026-08-03 14:53:28] ============================================================

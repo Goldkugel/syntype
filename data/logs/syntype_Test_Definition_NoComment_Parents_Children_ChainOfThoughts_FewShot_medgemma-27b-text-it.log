@@ -1,0 +1,50 @@
+[2026-08-03 12:42:04] ============================================================
+[2026-08-03 12:42:04] =                 Classifying the Synonyms                 =
+[2026-08-03 12:42:04] ============================================================
+[2026-08-03 12:42:04] Reading file 'transform.reduced.csv'.
+[2026-08-03 12:42:04] Reading file 'transform.reduced.csv' completed.
+[2026-08-03 12:42:09] Write Prompts to file.
+[2026-08-03 12:42:09] Writing in temporary file...
+[2026-08-03 12:42:09] Writing file 'type_Test_Definition_NoComment_Parents_Children_ChainOfThoughts_FewShot_raw_medgemma-27b-text-it.csv.tmp'.
+[2026-08-03 12:42:09] Writing file 'type_Test_Definition_NoComment_Parents_Children_ChainOfThoughts_FewShot_raw_medgemma-27b-text-it.csv.tmp' completed.
+[2026-08-03 12:42:09] Writing in temporary file completed. Replacing old data with new data...
+[2026-08-03 12:42:09] Old data replaced with new data.
+[2026-08-03 12:42:09] Set up the LLM (medgemma-27b-text-it)...
+[2026-08-03 12:42:09] Available: True
+[2026-08-03 12:42:09] Device count: 2
+[2026-08-03 12:42:09] Max Num batched Tokens: 16384
+[2026-08-03 12:42:09] Max new Tokens: 2048
+[2026-08-03 12:42:09] Temperature: 0.01
+[2026-08-03 12:42:09] Max Model Length: 8192
+[2026-08-03 12:42:09] Few-Shot (Zero-Shot): True
+[2026-08-03 12:42:09] Chain-Of-Thoughts: True
+[2026-08-03 12:42:09] Add Definitions to Prompt: True
+[2026-08-03 12:42:09] Add Comment to Prompt: False
+[2026-08-03 12:42:09] Add Parents to Prompt: True
+[2026-08-03 12:42:09] Add Children to Prompt: True
+[2026-08-03 12:42:09] GPUs: '0', '1'
+[2026-08-03 12:43:55] Set up of LLM complete.
+[2026-08-03 12:43:55] (1) Generating.
+[2026-08-03 12:43:55] 207 prompts added [Index: 0 - 206]. Start generating responses...
+[2026-08-03 12:47:31] Writing in temporary file...
+[2026-08-03 12:47:31] Writing file 'type_Test_Definition_NoComment_Parents_Children_ChainOfThoughts_FewShot_raw_medgemma-27b-text-it.csv.tmp'.
+[2026-08-03 12:47:31] Writing file 'type_Test_Definition_NoComment_Parents_Children_ChainOfThoughts_FewShot_raw_medgemma-27b-text-it.csv.tmp' completed.
+[2026-08-03 12:47:31] Writing in temporary file completed. Replacing old data with new data...
+[2026-08-03 12:47:31] Old data replaced with new data.
+[2026-08-03 12:47:31] (2) Generating.
+[2026-08-03 12:47:31] 207 prompts added [Index: 0 - 206]. Start generating responses...
+[2026-08-03 12:54:46] Writing in temporary file...
+[2026-08-03 12:54:46] Writing file 'type_Test_Definition_NoComment_Parents_Children_ChainOfThoughts_FewShot_raw_medgemma-27b-text-it.csv.tmp'.
+[2026-08-03 12:54:46] Writing file 'type_Test_Definition_NoComment_Parents_Children_ChainOfThoughts_FewShot_raw_medgemma-27b-text-it.csv.tmp' completed.
+[2026-08-03 12:54:46] Writing in temporary file completed. Replacing old data with new data...
+[2026-08-03 12:54:46] Old data replaced with new data.
+[2026-08-03 12:54:46] (3) Generating.
+[2026-08-03 12:54:46] 207 prompts added [Index: 0 - 206]. Start generating responses...
+[2026-08-03 12:57:02] Writing in temporary file...
+[2026-08-03 12:57:02] Writing file 'type_Test_Definition_NoComment_Parents_Children_ChainOfThoughts_FewShot_raw_medgemma-27b-text-it.csv.tmp'.
+[2026-08-03 12:57:02] Writing file 'type_Test_Definition_NoComment_Parents_Children_ChainOfThoughts_FewShot_raw_medgemma-27b-text-it.csv.tmp' completed.
+[2026-08-03 12:57:02] Writing in temporary file completed. Replacing old data with new data...
+[2026-08-03 12:57:02] Old data replaced with new data.
+[2026-08-03 12:57:02] ============================================================
+[2026-08-03 12:57:02] =            Synonyms Classified [Minutes: 14]             =
+[2026-08-03 12:57:02] ============================================================
