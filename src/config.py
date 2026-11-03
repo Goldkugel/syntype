@@ -2,7 +2,7 @@ import os
 import sys
 import yaml
 
-from SyntypeConfig import SyntypeConfig
+from syntype.src.SynTypeConfig import SyntypeConfig
 
 # Prevent Python from generating .pyc files (compiled bytecode files)
 sys.dont_write_bytecode = True
@@ -43,11 +43,6 @@ addChildren             = experimentSetting("children", experiment.children)
 
 forceDrawAdditionalPlots = syntypeConfig.force_draw_additional_plots
 
-# The prompt templates of the experiment, one per turn.
-promptFolder            = configurationFile["llm"]["prompt_folder"]
-promptFiles             = list(syntypeConfig.prompt_files.chain_of_thoughts
-    if chainOfThoughts else syntypeConfig.prompt_files.single)
-
 testStr                 = "Test" if reduceToTestIDs else "NoTest"
 configStr               = "Definition" if addDefinition else "NoDefinition"
 configStr              += "_Comment" if addComment else "_NoComment"
@@ -81,28 +76,6 @@ def modelNameOf(modelID : str) -> str:
     """
     return modelID[modelID.index("/") + 1:] if "/" in modelID else modelID
 
-# Possible Similarity Metrics
-cosineSimilarity        = "cosine"
-euclideanSimilarity     = "euclidean"
-scalarSimilarity        = "scalar"
-manhattanSimilarity     = "manhattan"
-angularSimilarity       = "angular"
-mahalanobisSimilarity   = "mahalanobis"
-
-# Similarity Metrics used.
-similarityMetrics = list(syntypeConfig.similarity_metrics)
-
-# Name (used in the similarity column names) -> model ID of every embedding
-# model of the embedder section.
-embeddingModelIDs = configurationFile["embedder"]["model_id"]
-missingNames      = [m for m in embeddingModelIDs if m not in syntypeConfig.embedding_model_names]
-if len(missingNames) > 0:
-    raise ValueError(f"No name in syntype.embedding_model_names for {missingNames}.")
-
-embeddingModels = {
-    syntypeConfig.embedding_model_names[m] : m for m in embeddingModelIDs
-}
-
 similarityColumnPrePrefix   = "similarity_"
 similarityColumnPrefix      = f"{similarityColumnPrePrefix}" + "{}_{}"
 
@@ -115,9 +88,6 @@ similarityEvaluationParts      = int((similarityEvaluationUperBound - similarity
 # =============================================================================
 
 quotationCharacter = "\""
-
-progressBarColor        = syntypeConfig.progress_bar.color
-progressBarTextLength   = syntypeConfig.progress_bar.text_length
 
 # =============================================================================
 # For Data Curation

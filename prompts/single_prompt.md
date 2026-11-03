@@ -19,16 +19,23 @@ Output Format (STRICT JSON)
 
 {{
 	"classification": "'expert' or 'layperson'",
-	"confidence": <integer from 1 to 10>
+	"confidence": <integer from 1 to 5>,
+    "rationale": "<one to three sentences summarising the decisive similarities and differences.>"
 }}
 
 Confidence guidelines:
 
-    9–10 = almost certainly correct
-    6–8 = likely correct
-    3–5 = substantial overlap or ambiguity
-    1–2 = highly uncertain{examples}
+    5   = almost certainly correct
+    4   = likely correct
+    3   = substantial overlap or ambiguity
+    2   = slight overlap or high ambiguity
+    1   = highly uncertain{examples}
 
 Now classify the following input:
 
-{input}
+* Label: {hpo_label}
+* Synonyms: {hpo_synonyms}
+* Definition: {hpo_definition}
+* Comment: {hpo_comment}
+* Parents: {hpo_parents}
+* Children: {hpo_children}

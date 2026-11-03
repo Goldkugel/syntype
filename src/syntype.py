@@ -43,7 +43,7 @@ from logger     import Logger
 # The logger takes the "logger" section of the configuration file; the
 # command line of the run is its first line, since the log file is named
 # after the start of the run only.
-l             = Logger(config = configFile)
+l = Logger()
 l.log(f"Command: python3 {shlex.join(sys.argv)}")
 
 # The packages (adapter, embedder, model) take their sections of the
