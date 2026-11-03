@@ -1,10 +1,12 @@
-rm ../data/logs/*.log
-rm ../data/output/format/*.csv
-rm ../data/output/evaluate/*.png
-rm ../data/output/merge/*.csv
-# rm ../data/output/transform/*.csv
-rm ../data/output/type/*.csv
-rm ../data/slurmlogs/*.err
-rm ../data/slurmlogs/*.out
+rm -f ../data/logs/*.log
+rm -f ../data/output/format/*.csv
+rm -f ../data/output/evaluate/*.png
+rm -f ../data/output/merge/*.csv
+# rm -f ../data/output/transform/*.csv
+# rm -f ../data/output/embed/*.csv
+rm -f ../data/output/type/*.csv
+rm -f ../data/tmp/*.tmp
+rm -f ../data/slurmlogs/*.err
+rm -f ../data/slurmlogs/*.out
 
 exit 0

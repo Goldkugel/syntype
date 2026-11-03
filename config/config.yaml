@@ -1,0 +1,154 @@
+# Paths are relative to src/, from where the scripts are run.
+syntype:
+  # The experiment of a run without words on the command line. Words after
+  # the model ID (see start.sh) replace all of these settings: test,
+  # few-shot, chain-of-thoughts, definition, comment, parents, children.
+  experiment:
+    test: False
+    few_shot: False
+    chain_of_thoughts: False
+    definition: False
+    comment: False
+    parents: False
+    children: False
+  data_folder: "../data"
+  # Name of every model of embedder.model_id in the similarity column names.
+  embedding_model_names:
+    "emilyalsentzer/Bio_ClinicalBERT": "BioClinicalBERT"
+    "cambridgeltl/SapBERT-from-PubMedBERT-fulltext": "SapBERT"
+    "medicalai/ClinicalBERT": "ClinicalBERT"
+    "dmis-lab/biobert-v1.1": "BioBERT"
+    "GanjinZero/UMLSBert_ENG": "UMLSBERT"
+    "allenai/scibert_scivocab_cased": "SciBERT"
+    "cambridgeltl/SapBERT-UMLS-2020AB-all-lang-from-XLMR": "SapUMLSBERT"
+    "ncbi/MedCPT-Query-Encoder": "medCPT"
+    "microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext": "PubMedBERT"
+    "michiyasunaga/BioLinkBERT-large": "BioLinkBERT"
+  similarity_metrics:
+    - "cosine"
+    - "euclidean"
+    - "manhattan"
+    - "angular"
+  similarity_evaluation_lower_bound: -4
+  similarity_evaluation_upper_bound: 4
+  force_draw_additional_plots: False
+  progress_bar:
+    color: "cyan"
+    text_length: 40
+  # Prompt templates (in llm.prompt_folder) of the classification, one per
+  # turn; syntype.py gives the model the ones of its experiment as
+  # llm.prompt_files.
+  prompt_files:
+    single: ["single_prompt.md"]
+    chain_of_thoughts: ["multiple_prompt1.md", "multiple_prompt2.md", "multiple_prompt3.md"]
+adapter:
+  hpo:
+    input_folder: "../data/input/"
+    input_files:
+      - "hp.owl"
+    # syntype.py writes its own files (see config.py); these are only used
+    # by HPOAdapter.to_csv(), which syntype does not call.
+    output_folder: "../data/output/transform/"
+    output_file: "hpo.csv"
+    skip_if_present: False
+    prefix: ""
+logger:
+  folder: "../data/logs/"
+  # One log file per run, named after its start ({start}, to the
+  # microsecond, so that runs started at the same time get their own file);
+  # the packages log into the same file. The first line is the command line
+  # of the run.
+  file_name: "syntype_{start:%Y%m%d_%H%M%S_%f}.log"
+  header_char: "="
+  header_length: 60
+  log_runtime: True
+  format: "%Y-%m-%d %H:%M:%S"
+  encoding: "utf-8"
+llm:
+  # The models of syntype.py, classifying one after the other ("all"); a
+  # model ID as its first command-line argument classifies with only that
+  # model.
+  model_id:
+    - "google/medgemma-4b-it"
+    - "Qwen/Qwen3-4B-Instruct-2507"
+    - "mistralai/Mistral-7B-Instruct-v0.2"
+    - "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8"
+    - "google/medgemma-27b-text-it"
+    - "mistralai/Mistral-Small-3.1-24B-Instruct-2503"
+  device: "cuda"
+  expert_parallel_models:
+    - "Qwen3-30B"
+  seed: 2898231092
+  temperature: 0.01
+  top_p: 0.95
+  max_model_len: 8192
+  max_num_batched_tokens: 16384
+  # CUDA graphs, as vLLM used them before the switch to the model package.
+  enforce_eager: false
+  gpu_memory_utilization: 0.9
+  dtype: "auto"
+  quantization: null
+  enable_prefix_caching: true
+  enable_thinking: null
+  reasoning_start_tag: "<think>"
+  reasoning_end_tag: "</think>"
+  max_tokens: 2048
+  chunk_size: 500
+  # Folder of the prompt templates; prompt_files is set by syntype.py from
+  # syntype.prompt_files.
+  prompt_folder: "../prompt/"
+  prompt_files: []
+  # syntype.py replaces prompt_tmp_file and prompt_log_file by names unique to
+  # the run, since start.sh starts many runs at the same time.
+  prompt_tmp_folder: "../data/tmp/"
+  prompt_tmp_file: "syntype.tmp"
+  prompt_log_folder: "../data/logs/"
+  prompt_log_file: "prompts.log"
+  metadata_folder: "../data/logs/"
+  metadata_file: "run_metadata.json"
+embedder:
+  # syntype.py "" embeds with one model after the other; every model needs a
+  # name in syntype.embedding_model_names.
+  model_id:
+    - "emilyalsentzer/Bio_ClinicalBERT"
+    - "cambridgeltl/SapBERT-from-PubMedBERT-fulltext"
+    - "medicalai/ClinicalBERT"
+    - "dmis-lab/biobert-v1.1"
+    - "GanjinZero/UMLSBert_ENG"
+    - "allenai/scibert_scivocab_cased"
+    - "cambridgeltl/SapBERT-UMLS-2020AB-all-lang-from-XLMR"
+    - "ncbi/MedCPT-Query-Encoder"
+    - "microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext"
+    - "michiyasunaga/BioLinkBERT-large"
+  # The commit of every model on the Hugging Face Hub (as of 2026-11-03), so
+  # that the cache never serves vectors of another model version. Update a
+  # commit to use a newer model; its cache file then starts anew.
+  revision:
+    "emilyalsentzer/Bio_ClinicalBERT": "d5892b39a4adaed74b92212a44081509db72f87b"
+    "cambridgeltl/SapBERT-from-PubMedBERT-fulltext": "090663c3ae57bf35ffe4d0d468a2a88d03051a4d"
+    "medicalai/ClinicalBERT": "f7c7f65227cb311f33a79c24858d875876d478ac"
+    "dmis-lab/biobert-v1.1": "551ca18efd7f052c8dfa0b01c94c2a8e68bc5488"
+    "GanjinZero/UMLSBert_ENG": "89c0ff41339352d6da2f70d96bb2a90317ab7050"
+    "allenai/scibert_scivocab_cased": "ddf0be025f8e432a1870e34811997ba6725bf04a"
+    "cambridgeltl/SapBERT-UMLS-2020AB-all-lang-from-XLMR": "47b6bd041ba61311584bb2494edfda5c7d9b719f"
+    "ncbi/MedCPT-Query-Encoder": "d83a36cc6b8e3a5c5e9d9d6ba156808c1643dcbc"
+    # Renamed to microsoft/BiomedNLP-BiomedBERT-base-uncased-abstract-fulltext
+    # on the Hub, which redirects the old name.
+    "microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext": "e1354b7a3a09615f6aba48dfad4b7a613eef7062"
+    "michiyasunaga/BioLinkBERT-large": "1eb6d81c5fc1c42d3a43c71956b0e526558ae053"
+  # The embeddings as before the switch to the embedder package, so the
+  # similarities stay comparable with earlier runs: mean pooling over at most
+  # 64 tokens, vectors not normalised.
+  pooling: "mean"
+  max_seq_length: 64
+  normalization: False
+  # Lowercases only for uncased models, whose tokenizer lowercases anyway.
+  lowercase: "auto"
+  device: "cpu"
+  backend: "torch"
+  batch_size: 128
+  # One file per model with the embedding of every term: syntype.py only
+  # encodes terms that are not in it yet (e.g. after an HPO update), and an
+  # interrupted run resumes from it. About 0.6-0.8 GB per model.
+  cache_folder: "../data/cache/embeddings/"
+  dimensionality_reduction: False

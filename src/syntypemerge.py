@@ -1,5 +1,6 @@
 import pandas as pd
 import sys
+import shlex
 import os
 import time
 
@@ -7,15 +8,23 @@ import time
 sys.dont_write_bytecode = True
 
 # Import project-specific helpers, model wrappers, and configuration.
-from prompts    import *
 from utils      import *
+from config     import *
+
+from logger     import Logger
 
 # ------------------------------------------------------------------------------
 # Initialization.
 # ------------------------------------------------------------------------------
 
+# The logger takes the "logger" section of the configuration file; the
+# command line of the run is its first line, since the log file is named
+# after the start of the run only.
+l             = Logger(config = configFile)
+l.log(f"Command: python3 {shlex.join(sys.argv)}")
+
 # Print a formatted header indicating the start of this processing stage.
-printHeader(f"Merging Generated Classifications")
+l.printHeader(f"Merging Generated Classifications")
 
 # To track time.
 startTime = time.time()
@@ -29,15 +38,25 @@ startTime = time.time()
 # Load Data.
 # ------------------------------------------------------------------------------
 
+# The formatted classifications of all models of this experiment.
+inputFileClassMerged = []
+if os.path.isdir(inputFolderClassMerged):
+    inputFileClassMerged = [
+        os.path.join(inputFolderClassMerged, file)
+        for file in os.listdir(inputFolderClassMerged)
+        if file.startswith(outputFileNameClassFormattedPrefix) and
+            file.endswith(csvFileFormat)
+    ]
+
 # Merging Generated Classes.
 if len(inputFileClassMerged) == 0:
-    log(f"No '{csvFileFormat}' files with prefix " + 
+    l.log(f"No '{csvFileFormat}' files with prefix " + 
         f"'{outputFileNameClassFormattedPrefix}' found in " + 
         f"'{outputFolderNameFormatted}'")
 else:
     # Read and merge CSV files.
     dataframes = []
-    log("Reading files...")
+    l.log("Reading files...")
     with newProgress() as progress:
         task = newTask(progress, len(inputFileClassMerged), 
             "Processing Files")
@@ -49,12 +68,12 @@ else:
         progress.refresh()
 
     # Read and merge CSV files.
-    log("Files read.")
+    l.log("Files read.")
 
-    log("Merging Data...")
+    l.log("Merging Data...")
     merged_df = pd.concat(dataframes, ignore_index = True)
     merged_df = merged_df.reset_index(drop = True)
-    log("Data merged.")
+    l.log("Data merged.")
 
     # --------------------------------------------------------------------------
     # Persist transformed data to disk.
@@ -63,7 +82,7 @@ else:
     # Write merged CSV
     writeCSV(merged_df, outputFileClassMerged)
 
-    log(f"Merged {len(inputFileClassMerged)} files into " + 
+    l.log(f"Merged {len(inputFileClassMerged)} files into " + 
         f"'{os.path.basename(outputFileClassMerged)}'")
 
 
@@ -75,4 +94,4 @@ else:
 minutes         = int((time.time() - startTime) // 60)
 
 # Print a formatted header indicating the end of this processing stage.
-printHeader(f"Data Merged [Minutes: {minutes}]")
+l.printHeader(f"Data Merged [Minutes: {minutes}]")
