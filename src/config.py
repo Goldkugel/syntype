@@ -2,7 +2,7 @@ import os
 import sys
 import yaml
 
-from syntype.src.SynTypeConfig import SyntypeConfig
+from SynTypeConfig import SyntypeConfig
 
 # Prevent Python from generating .pyc files (compiled bytecode files)
 sys.dont_write_bytecode = True
@@ -13,7 +13,7 @@ sys.dont_write_bytecode = True
 
 # The settings of syntype ("syntype" section) and of the packages it uses
 # (adapter, embedder, llm, logger).
-configFile = "../config/config.yaml"
+configFile = "./config/config.yaml"
 
 with open(configFile, "r", encoding = "utf-8") as f:
     configurationFile = yaml.safe_load(f)
@@ -26,7 +26,7 @@ syntypeConfig = SyntypeConfig.model_validate(configurationFile["syntype"])
 # setting off. Without such words the configuration file sets them.
 # =============================================================================
 
-experiment = syntypeConfig.experiment
+experiment = syntypeConfig
 
 def experimentSetting(word : str, configured : bool) -> bool:
     if len(sys.argv) > 2:
@@ -83,6 +83,11 @@ similarityEvaluationLowerBound = syntypeConfig.similarity_evaluation_lower_bound
 similarityEvaluationUperBound  = syntypeConfig.similarity_evaluation_upper_bound
 similarityEvaluationParts      = int((similarityEvaluationUperBound - similarityEvaluationLowerBound) * 1000 + 1)
 
+# Mean and standard deviation of the cosine similarity with which the
+# similarities are normalised (None: computed from the data).
+cosineSimilarityMean           = syntypeConfig.cosine_similarity_mean
+cosineSimilarityStd            = syntypeConfig.cosine_similarity_std
+
 # =============================================================================
 # For Simplification
 # =============================================================================
@@ -132,7 +137,7 @@ directSynonymType               = "direct"
 
 undefinedSynonymType            = "undefined"
 
-# The types the LLM classifies synonyms into (see prompt/).
+# The types the LLM classifies synonyms into (see prompts/).
 synonymTypes = [expertSynonymType, laypersonSynonymType]
 
 childrenClass                   = "child"
@@ -165,7 +170,7 @@ logFolderName                       = "logs"
 
 # Basic Data Processing Directories.
 # First step (and the embeddings for the evaluation).
-outputFolderNameTransformed         = "transform"
+outputFolderNameTransformed         = "transformed"
 # The second Step is the actual job e.g. generation or classification.
 # Third step.
 outputFolderNameFormatted           = "format"
@@ -173,12 +178,6 @@ outputFolderNameFormatted           = "format"
 outputFolderNameMerged              = "merge"
 # Fifth step.
 outputFolderNameEvaluation          = "evaluate"
-
-def promptLogFileName(modelName : str) -> str:
-    """
-    The model package's log of the prompts and answers of a model.
-    """
-    return f"prompts_{testStr}_{configStr}_{chainOfThoughtsStr}_{fewShotStr}_{modelName}.{logFileFormat}"
 
 
 # The HPO file read by the adapter (adapter.hpo section).
@@ -241,13 +240,6 @@ def outputFileClass(modelName : str) -> str:
     """
     return os.path.join(dataDir, outputFolderName, outputFolderNameClass,
         f"{filesPrefixApproachClass}_raw_{modelName}.{csvFileFormat}")
-
-def checkpointFileNameClass(modelName : str) -> str:
-    """
-    The model package's checkpoint of the histories of a model, in
-    llm.prompt_tmp_folder.
-    """
-    return f"{filesPrefixApproachClass}_{modelName}.tmp"
 
 def outputFileClassFormatted(modelName : str) -> str:
     """
@@ -334,9 +326,11 @@ outputFileNameClassSimilarityEvaluation   = f"{embeddingPrefix}_similarity_evalu
 
 # =============================================================================
 
-# The examples of the Few-Shot approach. Their synonyms are left out of the
-# evaluation (syntypeeval.py; the prompts are in syntype.py), also in runs without examples, so that all
-# runs are scored on the same synonyms.
+# The examples of the Few-Shot approach, with the answer of the prompts
+# (classification, confidence from 1 to 5, rationale). Their synonyms are
+# left out of the evaluation (syntypeeval.py; syntype.py writes them into the
+# prompts), also in runs without examples, so that all runs are scored on the
+# same synonyms.
 fewShotExamples = [
     {
         hpoidColumn : "HP:0008365",
@@ -347,7 +341,8 @@ fewShotExamples = [
         "children"  : ["Tarsal osteovalgus", "Talar aplasia", "Shortening of the talar neck", "Rocker bottom foot", "Osteolysis of talus", "Osteochondral lesion of talus", "Os trigonum", "Fractured talus", "Delayed talus ossification"],
         "synonym"   : "Abnormal large bone of ankle",
         "type"      : laypersonSynonymType,
-        "confidence": "9"
+        "confidence": "5",
+        "rationale" : "The synonym replaces the anatomical term 'talus' with the plain description 'large bone of ankle', as patient-facing materials do. Clinicians and phenotype databases name the talus directly."
     },
     {
         hpoidColumn : "HP:0000132",
@@ -358,7 +353,8 @@ fewShotExamples = [
         "children"  : [],
         "synonym"   : "Hypermenorrhea",
         "type"      : expertSynonymType,
-        "confidence": "10"
+        "confidence": "5",
+        "rationale" : "'Hypermenorrhea' is a Greek-derived medical term used in clinical documentation and gynaecological literature. Patients would speak of heavy or long periods instead."
     },
     {
         hpoidColumn : "HP:0000218",
@@ -369,7 +365,8 @@ fewShotExamples = [
         "children"  : ["High, narrow palate"],
         "synonym"   : "Increased palatal height",
         "type"      : laypersonSynonymType,
-        "confidence": "8"
+        "confidence": "4",
+        "rationale" : "The synonym paraphrases the finding as an increased height of the palate instead of using the established clinical term 'high palate', as explanations for patients do. The technical word 'palatal' makes the category likely rather than certain."
     }
 ]
 

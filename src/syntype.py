@@ -2,11 +2,9 @@ import os
 import sys
 import copy
 import shlex
-import fcntl
 import json
 import logging
 import math
-import time
 
 import numpy  as np
 import pandas as pd
@@ -18,23 +16,26 @@ sys.dont_write_bytecode = True
 from utils      import *
 from config     import *
 
-from logger     import Logger
+from logger     import Logger, lockedFile, writeJSON
 
 # The steps of syntype. The packages of a step (adapter, embedder, model)
 # are imported by the step itself, so that a run only loads what it needs:
 # the preparation run (no model given) does not load vLLM, the
 # classification runs (start.sh) do not load the embedding models.
 #
-#   python3 syntype.py ""                  Preparation: transforms the HPO
-#                                          (if needed) and embeds its terms
-#                                          (if needed) for the evaluation.
-#   python3 syntype.py all <words...>      Classification: transforms the HPO
-#                                          (if needed), then every model of
-#                                          llm.model_id classifies the
-#                                          synonyms and its answers are
-#                                          formatted, one model after the
-#                                          other.
-#   python3 syntype.py <model> <words...>  The same with only this model.
+# Run from the repository root (see start.sh and classify.sh):
+#
+#   python3 ./src/syntype.py ""                  Preparation: transforms the
+#                                                HPO (if needed) and embeds its
+#                                                terms (if needed) for the
+#                                                evaluation.
+#   python3 ./src/syntype.py all <words...>      Classification: transforms
+#                                                the HPO (if needed), then every
+#                                                model of llm.model_id
+#                                                classifies the synonyms and
+#                                                its answers are formatted, one
+#                                                model after the other.
+#   python3 ./src/syntype.py <model> <words...>  The same with only this model.
 
 # ------------------------------------------------------------------------------
 # Initialization.
@@ -43,12 +44,12 @@ from logger     import Logger
 # The logger takes the "logger" section of the configuration file; the
 # command line of the run is its first line, since the log file is named
 # after the start of the run only.
-l = Logger()
+l = Logger(config = configFile)
 l.log(f"Command: python3 {shlex.join(sys.argv)}")
 
-# The packages (adapter, embedder, model) take their sections of the
-# configuration file; syntype.py sets the model and the files of a run on
-# this copy of it.
+# The adapter and the embedder take their sections from this copy of the
+# configuration file, on which syntype.py sets the embedding model of a run;
+# the model package reads the llm section from the file itself.
 configuration = copy.deepcopy(configurationFile)
 
 def isOutdated(output : str, inputs : list) -> bool:
@@ -64,14 +65,17 @@ def isOutdated(output : str, inputs : list) -> bool:
 # only when one of its input files is newer.
 # ------------------------------------------------------------------------------
 
-# The transformation depends on the adapter settings and the test set.
+# The transformation depends on the adapter settings, the test set and the
+# format of the transformed HPO (the columns of the adapter package).
 transformSettings = {
     "adapter"  : configurationFile["adapter"],
-    "test_ids" : testIDs
+    "test_ids" : testIDs,
+    "format"   : [idColumn, attributeColumn, valueColumn, additionalColumn]
 }
 
 # The embedding depends on every embedder setting except those that do not
-# change the vectors, and on the names and metrics of the similarity columns.
+# change the vectors, on the names and metrics of the similarity columns, and
+# on the mean and standard deviation they are normalised with.
 embedderSettingsWithoutEffect = ["device", "backend", "num_threads",
     "batch_size", "cache_folder", "cache_decimals", "progress_interval"]
 embedSettings = {
@@ -80,7 +84,8 @@ embedSettings = {
         if key not in embedderSettingsWithoutEffect
     },
     "embedding_model_names" : syntypeConfig.embedding_model_names,
-    "similarity_metrics"    : similarityMetrics
+    "similarity_metrics"    : similarityMetrics,
+    "cosine_similarity"     : [cosineSimilarityMean, cosineSimilarityStd]
 }
 
 def settingsFile(output : str) -> str:
@@ -102,8 +107,7 @@ def changedSettings(output : str, settings : dict) -> list:
     return [key for key in current if recorded.get(key) != current[key]]
 
 def writeSettings(output : str, settings : dict) -> None:
-    with open(settingsFile(output), "w", encoding = "utf-8") as f:
-        json.dump(settings, f, indent = 2)
+    writeJSON(settings, settingsFile(output))
 
 def outdated(output : str, inputs : list, settings : dict, log : bool = True) -> bool:
     """
@@ -128,34 +132,36 @@ def transformOutdated(log : bool = True) -> bool:
     return any(outdated(output, [inputFileTransformed], transformSettings, log) for output in outputs)
 
 # ==============================================================================
-# Prompts: the templates of the experiment (prompt/) with the concept
-# information, the synonym and the Few-Shot examples (fewShotExamples in
-# config.py).
+# Prompts: the model loads the templates of the experiment (llm.prompt_files)
+# and fills in the concept information, the synonym and the Few-Shot examples
+# (fewShotExamples in config.py); syntype.py gives their order and values.
 # ==============================================================================
 
-def createJSONExample(cl : str = "", co : str = "10") -> str:
+def createJSONExample(cl : str = "", co : str = "5", ra : str = "") -> str:
+    """
+    The answer of a Few-Shot example, in the output format of the prompts.
+    """
     ret = "{\n" \
         f"\t{quote(synonymClass)}: {quote(cl)},\n" \
-        f"\t{quote(confidenceColumn)}: {co}\n" \
+        f"\t{quote(confidenceColumn)}: {co},\n" \
+        f"\t{quote('rationale')}: {json.dumps(ra)}\n" \
         "}"
     
     return ret
 
 def formatInput(label : str = "", definition : str = "", comment : str = "", parents : list = [], children : list = [], synonym : str = "") -> str:
-    ret = f"Label: {quote(label)}"
+    """
+    The input of a Few-Shot example, in the format of the input of the
+    prompts: the information the experiment does not add is left empty.
+    """
+    values = promptValues(label, definition, comment, parents, children, synonym)
 
-    if addDefinition:
-        ret = ret + f"\nDefinition: {quote(definition)}"
-    if addComment:
-        ret = ret + f"\nComment: {quote(comment)}"
-    if addParents:
-        ret = ret + f"\nParents: {applyFormat(parents)}"
-    if addChildren:
-        ret = ret + f"\nChildren: {applyFormat(children)}"
-    if len(synonym) > 0:
-        ret = ret + f"\nSynonym: {quote(synonym)}"
-
-    return ret
+    return f"* Label: {values['hpo_label']}\n" \
+        f"* Synonyms: {values['hpo_synonyms']}\n" \
+        f"* Definition: {values['hpo_definition']}\n" \
+        f"* Comment: {values['hpo_comment']}\n" \
+        f"* Parents: {values['hpo_parents']}\n" \
+        f"* Children: {values['hpo_children']}"
 
 def getExamples() -> str:
     ret = "Examples"
@@ -169,17 +175,9 @@ Input:
 {formatInput(example["label"], example["definition"], example["comment"], example["parents"], example["children"], example["synonym"])}
 
 Output:
-{createJSONExample(example["type"], example["confidence"])}"""
+{createJSONExample(example["type"], example["confidence"], example["rationale"])}"""
 
     return ret
-
-# The templates are filled in like Model.formatPromptFromFile() does.
-
-def readTemplate(file : str) -> str:
-    with open(os.path.join(promptFolder, file), "r", encoding = "utf-8") as f:
-        return f.read()
-
-templates = [readTemplate(file) for file in promptFiles]
 
 def examples(fewShot : bool = fewShot) -> str:
     """
@@ -187,173 +185,92 @@ def examples(fewShot : bool = fewShot) -> str:
     """
     return "\n\n" + getExamples() if fewShot else ""
 
-def sourceClassificationPrompt1(
-        label : str, 
-        definition : str, 
-        comment : str,  
-        parents : list,
-        children : list
-) -> str:
+def promptValues(
+        label : str = "",
+        definition : str = "",
+        comment : str = "",
+        parents : list = [],
+        children : list = [],
+        synonym : str = ""
+) -> dict:
     """
-    First prompt of the Chain-Of-Thoughts approach: the HPO concept.
+    The values of the placeholders of the prompts (see prompts/README.md),
+    without {examples}: the information the experiment does not add is left
+    empty, so that every prompt of an experiment has the same lines.
     """
-    return templates[0].format(
-        input = formatInput(label, definition, comment, parents, children, ""))
+    return {
+        "hpo_label"      : quote(label),
+        "hpo_synonyms"   : quote(synonym),
+        "hpo_definition" : quote(definition) if addDefinition else "",
+        "hpo_comment"    : quote(comment) if addComment else "",
+        "hpo_parents"    : applyFormat(parents) if addParents else "",
+        "hpo_children"   : applyFormat(children) if addChildren else ""
+    }
 
-def sourceClassificationPrompt2(
-    synonym : str
-) -> str:
-    """
-    Second prompt of the Chain-Of-Thoughts approach: the synonym.
-    """
-    return templates[1].format(synonym = synonym)
+# The prompts of the experiment, one per turn, by their index in
+# llm.prompt_files, from where the model loads them: 0 is the single prompt,
+# 1 to 3 are the chain-of-thoughts prompts.
+singlePromptIndex            = 0
+chainOfThoughtsPromptIndexes = [1, 2, 3]
 
-def sourceClassificationPrompt3(fewShot : bool = fewShot) -> str:
-    """
-    Last prompt of the Chain-Of-Thoughts approach: the classification.
-    """
-    return templates[2].format(examples = examples(fewShot))
-
-def sourceClassificationPrompt(
-        label : str, 
-        definition : str, 
-        comment : str, 
-        parents : list, 
-        children : list,
-        synonym : str,
-        fewShot : bool = fewShot
-)-> str:
-    """
-    The prompt of the single prompt approach.
-    """
-    return templates[0].format(
-        input    = formatInput(label, definition, comment, parents, children, synonym),
-        examples = examples(fewShot))
+promptIndexes = chainOfThoughtsPromptIndexes if chainOfThoughts else [singlePromptIndex]
 
 # ==============================================================================
 # Transformation: hp.owl (adapter) -> transform.csv, transform.reduced.csv.
 # ==============================================================================
 
 def transformHPO() -> None:
-    from adapter    import HPOAdapter, semanticClass, sourceType
-    from adapter    import synonymClass as adapterSynonymClass
+    from adapter    import HPOAdapter
 
     # A synonym of a concept with all classes or all types of one of these sets
     # has no unambiguous gold label and is removed.
     conflictingSynonymClasses = {exactSynonymClass, relatedSynonymClass}
     conflictingSynonymTypes   = {laypersonSynonymType, abbreviationSynonymType}
 
-    class SyntypeHPOAdapter(HPOAdapter):
-        """
-        HPOAdapter that removes the synonyms listed for the same concept both as
-        exact and related synonym, or both as layperson synonym and
-        abbreviation (an expert term).
-
-        This is done in _clean(), which runs before the adapter removes
-        duplicate (id, attribute, value) rows: afterwards only the first class
-        and type of such a synonym would be left.
-        """
-
-        def _clean(self, data : pd.DataFrame) -> pd.DataFrame:
-            data = super()._clean(data)
-
-            synonyms   = data[data[self.config.attribute_column] == adapterSynonymClass]
-            additional = synonyms[self.config.additional_column]
-
-            # One key per synonym of a concept.
-            key = (synonyms[self.config.id_column].astype(str) + "\t" +
-                synonyms[self.config.value_column].astype(str))
-
-            classes = additional.map(lambda a: a.get(semanticClass, "")).groupby(key).agg(set)
-            types   = additional.map(lambda a: a.get(sourceType, "")).groupby(key).agg(set)
-
-            conflictingClasses = classes.map(lambda c: conflictingSynonymClasses <= c)
-            conflictingTypes   = types.map(lambda t: conflictingSynonymTypes <= t)
-            l.log(f"Removing {conflictingClasses.sum()} synonyms listed as both " \
-                f"{applyFormat(sorted(conflictingSynonymClasses))} and " \
-                f"{(conflictingTypes & ~conflictingClasses).sum()} further synonyms " \
-                f"listed as both {applyFormat(sorted(conflictingSynonymTypes))}...")
-
-            remove = key.map(conflictingClasses | conflictingTypes)
-            return data.drop(synonyms.index[remove.to_numpy()])
-
     l.printHeader("Transforming the Raw HPO Data")
 
-    # To track time.
-    startTime = time.time()
-
-    # Ensure the input file exists before proceeding.
-    exitIfFileNotExist(inputFileTransformed)
-
     # --------------------------------------------------------------------------
-    # Load the HPO with the adapter. It extracts labels, definitions, comments,
-    # children, references and synonyms of the active (not obsolete) concepts,
-    # and removes rows without an ID or content and duplicates.
+    # Load the HPO with the adapter. It stops with an error if hp.owl is
+    # missing, extracts labels, definitions, comments, children, references
+    # and synonyms of the active (not obsolete) concepts, removes rows without
+    # an ID or content and merges duplicates: a synonym listed several times
+    # for a concept is one row whose classes and types are joined, e.g.
+    # "exact, related".
     # --------------------------------------------------------------------------
 
-    adapter = SyntypeHPOAdapter(configuration)
+    adapter = HPOAdapter(configuration)
     adapter.load()
 
     # --------------------------------------------------------------------------
-    # Convert the adapter's rows (id, attribute, value, additional) into the
-    # columns used by syntype.
+    # Remove the synonyms listed both as exact and related synonym, or both as
+    # layperson synonym and abbreviation (an expert term), which have no
+    # unambiguous gold label. The others count with their first class and type
+    # (synonymClassOf(), synonymTypeOf()).
     # --------------------------------------------------------------------------
 
-    l.log("Converting Data...")
+    data       = adapter.data
+    additional = data.loc[data[attributeColumn] == synonymAttribute, additionalColumn]
+    classes    = additional.map(lambda a: set(additionalValues(a, semanticClass)))
+    types      = additional.map(lambda a: set(additionalValues(a, sourceType)))
 
-    hpo = adapter.data
-    synonymRows = hpo[adapter.config.attribute_column] == adapterSynonymClass
-    additional  = hpo[adapter.config.additional_column]
-
-    # Synonyms get their synonym class (exact, related, ...) as class and their
-    # source type (layperson, abbreviation, ...) as type; synonyms without a
-    # source type (direct) are expert synonyms. All other rows keep their
-    # attribute (label, definition, ...) as class.
-    data = pd.DataFrame({
-        hpoidColumn   : hpo[adapter.config.id_column],
-        classColumn   : hpo[adapter.config.attribute_column].where(
-            ~synonymRows, additional.map(lambda a: a.get(semanticClass, ""))),
-        typeColumn    : additional.map(lambda a: a.get(sourceType, "")).where(
-            synonymRows, "").replace(directSynonymType, expertSynonymType),
-        contentColumn : hpo[adapter.config.value_column].astype(str),
-        systemColumn  : goldStandardSystem
-    }).reset_index(drop = True)
-
-    l.log(f"Converting resulted in {len(data.index)} Lines of Data.")
+    conflictingClasses = classes.map(lambda c: conflictingSynonymClasses <= c)
+    conflictingTypes   = types.map(lambda t: conflictingSynonymTypes <= t)
+    l.log(f"Removing {conflictingClasses.sum()} synonyms listed as both " \
+        f"{applyFormat(sorted(conflictingSynonymClasses))} and " \
+        f"{(conflictingTypes & ~conflictingClasses).sum()} further synonyms " \
+        f"listed as both {applyFormat(sorted(conflictingSynonymTypes))}...")
+    data = data.drop(additional.index[(conflictingClasses | conflictingTypes).to_numpy()])
 
     # --------------------------------------------------------------------------
-    # Clean data: remove rows with empty or missing content.
+    # Remove the synonyms that match the label of their concept (ignoring
+    # case).
     # --------------------------------------------------------------------------
-
-    rowCount = len(data.index)
-    l.log("Removing Empty Content Rows...")
-
-    # Remove rows where the content column is empty or NaN.
-    data = (
-        data[data[contentColumn] != ""]
-        .dropna(subset = [contentColumn, hpoidColumn])
-        .reset_index(drop = True)
-    )
-
-    l.log(f"Removed {rowCount - len(data.index)} Rows due to Empty Content.")
-
-    l.log("Converting terms to lower case...")
-
-    # Labels and synonyms in lower case, to find synonyms matching their label.
-    data["tmp"] = data[contentColumn].astype(str).str.lower().where(
-        data[classColumn].isin([labelClass] + synonymClasses))
-
-    l.log("Terms were converted to lower case.")
-
 
     rowCount = len(data.index)
     l.log("Removing synonyms having a match with labels...")
-    data["tmp"] = data[hpoidColumn].astype(str) + data["tmp"].astype(str)
-    labeldata = data.loc[data[classColumn] == labelClass, "tmp"].tolist()
-    data = data[
-        (~data[classColumn].isin(synonymClasses)) |
-        (~data["tmp"].isin(labeldata))
-    ].reset_index(drop = True).drop('tmp', axis = 1).copy()
+    terms   = data[idColumn].astype(str) + data[valueColumn].astype(str).str.lower()
+    matches = synonymRows(data) & terms.isin(terms[data[attributeColumn] == labelClass])
+    data    = data[~matches].reset_index(drop = True)
     l.log(f"Removed {rowCount - len(data.index)} synonyms due to having a " \
         "match with their label.")
 
@@ -361,7 +278,7 @@ def transformHPO() -> None:
     printDataSummary(data)
 
     l.log("Write full transformated Data...")
-    writeCSV(data, outputFileTransformedFull)
+    writeHugeCSV(data, outputFileTransformedFull)
     writeSettings(outputFileTransformedFull, transformSettings)
     l.log("Full transformed Data written.")
 
@@ -379,15 +296,15 @@ def transformHPO() -> None:
         # - their children
         # - their parents
         parentIDs = data.loc[
-            (data[contentColumn].isin(testIDs)) &
-            (data[classColumn] == childrenClass),
-            hpoidColumn
+            (data[valueColumn].isin(testIDs)) &
+            (data[attributeColumn] == childrenClass),
+            idColumn
         ].tolist()
 
         childIDs = data.loc[
-            (data[hpoidColumn].isin(testIDs)) &
-            (data[classColumn] == childrenClass),
-            contentColumn
+            (data[idColumn].isin(testIDs)) &
+            (data[attributeColumn] == childrenClass),
+            valueColumn
         ].tolist()
 
         hpoIDs = list(set(testIDs + childIDs + parentIDs))
@@ -396,7 +313,7 @@ def transformHPO() -> None:
         # Reduce content to only the selected HPO concepts.
         # ----------------------------------------------------------------------
 
-        result = data[data[hpoidColumn].isin(hpoIDs)].copy().reset_index(
+        result = data[data[idColumn].isin(hpoIDs)].copy().reset_index(
             drop = True)
         l.log(f"Content Reduced by {rowCount - len(result.index)} Rows.")
 
@@ -412,15 +329,9 @@ def transformHPO() -> None:
         # ----------------------------------------------------------------------
 
         l.log("Write reduced transformated Data...")
-        writeCSV(result, outputFileTransformed)
+        writeHugeCSV(result, outputFileTransformed)
         writeSettings(outputFileTransformed, transformSettings)
         l.log("Reduced transformed Data written.")
-
-    # For time tracking.
-    minutes         = int((time.time() - startTime) // 60)
-
-    # Printing Footer with minutes needed for the job.
-    l.printHeader(f"Transforming completed [Minutes: {minutes}]")
 
 # ==============================================================================
 # Embedding: the similarity of every synonym to its label -> embed.csv, for
@@ -433,59 +344,44 @@ def embedTerms() -> None:
     # Printing header.
     l.printHeader("Embedding HPO Terms")
 
-    # To track time.
-    startTime = time.time()
-
     # --------------------------------------------------------------------------
     # Load the Human Phenotype Ontology (HPO) from the transformed data file.
     # All concepts are embedded, also for test runs: the similarities are
-    # standardised over all synonyms, so that test and full runs share one scale.
+    # standardised with one mean and standard deviation (configured, or of all
+    # synonyms), so that test and full runs share one scale.
     # --------------------------------------------------------------------------
 
     # Ensure the input file exists before proceeding.
     exitIfFileNotExist(outputFileTransformedFull)
 
-    data = readCSV(outputFileTransformedFull)
+    data = readTransformed(outputFileTransformedFull)
 
     l.log("Filtering Labels and Synonyms of HPO Concepts...")
     # One label per concept (the first, if a concept has several).
-    labelRows   = data[data[classColumn] == labelClass].drop_duplicates(
-        subset = hpoidColumn)
-    labels      = labelRows[contentColumn].astype(str).tolist()
+    labelRows   = data[data[attributeColumn] == labelClass].drop_duplicates(
+        subset = idColumn)
+    labels      = labelRows[valueColumn].astype(str).tolist()
 
-    synonymRows = data[data[classColumn].isin(synonymClasses)][
-        [hpoidColumn, classColumn, contentColumn]].reset_index(drop = True)
+    synonymRows = synonymTable(data)
+    types       = synonymRows[typeColumn]
+    synonymRows = synonymRows[[hpoidColumn, classColumn, contentColumn]].copy()
     synonyms    = synonymRows[contentColumn].astype(str).tolist()
 
     # Position of the label of each synonym's concept in labels (-1 if the
     # concept has no label).
     labelIndex  = synonymRows[hpoidColumn].map(
-        pd.Series(range(len(labels)), index = labelRows[hpoidColumn])
+        pd.Series(range(len(labels)), index = labelRows[idColumn])
     ).fillna(-1).astype(int).to_numpy()
     hasLabel    = labelIndex >= 0
     l.log(f"Found {len(labels)} labels and {len(synonyms)} synonyms " \
         f"({(~hasLabel).sum()} of a concept without label).")
 
-    def similarity(metric : str, a : np.ndarray, b : np.ndarray) -> np.ndarray:
+    def similarity(a : np.ndarray, b : np.ndarray) -> np.ndarray:
         """
-        Similarity of the rows of a and b with the metric (larger is more
-        similar), or None for an unknown metric.
+        Cosine similarity of the rows of a and b.
         """
-        ret = None
-
-        if metric == cosineSimilarity or metric == angularSimilarity:
-            ret = np.sum(a * b, axis = 1) / (
-                np.linalg.norm(a, axis = 1) * np.linalg.norm(b, axis = 1))
-            if metric == angularSimilarity:
-                ret = 1 - np.arccos(np.clip(ret, -1.0, 1.0)) / np.pi
-        elif metric == euclideanSimilarity or metric == mahalanobisSimilarity:
-            # Without a covariance matrix the Mahalanobis distance is the
-            # Euclidean distance.
-            ret = 1 / (1 + np.linalg.norm(a - b, axis = 1))
-        elif metric == manhattanSimilarity:
-            ret = 1 / (1 + np.sum(np.abs(a - b), axis = 1))
-
-        return ret
+        return np.sum(a * b, axis = 1) / (
+            np.linalg.norm(a, axis = 1) * np.linalg.norm(b, axis = 1))
 
     # --------------------------------------------------------------------------
     # Embed and calculate the similarity of labels with their respective synonyms.
@@ -524,19 +420,22 @@ def embedTerms() -> None:
 
             # Standard value for no similarity is np.nan.
             values           = np.full(len(synonyms), np.nan)
-            values[hasLabel] = similarity(similarityMetric, a, b)
+            values[hasLabel] = similarity(a, b)
 
-            # Normalization of the similarity metrics: since every metric has
-            # it's own range of values, for every model and metric the values
-            # are subtracted by the mean and divided by the standard deviation.
-            # With this approach the similarity metrics are comparable.
+            # Normalization: the values are subtracted by the mean and divided
+            # by the standard deviation, those of syntype.cosine_similarity_mean
+            # and _std if set, so that every run uses the same scale, otherwise
+            # those of the data.
             values = pd.Series(values)
-            synonymRows[similarityColumn] = (values - values.mean()) / values.std()
+            mean   = values.mean() if cosineSimilarityMean is None else cosineSimilarityMean
+            std    = values.std() if cosineSimilarityStd is None else cosineSimilarityStd
+            l.log(f"{embeddingModel} with {similarityMetric}: mean {values.mean()} and " \
+                f"standard deviation {values.std()} of the data, normalised with " \
+                f"mean {mean} and standard deviation {std}.")
+            synonymRows[similarityColumn] = (values - mean) / std
 
             # A first, quick evaluation of the similarity scores: how well they
             # separate expert from layperson synonyms (gold type).
-            types   = data.loc[data[classColumn].isin(synonymClasses), typeColumn
-                ].reset_index(drop = True)
             grouped = synonymRows[similarityColumn][types.isin(synonymTypes)].groupby(
                 types).agg([m, s]).reindex(synonymTypes)
 
@@ -563,14 +462,8 @@ def embedTerms() -> None:
     # syntypeeval.py joins to the classified synonyms.
     # --------------------------------------------------------------------------
 
-    writeCSV(synonymRows, outputFileEmbedded)
+    writeHugeCSV(synonymRows, outputFileEmbedded)
     writeSettings(outputFileEmbedded, embedSettings)
-
-    # For time tracking.
-    minutes         = int((time.time() - startTime) // 60)
-
-    # Printing Footer with minutes needed for the job.
-    l.printHeader(f"Embedding of HPO Terms completed [Minutes: {minutes}]")
 
 # ==============================================================================
 # Classification of the synonyms with the LLM -> the raw classification file.
@@ -581,31 +474,27 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
     Classifies the synonyms with one model and returns them with its answers.
     """
     from model              import Model
-    from model.ModelUtils   import (
-        messageRoleElement,
-        messageTextElement,
-        modelRole,
-        userRole
-    )
+    from model.ModelUtils   import modelRole, userRole
 
     logging.getLogger("vllm").setLevel(logging.ERROR)
+
+    # The model is loaded by its index in llm.model_id.
+    if modelID not in configurationFile["llm"]["model_id"]:
+        raise ValueError(f"{quote(modelID)} is not in llm.model_id.")
+    modelIndex = configurationFile["llm"]["model_id"].index(modelID)
 
     modelName = modelNameOf(modelID)
     rawFile   = outputFileClass(modelName)
 
     l.printHeader(f"Classifying the Synonyms ({modelName})")
 
-    # To track time.
-    startTime = time.time()
-
     # Only proceed if transformed input data exists
     exitIfFileNotExist(inputFileClass)
 
-    gold     = readCSV(inputFileClass)
+    gold     = readTransformed(inputFileClass)
 
-    # Filter the synonyms of the concepts to classify.
-    synonyms = gold[gold[classColumn].isin(synonymClasses)].copy().reset_index(
-        drop = True)
+    # The synonyms of the concepts to classify, with their gold type.
+    synonyms = synonymTable(gold)
     hpoIDs   = getHPOIDs(synonyms)
     synonyms = synonyms[synonyms[hpoidColumn].isin(hpoIDs)].copy().reset_index(
         drop = True)
@@ -614,20 +503,21 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
     # Concept information for the prompts.
     # --------------------------------------------------------------------------
 
-    def elements(className : str, key : str = hpoidColumn,
-            value : str = contentColumn) -> dict:
+    def elements(attribute : str, key : str = idColumn,
+            value : str = valueColumn) -> dict:
         """
-        The values of the rows of a class per key, in the order of the data.
+        The values of the rows of an attribute per key, in the order of the
+        data.
         """
-        rows = gold[gold[classColumn] == className]
+        rows = gold[gold[attributeColumn] == attribute]
         return rows.groupby(key, sort = False)[value].agg(list).to_dict()
 
     labels      = elements(labelClass)
     definitions = elements(definitionClass)
     comments    = elements(commentClass)
-    # The children rows hold the ID of a child concept as content.
+    # The child rows hold the ID of a child concept as value.
     childIDs    = elements(childrenClass)
-    parentIDs   = elements(childrenClass, key = contentColumn, value = hpoidColumn)
+    parentIDs   = elements(childrenClass, key = valueColumn, value = idColumn)
 
     def relatedLabels(relatedIDs : dict, hpoID : str) -> list:
         """
@@ -639,134 +529,22 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
         return "".join(str(v) for v in values.get(hpoID, []))
 
     # --------------------------------------------------------------------------
-    # Create the prompts.
+    # The values of the placeholders of the prompts, one dictionary per synonym
+    # (the model loads the prompts and fills them in).
     # --------------------------------------------------------------------------
 
-    with newProgress() as progress:
-
-        task = newTask(progress, len(synonyms.index), "Creating first Prompt")
-        messages = []
-
-        for index, row in synonyms.iterrows():
-            hpoID = row[hpoidColumn]
-
-            # For the Chain-Of-Thoughts approach there are several other prompts
-            # following after this. The Few-Shot approach is incorporated directly
-            # into the prompts.
-            if chainOfThoughts:
-                messages.append(sourceClassificationPrompt1(
-                    text(labels, hpoID),
-                    text(definitions, hpoID),
-                    text(comments, hpoID),
-                    relatedLabels(parentIDs, hpoID),
-                    relatedLabels(childIDs, hpoID)
-                ))
-            else:
-                messages.append(sourceClassificationPrompt(
-                    text(labels, hpoID),
-                    text(definitions, hpoID),
-                    text(comments, hpoID),
-                    relatedLabels(parentIDs, hpoID),
-                    relatedLabels(childIDs, hpoID),
-                    row[contentColumn]
-                ))
-
-            progress.update(task, advance = 1)
-
-        progress.refresh()
-
-    # With a single prompt its answer is the final answer.
-    synonyms["{}{}".format(userRole, 1)]  = messages
-    if chainOfThoughts:
-        synonyms["{}{}".format(modelRole, 1)] = [""] * len(synonyms.index)
-    else:
-        synonyms[answerColumn]                = [""] * len(synonyms.index)
-
-    # Here the other prompts for the Chain-Of-Thoughts approach are added.
-    # The Few-Shot approach is incorporated directl into the prompts.
-    if chainOfThoughts:
-        synonyms["{}{}".format(userRole, 2)]  = [
-            sourceClassificationPrompt2(synonym) for synonym in synonyms[contentColumn]]
-        synonyms["{}{}".format(modelRole, 2)] = [""] * len(synonyms.index)
-        synonyms["{}{}".format(userRole, 3)]  = [sourceClassificationPrompt3()] * len(synonyms.index)
-        synonyms[answerColumn]                = [""] * len(synonyms.index)
-
-    synonyms[systemColumn] = [modelName] * len(synonyms.index)
-
-    # --------------------------------------------------------------------------
-    # The answers of an earlier run are kept if it had the same prompts.
-    # --------------------------------------------------------------------------
-
-    checkpointFile = os.path.join(configurationFile["llm"]["prompt_tmp_folder"],
-        checkpointFileNameClass(modelName))
-
-    if isFile(rawFile):
-        earlier = readCSV(rawFile)
-        columns = [hpoidColumn, contentColumn] + [
-            c for c in synonyms.columns if c.startswith(userRole)]
-
-        if (len(earlier.index) == len(synonyms.index) and
-            all(c in earlier.columns for c in columns) and
-            earlier[columns].astype(str).equals(synonyms[columns].astype(str))):
-            l.log("Continuing the earlier run with the same prompts.")
-            synonyms = earlier
-        else:
-            l.error(f"{os.path.basename(rawFile)} holds a run with other " \
-                "synonyms or prompts. Delete it and the checkpoint " \
-                f"{os.path.basename(checkpointFile)} to start again.")
-            sys.exit(1)
-    else:
-        l.log("Write Prompts to file.")
-        writeHugeCSV(synonyms, rawFile)
-
-    l.log(f"Few-Shot (Zero-Shot): {fewShot}")
-    l.log(f"Chain-Of-Thoughts: {chainOfThoughts}")
-    l.log(f"Add Definitions to Prompt: {addDefinition}")
-    l.log(f"Add Comment to Prompt: {addComment}")
-    l.log(f"Add Parents to Prompt: {addParents}")
-    l.log(f"Add Children to Prompt: {addChildren}")
-
-    # --------------------------------------------------------------------------
-    # Set up the LLM.
-    # --------------------------------------------------------------------------
-
-    # Every model and experiment needs its own checkpoint and prompt log, so
-    # these are set on top of the configuration file.
-    configuration["llm"]["model_id"]        = [modelID]
-    configuration["llm"]["prompt_tmp_file"] = checkpointFileNameClass(modelName)
-    configuration["llm"]["prompt_log_file"] = promptLogFileName(modelName)
-    # Recorded with their hashes in the run metadata, and naming the columns of
-    # the checkpoint.
-    configuration["llm"]["prompt_files"]    = promptFiles
-
-    def hasText(value) -> bool:
-        """
-        Whether a value read from the CSV file is a non-empty string.
-        """
-        return isinstance(value, str) and value != ""
-
-    def userTurns(model : Model) -> int:
-        """
-        Number of user prompts in the histories (all histories have the same).
-        """
-        histories = model.getMessageHistories()
-        if len(histories) == 0:
-            return 0
-        return sum(1 for message in histories[0] if message[messageRoleElement] == userRole)
-
-    def turnAnswer(history : list, turn : int) -> str:
-        """
-        The answer to the user prompt of the given turn (counted from 0), or ""
-        if it has none (prompt longer than max_model_len).
-        """
-        prompts = [
-            index for index, message in enumerate(history)
-            if message[messageRoleElement] == userRole
-        ]
-        index = prompts[turn] + 1
-        if index >= len(history) or history[index][messageRoleElement] != modelRole:
-            return ""
-        return str(history[index][messageTextElement]).strip()
+    examplesValue = examples()
+    values = [
+        promptValues(
+            text(labels, hpoID),
+            text(definitions, hpoID),
+            text(comments, hpoID),
+            relatedLabels(parentIDs, hpoID),
+            relatedLabels(childIDs, hpoID),
+            synonym
+        ) | {"examples" : examplesValue}
+        for hpoID, synonym in zip(synonyms[hpoidColumn], synonyms[contentColumn])
+    ]
 
     # One (prompt column, answer column) pair per turn of the conversation; the
     # answer of the last turn is the final answer. The Few-Shot approach is
@@ -780,49 +558,51 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
         ]
 
     # --------------------------------------------------------------------------
+    # The raw classification file: the synonyms with the prompts and answers of
+    # every turn, written after every turn.
+    # --------------------------------------------------------------------------
+
+    for promptColumn, targetColumn in turns:
+        synonyms[promptColumn] = [""] * len(synonyms.index)
+        synonyms[targetColumn] = [""] * len(synonyms.index)
+    synonyms[systemColumn] = [modelName] * len(synonyms.index)
+
+    l.log(f"Few-Shot (Zero-Shot): {fewShot}")
+    l.log(f"Chain-Of-Thoughts: {chainOfThoughts}")
+    l.log(f"Add Definitions to Prompt: {addDefinition}")
+    l.log(f"Add Comment to Prompt: {addComment}")
+    l.log(f"Add Parents to Prompt: {addParents}")
+    l.log(f"Add Children to Prompt: {addChildren}")
+
+    # --------------------------------------------------------------------------
     # Classification of synonyms.
     # --------------------------------------------------------------------------
 
+    # The model is loaded by its index in llm.model_id, with the llm section as
+    # it is. Its answer store (the checkpoint) and prompt log are named after
+    # the model and the experiment (the postfix), since start.sh starts many
+    # runs at the same time.
     l.log(f"Set up the LLM ({modelName})...")
-    with Model(configuration) as model:
+    with Model(configFile, modelIndex) as model:
+        model.setPostfix(f"{testStr}_{configStr}_{chainOfThoughtsStr}_{fewShotStr}")
         l.log(f"Set up of LLM complete.")
 
-        # An interrupted run is resumed from the model's checkpoint, which holds
-        # the turns generated so far, including part of the current one.
-        try:
-            model.importHistoriesFromFile()
-            l.log(f"Resuming from the checkpoint ({userTurns(model)} turn(s)).")
-        except FileNotFoundError:
-            pass
-        except ValueError as e:
-            # E.g. a checkpoint written before the prompts were read from
-            # prompt/, whose columns are named differently.
-            l.error(f"The checkpoint {os.path.basename(checkpointFile)} cannot be " \
-                f"read ({e}). Delete it to start this run again; the answers " \
-                f"completed in {os.path.basename(rawFile)} are kept.")
-            sys.exit(1)
-
+        # The model uses the answers in its answer store and only generates the
+        # others, so an interrupted run resumes where it stopped; without the
+        # store the classification starts anew. A changed prompt has no stored
+        # answers, and a store written with other model settings is refused.
         for turn, (promptColumn, targetColumn) in enumerate(turns):
             l.log(f"({turn + 1}) Generating.")
 
-            if userTurns(model) <= turn:
-                model.addPrompt(userRole, synonyms[promptColumn].tolist())
+            # The model loads the prompt of this turn (by its index in
+            # llm.prompt_files) and fills in its placeholders.
+            model.addPromptsFromFile(promptIndexes[turn], values)
+            synonyms[promptColumn] = [model.getPrompt(index, turn) for index in range(len(values))]
 
-                # Without a checkpoint, the answers of a turn completed earlier
-                # are taken from the CSV file instead of being generated again.
-                answers = synonyms[targetColumn].tolist()
-                if all(hasText(answer) for answer in answers):
-                    model.addPrompt(modelRole, answers)
-                    l.log("Skipping Generation.")
-                    continue
-
-            # Generates the answers missing in this turn; histories that already
-            # have one (after resuming) are skipped.
+            # Generates the answers that are not in the answer store.
             model.generate()
 
-            synonyms[targetColumn] = [
-                turnAnswer(history, turn) for history in model.getMessageHistories()
-            ]
+            synonyms[targetColumn] = [model.getAnswer(index, turn) for index in range(len(values))]
             writeHugeCSV(synonyms, rawFile)
 
         # The final answers are JSON objects with the classification and its
@@ -838,11 +618,9 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
             f"{len(parsed)} answers contain a valid classification.")
         writeHugeCSV(synonyms, rawFile)
 
-    # For time tracking.
-    minutes         = int((time.time() - startTime) // 60)
-
-    # Print a formatted header indicating the end of this processing stage
-    l.printHeader(f"Synonyms Classified [Minutes: {minutes}]")
+        # Every prompt and answer of this model and experiment.
+        l.log("Writing the prompts and answers to the prompt log...")
+        model.logPrompts()
 
     return synonyms
 
@@ -854,9 +632,6 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
 def formatAnswers(synonyms : pd.DataFrame, modelName : str) -> None:
     l.printHeader(f"Formatting Answers of Synonym's Classification ({modelName})")
 
-    # To track time.
-    startTime = time.time()
-
     # classifySynonyms() parsed the answers with the model package
     # (model.toJSON()) into a classification and a confidence; the formatted
     # answer is the classification.
@@ -866,18 +641,18 @@ def formatAnswers(synonyms : pd.DataFrame, modelName : str) -> None:
     classified                   = classified.drop(columns = synonymClass)
 
     # --------------------------------------------------------------------------
-    # Persist transformed data to disk.
+    # Persist the formatted classification to disk.
     # --------------------------------------------------------------------------
 
-    writeCSV(classified, outputFileClassFormatted(modelName))
+    writeHugeCSV(classified, outputFileClassFormatted(modelName))
 
     l.log("Logging incorrect classified Synonyms...")
 
     # For logging purposes the gold standard is read and wrong classifications
     # are placed in the logging file. This is useful when it comes to prompt 
     # optimization.
-    gold   = readCSV(inputFileClass)
-    labels = gold[gold[classColumn] == labelClass].copy().reset_index(drop = True)
+    gold   = readTransformed(inputFileClass)
+    labels = gold[gold[attributeColumn] == labelClass].copy().reset_index(drop = True)
     count  = 0
 
     for index, row in classified.iterrows():
@@ -899,12 +674,6 @@ def formatAnswers(synonyms : pd.DataFrame, modelName : str) -> None:
     l.log(f"Correct Classifications:   {len(classified.index) - count}")
     l.log("Logging competed.")
 
-    # For time tracking.
-    minutes         = int((time.time() - startTime) // 60)
-
-    # Printing Footer with minutes needed for the job.
-    l.printHeader(f"Formatting completed [Minutes: {minutes}]")
-
 # ==============================================================================
 # The steps of this run.
 # ==============================================================================
@@ -913,28 +682,34 @@ def formatAnswers(synonyms : pd.DataFrame, modelName : str) -> None:
 # time that finds it missing, older than hp.owl or made with other settings;
 # the others wait for it. The reason is logged after the lock is taken.
 if transformOutdated(log = False):
-    with open(outputFileTransformedFull + ".lock", "w") as lock:
-        fcntl.flock(lock, fcntl.LOCK_EX)
+    with lockedFile(outputFileTransformedFull):
         if transformOutdated():
-            transformHPO()
-        fcntl.flock(lock, fcntl.LOCK_UN)
+            with l.step("Transforming the HPO"):
+                transformHPO()
 else:
     l.log("The transformed HPO is up to date.")
 
 if len(modelIDs) == 0:
     # Preparation run: the embeddings of the evaluation.
     if outdated(outputFileEmbedded, [outputFileTransformedFull], embedSettings):
-        embedTerms()
+        with l.step("Embedding the HPO terms"):
+            embedTerms()
     else:
         l.log("The embeddings are up to date.")
 else:
     # The models classify one after the other; a failing model does not stop
-    # the others. Each model is unloaded from the GPU before the next one.
+    # the others. Each model is unloaded from the GPU before the next one. The
+    # logger logs the start, end and duration of every step (data/logs/done.sh
+    # counts the completed classifications).
     failed = []
     for index, modelID in enumerate(modelIDs):
         l.log(f"Model {index + 1}/{len(modelIDs)}: {quote(modelID)}")
+        modelName = modelNameOf(modelID)
         try:
-            formatAnswers(classifySynonyms(modelID), modelNameOf(modelID))
+            with l.step(f"Classifying the synonyms ({modelName})"):
+                synonyms = classifySynonyms(modelID)
+            with l.step(f"Formatting the answers ({modelName})"):
+                formatAnswers(synonyms, modelName)
         except (Exception, SystemExit) as e:
             l.error(f"Classifying with {quote(modelID)} failed: {e!r}")
             failed.append(modelID)

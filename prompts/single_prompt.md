@@ -20,7 +20,7 @@ Output Format (STRICT JSON)
 {{
 	"classification": "'expert' or 'layperson'",
 	"confidence": <integer from 1 to 5>,
-    "rationale": "<one to three sentences summarising the decisive similarities and differences.>"
+	"rationale": "<one to three sentences summarising the decisive similarities and differences.>"
 }}
 
 Confidence guidelines:

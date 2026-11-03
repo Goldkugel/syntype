@@ -12,4 +12,4 @@ Discuss:
 * Base your assessment on contemporary English usage rather than on how technical or plain the wording appears.
 * If both healthcare professionals and patients commonly use the synonym, determine which group would account for the majority of its real-world use.
 
-Synonym: {synonym}
+* Synonyms: {hpo_synonyms}

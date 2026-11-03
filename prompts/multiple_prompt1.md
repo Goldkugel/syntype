@@ -20,4 +20,8 @@ Provide a concise analysis covering:
 
 Context:
 
-{input}
+* Label: {hpo_label}
+* Definition: {hpo_definition}
+* Comment: {hpo_comment}
+* Parents: {hpo_parents}
+* Children: {hpo_children}

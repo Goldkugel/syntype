@@ -1,4 +1,5 @@
-# Paths are relative to src/, from where the scripts are run.
+# Paths are relative to the repository root, from where the scripts are run
+# (e.g. ./start.sh, python3 ./src/syntype.py "").
 syntype:
   # The experiment of a run without words on the command line. Words after
   # the model ID (see start.sh) replace all of these settings: test,
@@ -11,6 +12,12 @@ syntype:
   parents: False
   children: False
   data_folder: "./data"
+  # Mean and standard deviation of the cosine similarity (SapBERT) between
+  # every synonym and the label of its concept, over all synonyms of HPO.
+  # The similarities are normalised with them, (similarity - mean) / std, so
+  # that every run uses the same scale; null computes them from the data.
+  cosine_similarity_mean: null
+  cosine_similarity_std: null
   similarity_evaluation_lower_bound: -4
   similarity_evaluation_upper_bound: 4
   force_draw_additional_plots: False
@@ -21,7 +28,7 @@ adapter:
       - "hp.owl"
     # syntype.py writes its own files (see config.py); these are only used
     # by HPOAdapter.to_csv(), which syntype does not call.
-    output_folder: "./data/output/transform/"
+    output_folder: "./data/output/transformed/"
     output_file: "hpo.csv"
     skip_if_present: False
     prefix: ""
@@ -40,7 +47,7 @@ logger:
 llm:
   # The models of syntype.py, classifying one after the other ("all"); a
   # model ID as its first command-line argument classifies with only that
-  # model.
+  # model. syntype.py loads a model by its index in this list.
   model_id:
     - "google/medgemma-4b-it"
     - "Qwen/Qwen3-4B-Instruct-2507"
@@ -67,25 +74,30 @@ llm:
   reasoning_end_tag: "</think>"
   max_tokens: 2048
   chunk_size: 500
-  # Folder of the prompt templates; prompt_files is set by syntype.py from
-  # syntype.prompt_files.
+  # Folder of the prompt templates and the templates, used by their index:
+  # 0 is the single prompt, 1 to 3 are the chain-of-thoughts prompts, one
+  # per turn.
   prompt_folder: "./prompts/"
   prompt_files: 
     - "single_prompt.md"
     - "multiple_prompt1.md"
     - "multiple_prompt2.md"
     - "multiple_prompt3.md"
-  # syntype.py replaces prompt_tmp_file and prompt_log_file by names unique to
-  # the run, since start.sh starts many runs at the same time.
+  # The answer store (the checkpoint: the prompts and answers of a model in a
+  # JSON file) and the prompt log. The model package adds the model name and
+  # the experiment (syntype.py sets it as postfix) to their names, e.g.
+  # syntype_medgemma-4b-it_Test_..._FewShot.json, since start.sh starts many
+  # runs at the same time.
   prompt_tmp_folder: "./data/tmp/"
-  prompt_tmp_file: "syntype.tmp"
+  prompt_tmp_file: "syntype.json"
   prompt_log_folder: "./data/logs/"
   prompt_log_file: "prompts.log"
   metadata_folder: "./data/logs/"
   metadata_file: "run_metadata.json"
 embedder:
-  # syntype.py "" embeds with one model after the other; every model needs a
-  # name in syntype.embedding_model_names.
+  # syntype.py "" embeds with one model after the other; a model is named in
+  # the similarity columns by syntype.embedding_model_names, or by its ID
+  # without the organisation.
   model_id:
     - "cambridgeltl/SapBERT-from-PubMedBERT-fulltext"
   # The commit of every model on the Hugging Face Hub (as of 2026-11-03), so
@@ -93,9 +105,8 @@ embedder:
   # commit to use a newer model; its cache file then starts anew.
   revision:
     "cambridgeltl/SapBERT-from-PubMedBERT-fulltext": "090663c3ae57bf35ffe4d0d468a2a88d03051a4d"
-  # The embeddings as before the switch to the embedder package, so the
-  # similarities stay comparable with earlier runs: mean pooling over at most
-  # 64 tokens, vectors not normalised.
+  # CLS pooling, as SapBERT was trained with, over at most 64 tokens; vectors
+  # not normalised.
   pooling: "cls"
   max_seq_length: 64
   normalization: False
@@ -107,5 +118,5 @@ embedder:
   # One file per model with the embedding of every term: syntype.py only
   # encodes terms that are not in it yet (e.g. after an HPO update), and an
   # interrupted run resumes from it. About 0.6-0.8 GB per model.
-  cache_folder: "../data/cache/embeddings/"
+  cache_folder: "./data/cache/embeddings/"
   dimensionality_reduction: False

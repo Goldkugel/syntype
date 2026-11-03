@@ -23,12 +23,18 @@ class SyntypeConfig(BaseModel):
     parents: bool                               = False
     children: bool                              = False
 
-    # Folder of the data, relative to src/.
+    # Folder of the data, relative to the repository root.
     data_folder: str                            = "./data"
 
     # Name used in the similarity column names for every model in
     # embedder.model_id.
     embedding_model_names: dict[str, str]       = {}
+
+    # Mean and standard deviation of the cosine similarity between every
+    # synonym and the label of its concept, over all synonyms of HPO, with
+    # which the similarities are normalised; None computes them from the data.
+    cosine_similarity_mean: float | None        = None
+    cosine_similarity_std: float | None         = Field(default = None, gt = 0)
 
     # Range of the normalised similarities in the evaluation plots.
     similarity_evaluation_lower_bound: float    = -4
