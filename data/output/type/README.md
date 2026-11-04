@@ -4,7 +4,7 @@ Written by the classification (`python3 ./src/SynTypeClassification.py <index>`)
 
 | Column | Content |
 |---|---|
-| `hpoID`, `class`, `type`, `content` | The concept, the synonym class (`exact` or `related`), the gold source type from the HPO (`expert`, `layperson`, `abbreviation`, `plural`, `uk`, ...) and the synonym |
+| `id`, `attribute`, `value`, `additional` | The synonym's row of the transformed HPO (`hpo.development.csv` or `hpo.evaluation.csv`): the concept, `synonym`, the synonym and its additional information, which holds the synonym class (`semantic_class`: `exact` or `related`) and the gold source type (`source_type`: `expert`, `layperson`, or `direct`, which counts as `expert`) |
 | `system` | The model |
 | `user1`, `answer` | The prompt and the answer (single prompt) |
 | `user1`, `assistant1`, `user2`, `assistant2`, `user3`, `answer` | The prompts and answers of the three turns (chain-of-thoughts) |

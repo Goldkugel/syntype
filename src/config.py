@@ -107,12 +107,9 @@ cosineDistanceStd            = syntypeConfig.cosine_distance_std
 quotationCharacter = "\""
 
 # =============================================================================
-# Column names of the synonym tables and classification files
+# Result columns of the classification files, after the columns of the
+# transformed HPO (id, attribute, value, additional)
 # =============================================================================
-hpoidColumn                 = "hpoID"
-classColumn                 = "class"
-typeColumn                  = "type"
-contentColumn               = "content"
 systemColumn                = "system"
 answerColumn                = "answer"
 confidenceColumn            = "confidence"
@@ -135,7 +132,6 @@ undefinedSynonymType            = "undefined"
 # The types the LLM classifies synonyms into (see prompts/).
 synonymTypes = [expertSynonymType, laypersonSynonymType]
 
-goldStandardSystem              = "gold"
 
 precisionLabel  = "precision"
 recallLabel     = "recall"
@@ -327,7 +323,7 @@ outputFileClassCalibration = outputFileClassEvaluationOf("calibration")
 # without examples, so that all runs are scored on the same synonyms.
 fewShotExamples = [
     {
-        hpoidColumn : "HP:0008365",
+        "id"        : "HP:0008365",
         "label"     : "Abnormal talus morphology",
         "definition": "An abnormality of the talus.",
         "comment"   : "",
@@ -339,7 +335,7 @@ fewShotExamples = [
         "rationale" : "The synonym replaces the anatomical term 'talus' with the plain description 'large bone of ankle', as patient-facing materials do. Clinicians and phenotype databases name the talus directly."
     },
     {
-        hpoidColumn : "HP:0000132",
+        "id"        : "HP:0000132",
         "label"     : "Menorrhagia",
         "definition": "Prolonged and excessive menses at regular intervals in excess of 80 mL or lasting longer than 7 days.",
         "comment"   : "",
@@ -351,7 +347,7 @@ fewShotExamples = [
         "rationale" : "'Hypermenorrhea' is a Greek-derived medical term used in clinical documentation and gynaecological literature. Patients would speak of heavy or long periods instead."
     },
     {
-        hpoidColumn : "HP:0000218",
+        "id"        : "HP:0000218",
         "label"     : "High palate",
         "definition": "Height of the palate more than 2 SD above the mean (objective) or palatal height at the level of the first permanent molar more than twice the height of the teeth (subjective).",
         "comment"   : "The measuring device for this assessment is described in (Hall JG, Froster-Iskenius UG, Allanson JE, Gripp K, Slavotinek A. 2006. Handbook of Normal Physical Measurements. 2nd edition. Oxford Medical, publishers). A high palate is often associated with a narrow palate. However, a narrow palate can easily give a false appearance of a high palate. Height and width of the palate should be assessed and coded separately. We do not recommend the subjective determination because this term can be overused and applied inaccurately.",

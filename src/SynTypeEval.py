@@ -39,28 +39,23 @@ l.printHeader("Evaluating the Results of Synonym Classification")
 with l.step("Evaluating the classifications"):
     exitIfFileNotExist(inputFileClassEvaluation)
 
-    classifiedComplete = readCSV(inputFileClassEvaluation)
+    classifiedComplete = readTransformed(inputFileClassEvaluation)
 
     # The distances of the preparation run: of the development set for test
     # runs, of the evaluation set otherwise. They replace distance columns
     # already in the classifications.
     if isFile(inputFileDistances):
-        # In the format of the transformed HPO; joined by concept, synonym class
-        # and synonym.
-        distances = readTransformed(inputFileDistances)
-        distances[hpoidColumn]   = distances[idColumn]
-        distances[classColumn]   = distances[additionalColumn].map(synonymClassOf)
-        distances[contentColumn] = distances[valueColumn]
-        keys         = [hpoidColumn, classColumn, contentColumn]
-        distances    = distances[keys + [
+        # Both in the format of the transformed HPO, joined by concept and synonym.
+        distances = readCSV(inputFileDistances)
+        distances = distances[synonymKeys + [
             c for c in distances.columns if c.startswith(distanceColumnPrePrefix)]]
         for data in [classifiedComplete, distances]:
-            data[keys] = data[keys].astype(str)
+            data[synonymKeys] = data[synonymKeys].astype(str)
 
         classifiedComplete = classifiedComplete.drop(columns = [
             c for c in classifiedComplete.columns
             if c.startswith(distanceColumnPrePrefix)
-        ]).merge(distances, on = keys, how = "left")
+        ]).merge(distances, on = synonymKeys, how = "left")
     else:
         l.log(f"No distances found ({os.path.basename(inputFileDistances)}); " \
             "run SynTypeClassification.py without arguments for the distance plots.")
@@ -71,7 +66,7 @@ with l.step("Evaluating the classifications"):
     # Every model classified the same synonyms, so they are counted once.
     ontologies = [
         str(s).split(":", 1)[0] for s in
-        classifiedComplete[classifiedComplete[systemColumn] == systems[0]][hpoidColumn].to_list()
+        classifiedComplete[classifiedComplete[systemColumn] == systems[0]][idColumn].to_list()
     ]
 
     counts = Counter(ontologies)
@@ -88,29 +83,27 @@ with l.step("Evaluating the classifications"):
         f"(~{int(len(classifiedComplete.index) / len(systems))} per system)")
     classifiedComplete = classifiedComplete[classifiedComplete[systemColumn] != ""]
 
-    classifiedComplete[classColumn]   = classifiedComplete[classColumn ].str.lower()
     classifiedComplete[answerColumn]  = classifiedComplete[answerColumn].str.lower()
-    classifiedComplete[typeColumn]    = classifiedComplete[typeColumn  ].str.lower()
 
     # ------------------------------------------------------------------------------
     # Only synonyms with a gold type of synonymTypes are evaluated; other types
     # (abbreviation, uk, plural, ...) describe the form of a synonym.
     # ------------------------------------------------------------------------------
 
-    classifiedComplete = classifiedComplete[classifiedComplete[classColumn].isin(synonymClasses)]
+    classifiedComplete = classifiedComplete[classesOf(classifiedComplete).isin(synonymClasses)]
 
-    goldSystem = classifiedComplete[classifiedComplete[systemColumn] == systems[0]]
-    excluded   = goldSystem[~goldSystem[typeColumn].isin(synonymTypes)][typeColumn].value_counts()
+    goldTypes  = typesOf(classifiedComplete[classifiedComplete[systemColumn] == systems[0]])
+    excluded   = goldTypes[~goldTypes.isin(synonymTypes)].value_counts()
     l.log(f"Evaluating the synonyms with gold type {applyFormat(synonymTypes)}; " \
         f"left out: {', '.join(f'{count} {t}' for t, count in excluded.items()) or 'none'}.")
 
     classifiedComplete = classifiedComplete[
-        classifiedComplete[typeColumn].isin(synonymTypes)
+        typesOf(classifiedComplete).isin(synonymTypes)
     ].copy().reset_index(drop = True)
 
     # The Few-Shot synonyms are given with their answer in the prompts.
-    exampleSynonyms = classifiedComplete[[hpoidColumn, contentColumn]].apply(tuple, axis = 1).isin(
-        [(example[hpoidColumn], example["synonym"]) for example in fewShotExamples])
+    exampleSynonyms = keysOf(classifiedComplete).isin(
+        [(example["id"], example["synonym"]) for example in fewShotExamples])
     l.log(f"Leaving out the {len(fewShotExamples)} synonyms of the Few-Shot examples " \
         f"({exampleSynonyms.sum()} rows).")
     classifiedComplete = classifiedComplete[~exampleSynonyms].copy().reset_index(drop = True)
@@ -122,6 +115,9 @@ with l.step("Evaluating the classifications"):
     }
     # One colour per source type in every plot.
     typeColors = {expertSynonymType : colors[0], laypersonSynonymType : colors[1]}
+
+    # The gold type in the plots of the distances.
+    goldTypeLabel = "gold type"
 
     def typeF1(predicted : np.ndarray, gold : np.ndarray, sourceType : str) -> float:
         """F1 of sourceType (0 if it is neither predicted nor in the gold data)."""
@@ -152,8 +148,7 @@ with l.step("Evaluating the classifications"):
     development = gold
     if not reduceToTestIDs and isFile(outputFileEmbeddedDevelopment):
         development = readTransformed(outputFileEmbeddedDevelopment)
-        development[typeColumn] = development[additionalColumn].map(synonymTypeOf)
-        development = development[development[typeColumn].isin(synonymTypes)]
+        development = development[typesOf(development).isin(synonymTypes)]
     drawPlots = reduceToTestIDs or forceDrawAdditionalPlots
     # The predictions of the distance baselines and the distances, per gold
     # synonym, for the summary and the ROC curves.
@@ -166,8 +161,11 @@ with l.step("Evaluating the classifications"):
             if column not in gold.columns or column not in development.columns:
                 continue
 
-            tuning     = development[[column, typeColumn]].dropna()
-            evaluation = gold[[column, typeColumn]].dropna()
+            # The distances with the gold type of every synonym.
+            tuning     = pd.DataFrame({column : development[column],
+                goldTypeLabel : typesOf(development)}).dropna()
+            evaluation = pd.DataFrame({column : gold[column],
+                goldTypeLabel : typesOf(gold)}).dropna()
             if len(tuning.index) == 0 or len(evaluation.index) == 0:
                 continue
 
@@ -177,14 +175,14 @@ with l.step("Evaluating the classifications"):
                 max(distanceEvaluationUpperBound, tuning[column].max()),
                 distanceEvaluationParts)
             scores = np.array([thresholdScores(tuning[column].to_numpy(),
-                tuning[typeColumn].to_numpy(), t) for t in thresholds])
+                tuning[goldTypeLabel].to_numpy(), t) for t in thresholds])
             best = thresholds[np.argmax(scores[:, 0])]
             baselines[f"distance ({embeddingModel})"] = np.where(
                 gold[column].to_numpy() >= best, laypersonSynonymType, expertSynonymType)
             distanceScores[f"distance ({embeddingModel})"] = gold[column].to_numpy()
 
             macro, expert, layperson = thresholdScores(evaluation[column].to_numpy(),
-                evaluation[typeColumn].to_numpy(), best)
+                evaluation[goldTypeLabel].to_numpy(), best)
             share = 100 * np.mean(evaluation[column].to_numpy() >= best)
             l.log(f"Distance baseline ({embeddingModel}): layperson if the normalised " \
                 f"{distanceMetric} distance >= {best:.3f}.")
@@ -205,7 +203,7 @@ with l.step("Evaluating the classifications"):
             l.log(f"{plotting}...")
 
             plt.figure(figsize = (8, 5))
-            sns.kdeplot(data = evaluation, x = column, hue = typeColumn, palette = typeColors,
+            sns.kdeplot(data = evaluation, x = column, hue = goldTypeLabel, palette = typeColors,
                 common_norm = False, fill = False)
             plt.xlabel("Normalised distance")
             plt.ylabel("Density")
@@ -277,12 +275,12 @@ with l.step("Evaluating the classifications"):
             "undefined"         : columns[:, 2] / n,
         }
 
-    goldTypes = gold[typeColumn].to_numpy()
-    majority  = gold[typeColumn].value_counts().idxmax()
+    goldTypes = typesOf(gold).to_numpy()
+    majority  = typesOf(gold).value_counts().idxmax()
+    goldIndex = pd.MultiIndex.from_frame(gold[synonymKeys])
     predictions = {
         system : classifiedComplete[classifiedComplete[systemColumn] == system].set_index(
-            [hpoidColumn, classColumn, contentColumn])[answerColumn].reindex(
-            pd.MultiIndex.from_frame(gold[[hpoidColumn, classColumn, contentColumn]])).to_numpy()
+            synonymKeys)[answerColumn].reindex(goldIndex).to_numpy()
         for system in systems
     }
     predictions[f"majority ({majority})"] = np.full(len(goldTypes), majority)
@@ -333,8 +331,7 @@ with l.step("Evaluating the classifications"):
         rankings = {}
         for system in systems:
             data = classifiedComplete[classifiedComplete[systemColumn] == system].set_index(
-                [hpoidColumn, classColumn, contentColumn]).reindex(
-                pd.MultiIndex.from_frame(gold[[hpoidColumn, classColumn, contentColumn]]))
+                synonymKeys).reindex(goldIndex)
             confidence = pd.to_numeric(data[confidenceColumn], errors = "coerce").fillna(0).clip(lower = 0)
             rankings[system] = np.select([data[answerColumn] == laypersonSynonymType,
                 data[answerColumn] == expertSynonymType], [confidence, -confidence], 0)
@@ -364,7 +361,7 @@ with l.step("Evaluating the classifications"):
     for index, system in enumerate(systems):
         data = classifiedComplete[classifiedComplete[systemColumn] == system]
         confidence = pd.to_numeric(data[confidenceColumn], errors = "coerce")
-        correct    = data[answerColumn] == data[typeColumn]
+        correct    = data[answerColumn] == typesOf(data)
         accuracy   = [correct[confidence == level].mean() if (confidence == level).any() else np.nan
             for level in levels]
         share      = [(confidence == level).mean() for level in levels]
@@ -390,8 +387,7 @@ with l.step("Evaluating the classifications"):
     # Gold counts.
     # ------------------------------------------------------------------------------
 
-    classified = classifiedComplete[classifiedComplete[systemColumn] == systems[0]].copy().drop([answerColumn, systemColumn], axis = 1).drop_duplicates().reset_index(drop = True)
-    types = Counter(classified[typeColumn])
+    types = Counter(typesOf(gold))
 
     labels = [t for t in synonymTypes if t in types]
     values = [types[t] for t in labels]
@@ -444,7 +440,7 @@ with l.step("Evaluating the classifications"):
         synonyms of the concepts whose ID starts with `startString` ("" for
         all), and logs them; does nothing if there are none.
         """
-        classified = data[data[hpoidColumn].str.startswith(startString, na=False)].reset_index(drop = True).copy()
+        classified = data[data[idColumn].astype(str).str.startswith(startString, na=False)].reset_index(drop = True).copy()
 
         # E.g. the development set may have only HPO concepts.
         if len(classified.index) == 0:
@@ -461,7 +457,7 @@ with l.step("Evaluating the classifications"):
             # precision; its share is logged. A type that is never predicted
             # (or not in the gold data) scores 0.
             precision, recall, f1, _ = precision_recall_fscore_support(
-                systemData[typeColumn], systemData[answerColumn],
+                typesOf(systemData), systemData[answerColumn],
                 labels = synonymTypes, average = None, zero_division = 0
             )
 

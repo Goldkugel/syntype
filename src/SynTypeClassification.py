@@ -246,23 +246,19 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
     data = readTransformed(inputFile)
 
     l.log("Filtering the labels and synonyms...")
-    # embed.csv keeps the format of the transformed HPO; synonymTable() has the
-    # same rows in the same order.
-    distanceRows = data[synonymRows(data)][
-        [idColumn, attributeColumn, valueColumn, additionalColumn]].reset_index(drop = True)
-    table       = synonymTable(data)
-    types       = table[typeColumn]
-    table = table[[hpoidColumn, classColumn, contentColumn]].copy()
-    synonyms    = table[contentColumn].astype(str).tolist()
+    # embed.csv keeps the format of the transformed HPO.
+    distanceRows = synonymTable(data)
+    types       = typesOf(distanceRows)
+    synonyms    = distanceRows[valueColumn].astype(str).tolist()
 
     # The first label of every concept with synonyms (not those of parents and
     # children in the development set).
     labelRows   = data[(data[attributeColumn] == labelClass)
-        & data[idColumn].isin(table[hpoidColumn])].drop_duplicates(subset = idColumn)
+        & data[idColumn].isin(distanceRows[idColumn])].drop_duplicates(subset = idColumn)
     labels      = labelRows[valueColumn].astype(str).tolist()
 
     # Index of each synonym's label in labels, -1 if the concept has none.
-    labelIndex  = table[hpoidColumn].map(
+    labelIndex  = distanceRows[idColumn].map(
         pd.Series(range(len(labels)), index = labelRows[idColumn])
     ).fillna(-1).astype(int).to_numpy()
     hasLabel    = labelIndex >= 0
@@ -430,7 +426,7 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
             relatedLabels(childIDs, hpoID),
             synonym
         ) | {"examples" : examplesValue}
-        for hpoID, synonym in zip(synonyms[hpoidColumn], synonyms[contentColumn])
+        for hpoID, synonym in zip(synonyms[idColumn], synonyms[valueColumn])
     ]
 
     # One (prompt column, answer column) pair per turn; the answer of the last
@@ -444,19 +440,19 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
         ]
 
     # The raw classification file, written after every turn.
+    synonyms[systemColumn] = [modelName] * len(synonyms.index)
     for promptColumn, targetColumn in turns:
         synonyms[promptColumn] = [""] * len(synonyms.index)
         synonyms[targetColumn] = [""] * len(synonyms.index)
-    synonyms[systemColumn] = [modelName] * len(synonyms.index)
 
     settings = [name for name, value in experiment.model_dump().items() if value]
     l.log(f"Experiment {experimentIndex}: {applyFormat(settings)}.")
     l.log(f"Files: {quote(filesPrefixApproachClass)}.")
     l.log("Prompt files: " + applyFormat(
         [configurationFile["llm"]["prompt_files"][index] for index in promptIndexes]))
-    goldTypes = synonyms[typeColumn].value_counts()
+    goldTypes = typesOf(synonyms).value_counts()
     l.log(f"Classifying {len(synonyms.index)} synonyms of " \
-        f"{synonyms[hpoidColumn].nunique()} concepts; gold types: " + ", ".join(
+        f"{synonyms[idColumn].nunique()} concepts; gold types: " + ", ".join(
             f"{goldType} {count}" for goldType, count in goldTypes.items()) + ".")
 
     # The answer store (checkpoint) and prompt log are named after the model
@@ -476,7 +472,7 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
             model.addPromptsFromFile(promptIndexes[turn], values)
             # The prompt of the first synonym, to see what the model is given.
             l.log(f"Prompt of turn {turn + 1} for the first synonym " \
-                f"({quote(synonyms[contentColumn].iloc[0])}):\n{model.getPrompt(0, turn)}",
+                f"({quote(synonyms[valueColumn].iloc[0])}):\n{model.getPrompt(0, turn)}",
                 cmdline = False)
             synonyms[promptColumn] = [model.getPrompt(index, turn) for index in range(len(values))]
 
@@ -538,15 +534,15 @@ def formatAnswers(synonyms : pd.DataFrame, modelName : str) -> None:
     l.log("Wrong or undefined classifications, as synonym (label): gold -> " \
         "classified (confidence),", cmdline = False)
     l.log("with the rationale in the next row.", cmdline = False)
-    for index, row in classified.iterrows():
+    for (index, row), goldType in zip(classified.iterrows(), typesOf(classified)):
         # Undefined, or differing from a gold type the LLM classifies into.
         if (str(row[answerColumn]).lower() == undefinedSynonymType.lower() or
-            (str(row[typeColumn]).lower() in synonymTypes and
-            str(row[answerColumn]).lower() != str(row[typeColumn]).lower())):
+            (goldType in synonymTypes and
+            str(row[answerColumn]).lower() != goldType)):
             # Shortened; the full texts are in the raw and formatted files.
-            label = ", ".join(getElements(labels, row[hpoidColumn], labelClass))
-            l.log(f"{quote(shorten(row[contentColumn], 32))} " \
-                f"(label {quote(shorten(label, 28))}): {row[typeColumn]} -> " \
+            label = ", ".join(getElements(labels, row[idColumn], labelClass))
+            l.log(f"{quote(shorten(row[valueColumn], 32))} " \
+                f"(label {quote(shorten(label, 28))}): {goldType} -> " \
                 f"{row[answerColumn]} ({row[confidenceColumn]}).", cmdline = False)
             l.log(f"    {quote(shorten(row[rationaleColumn], 90))}", cmdline = False)
             count = count + 1
@@ -566,11 +562,11 @@ def logClassificationSummary(classified : pd.DataFrame, modelName : str) -> None
     against classified types, the mean confidence per classified type, and
     precision, recall and F1 per type (undefined answers count as wrong).
     """
-    examples = [(example[hpoidColumn], example["synonym"]) for example in fewShotExamples]
+    examples = [(example["id"], example["synonym"]) for example in fewShotExamples]
     scored = classified[
-        classified[typeColumn].isin(synonymTypes) &
-        ~classified[[hpoidColumn, contentColumn]].apply(tuple, axis = 1).isin(examples)
+        typesOf(classified).isin(synonymTypes) & ~keysOf(classified).isin(examples)
     ]
+    goldTypes = typesOf(scored)
     answers = synonymTypes + [undefinedSynonymType]
 
     l.log(f"Summary of {modelName}: {len(scored.index)} synonyms.")
@@ -578,13 +574,13 @@ def logClassificationSummary(classified : pd.DataFrame, modelName : str) -> None
         f"{(scored[answerColumn] == undefinedSynonymType).sum()} answers undefined.")
     l.log(f"{'Gold / Classified':<20}" + "".join(f"{answer:>12}" for answer in answers))
     for goldType in synonymTypes:
-        ofType = scored[scored[typeColumn] == goldType]
+        ofType = scored[goldTypes == goldType]
         l.log(f"{goldType:<20}" + "".join(
             f"{(ofType[answerColumn] == answer).sum():>12}" for answer in answers))
 
     for synonymType in synonymTypes:
         predicted = scored[answerColumn] == synonymType
-        actual    = scored[typeColumn] == synonymType
+        actual    = goldTypes == synonymType
         tp = (predicted & actual).sum()
         precision = tp / predicted.sum() if predicted.sum() > 0 else float("nan")
         recall    = tp / actual.sum() if actual.sum() > 0 else float("nan")

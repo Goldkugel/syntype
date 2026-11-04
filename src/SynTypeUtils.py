@@ -138,18 +138,28 @@ def synonymRows(data : pd.DataFrame) -> pd.Series:
 
 def synonymTable(data : pd.DataFrame) -> pd.DataFrame:
     """
-    The synonyms of the transformed HPO that syntype classifies, one row per
-    synonym with its concept, synonym class, gold type and text, as in the
-    classification files.
+    The synonyms of the transformed HPO that syntype classifies: their rows of
+    the transformed HPO (id, attribute, value, additional), as in the
+    classification and distance files.
     """
-    rows = data[synonymRows(data)]
-    return pd.DataFrame({
-        hpoidColumn   : rows[idColumn].tolist(),
-        classColumn   : rows[additionalColumn].map(synonymClassOf).tolist(),
-        typeColumn    : rows[additionalColumn].map(synonymTypeOf).tolist(),
-        contentColumn : rows[valueColumn].astype(str).tolist(),
-        systemColumn  : goldStandardSystem
-    })
+    return data[synonymRows(data)][
+        [idColumn, attributeColumn, valueColumn, additionalColumn]].reset_index(drop = True)
+
+def classesOf(data : pd.DataFrame) -> pd.Series:
+    """The synonym class of every row (its first, see synonymClassOf())."""
+    return data[additionalColumn].map(synonymClassOf)
+
+def typesOf(data : pd.DataFrame) -> pd.Series:
+    """The gold type of every row (see synonymTypeOf())."""
+    return data[additionalColumn].map(synonymTypeOf)
+
+# A synonym of the transformed HPO is identified by its concept and its text.
+synonymKeys = [idColumn, valueColumn]
+
+def keysOf(data : pd.DataFrame) -> pd.Series:
+    """The (concept, synonym) pair of every row, e.g. to compare files."""
+    return pd.Series(list(zip(data[idColumn].astype(str), data[valueColumn].astype(str))),
+        index = data.index)
 
 # The distance columns: one per model of embedder.model_id and metric, the
 # model named by syntype.embedding_model_names or its ID without organisation.
@@ -375,9 +385,9 @@ def logSynonymCounts(name : str, data : pd.DataFrame) -> None:
     """
     l = Logger()
     synonyms = synonymTable(data)
-    types    = synonyms[typeColumn].replace("", "(none)")
+    types    = typesOf(synonyms).replace("", "(none)")
     total    = types.value_counts()
-    counts   = pd.crosstab(synonyms[classColumn], types)[total.index]
+    counts   = pd.crosstab(classesOf(synonyms), types)[total.index]
     l.log(f"{name}: {len(synonyms.index)} synonyms: " + ", ".join(
         f"{t} {n}" for t, n in total.items()) + ".")
     for className, row in counts.iterrows():

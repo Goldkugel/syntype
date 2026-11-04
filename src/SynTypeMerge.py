@@ -69,7 +69,7 @@ with l.step("Merging the classifications"):
         """
         The (concept, synonym) pairs of a classification.
         """
-        return set(zip(data[hpoidColumn].astype(str), data[contentColumn].astype(str)))
+        return set(keysOf(data))
 
     first, reference = next(iter(dataframes.items()))
     referenceSynonyms = synonymsOf(reference)
