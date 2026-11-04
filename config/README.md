@@ -24,7 +24,7 @@ The settings of the package sections are described in the READMEs of the package
 | `cosine_distance_mean` | `float` or `null` | `0` | Mean the cosine distances (1 minus the cosine similarity) are normalised with, `(distance - mean) / std`; `null` takes the mean of the synonyms of each file. Set it to the mean the preparation run logs for the development set |
 | `cosine_distance_std` | `float` (> 0) or `null` | `1` | Standard deviation the cosine distances are normalised with; `null` takes that of the synonyms of each file; set it to the one logged for the development set. With `0` and `1` the distances stay as they are (0 to 2); normalised, they can be below -1 and above 1 |
 | `distance_evaluation_lower_bound`, `distance_evaluation_upper_bound` | `float` | `-4`, `4` | Range of the normalised distances in the evaluation plots and of the thresholds tried |
-| `force_draw_additional_plots` | `bool` | `False` | Draw the distance plots also for experiments without `test`, and again if they exist |
+| `force_draw_additional_plots` | `bool` | `False` | Draw the distance plots also for experiments without `test` |
 
 ### Settings of an experiment
 
