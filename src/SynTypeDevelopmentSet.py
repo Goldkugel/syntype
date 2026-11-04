@@ -5,8 +5,9 @@ and layperson synonyms each, drawn at random with syntype.development_set.seed,
 with the label, definition and comment of their concepts, the parent and
 child relations of the concepts and the labels of those parents and
 children, but no other synonym. Runs with "test" classify these synonyms.
-Writes hpo.csv without these synonyms to hpo.evaluation.csv, which the other
-runs classify, so that the development synonyms are never evaluated.
+Writes hpo.csv without these synonyms and without the synonyms of other gold
+types than expert and layperson to hpo.evaluation.csv, which the other runs
+classify, so that the development synonyms are never evaluated.
 
 The preparation run (python3 ./src/SynTypeClassification.py) draws the set
 itself when one of them is missing or outdated; this script draws it again in any

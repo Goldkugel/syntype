@@ -367,14 +367,16 @@ def applyFormat(l : list[str] = []) -> str:
 # The development set (syntype.development_set): synonyms drawn at random from
 # the transformed HPO with the information of their concepts, classified by
 # runs with "test" (hpo.development.csv); and the evaluation set, the
-# transformed HPO without these synonyms, classified by the other runs
+# transformed HPO without these synonyms and without the synonyms of other
+# gold types than expert and layperson, classified by the other runs
 # (hpo.evaluation.csv).
 # ------------------------------------------------------------------------------
 
-# Both sets depend on the settings of the development set and on the format of the
-# transformed HPO.
+# Both sets depend on the settings of the development set, on the gold types
+# the evaluation set keeps and on the format of the transformed HPO.
 developmentSetSettings = {
     "development_set" : syntypeConfig.development_set.model_dump(),
+    "gold_types"      : synonymTypes,
     "format"          : [idColumn, attributeColumn, valueColumn, additionalColumn]
 }
 
@@ -410,7 +412,8 @@ def writeDevelopmentSet() -> pd.DataFrame:
     concepts: label, definition, comment, the child rows of the concepts (to
     their children and from their parents) and the labels of those parents
     and children, but no other synonym. Writes hpo.csv without these synonyms
-    to hpo.evaluation.csv, so that the development synonyms are never
+    and without the synonyms of other gold types than expert and layperson to
+    hpo.evaluation.csv, so that the development synonyms are never
     evaluated. Records the settings next to both.
 
     :return: The development set.
@@ -457,16 +460,20 @@ def writeDevelopmentSet() -> pd.DataFrame:
     printDataSummary(result)
     logSynonymCounts("Development set", result)
 
-    # The evaluation set: every row of hpo.csv except the drawn synonyms. A
-    # synonym listed several times (with other classes or types) is removed
-    # with all its rows.
+    # The evaluation set: every row of hpo.csv except the drawn synonyms and
+    # the synonyms of other gold types than expert and layperson (e.g.
+    # abbreviation, plural; a synonym listed several times counts with its
+    # first type). A drawn synonym listed several times (with other classes
+    # or types) is removed with all its rows.
     drawn       = set(zip(data.loc[selectedRows, idColumn], data.loc[selectedRows, valueColumn]))
     drawnRows   = synonyms & pd.Series(list(zip(data[idColumn], data[valueColumn])),
         index = data.index).isin(drawn)
-    evaluation  = data[~drawnRows].reset_index(drop = True)
+    otherRows   = (data[attributeColumn] == synonymAttribute) & ~types.isin(synonymTypes)
+    evaluation  = data[~(drawnRows | otherRows)].reset_index(drop = True)
     l.log(f"Evaluation set: the {len(data.index)} rows of " \
         f"{os.path.basename(outputFileTransformedFull)} without the {drawnRows.sum()} " \
-        f"of the drawn synonyms; {len(evaluation.index)} rows.")
+        f"of the drawn synonyms and {(otherRows & ~drawnRows).sum()} of other gold types; " \
+        f"{len(evaluation.index)} rows.")
     logSynonymCounts("Evaluation set", evaluation)
 
     writeHugeCSV(result, outputFileTransformedDevelopment)

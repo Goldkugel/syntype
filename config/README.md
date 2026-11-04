@@ -32,7 +32,7 @@ A setting that is not given is off.
 
 | Key | Description |
 |---|---|
-| `test` | Classify only the synonyms of the development set (`hpo.development.csv`, see `development_set`); without it, the synonyms of the evaluation set (`hpo.evaluation.csv`: `hpo.csv` without the development synonyms) are classified |
+| `test` | Classify only the synonyms of the development set (`hpo.development.csv`, see `development_set`); without it, the synonyms of the evaluation set (`hpo.evaluation.csv`: the expert and layperson synonyms of `hpo.csv` without the development synonyms) are classified |
 | `few_shot` | Add the few-shot examples (`fewShotExamples` in `src/config.py`) to the prompts |
 | `chain_of_thoughts` | Classify in three prompts (`llm.prompt_files` 1 to 3) instead of one (index 0) |
 | `definition` | Add the definition of the concept to the prompts |

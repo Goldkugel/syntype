@@ -15,7 +15,8 @@ class ExperimentConfig(BaseModel):
 
     # Only the synonyms of the development set (hpo.development.csv, see
     # syntype.development_set); otherwise those of the evaluation set
-    # (hpo.evaluation.csv, hpo.csv without the development synonyms).
+    # (hpo.evaluation.csv, the expert and layperson synonyms of hpo.csv
+    # without the development synonyms).
     test: bool                                  = False
     # Examples in the prompts.
     few_shot: bool                              = False
