@@ -264,7 +264,7 @@ def transformHPO() -> None:
     l.printRowCount(data)
     printDataSummary(data)
 
-    l.log("Write full transformated Data...")
+    l.log("Writing the transformed HPO...")
     writeHugeCSV(data, outputFileTransformedFull)
     writeSettings(outputFileTransformedFull, transformSettings)
     l.log("Full transformed Data written.")
