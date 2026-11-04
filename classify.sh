@@ -11,4 +11,9 @@
 # or only the model given after the index (classify.sh <index> [<model ID>]).
 # Two GPUs, which the larger models need; a model is spread over both.
 
+# vLLM samples with PyTorch instead of FlashInfer: FlashInfer compiles its
+# sampling kernels at startup with the system's nvcc, which is too old for
+# its options ("nvcc fatal : Unknown option '--compress-mode=size'").
+export VLLM_USE_FLASHINFER_SAMPLER=0
+
 python3 ./src/SynTypeClassification.py "$@"
