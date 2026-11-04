@@ -23,7 +23,7 @@ syntype/
 │   ├── logs/                # Log files, prompt logs and run metadata
 │   ├── output/
 │   │   ├── transformed/     # The HPO in the adapter's format
-│   │   ├── embeded/         # Distance of every synonym to its label
+│   │   ├── embeded/         # Distance of every synonym to its label (development set and HPO)
 │   │   ├── type/            # Raw classifications (prompts and answers)
 │   │   ├── formated/        # Formatted classifications, one file per model
 │   │   ├── merged/          # Classifications of all models of an experiment
@@ -70,7 +70,7 @@ The Python scripts can also be run by hand:
 
 | Command | What it does |
 |---|---|
-| `python3 ./src/SynTypeClassification.py` | Preparation run: transforms the HPO and embeds its terms, if needed |
+| `python3 ./src/SynTypeClassification.py` | Preparation run: transforms the HPO, draws the development set and embeds both, each only if needed |
 | `python3 ./src/SynTypeClassification.py <index>` | Classifies the synonyms of experiment `syntype.experiments[<index>]` (counted from 0) with every model of `llm.model_id`, one after the other |
 | `python3 ./src/SynTypeClassification.py <index> <model ID>` | The same with only this model |
 | `python3 ./src/SynTypeDevelopmentSet.py` | Draws the development set again (e.g. after changing `syntype.development_set.seed`) |
@@ -90,7 +90,7 @@ The Python scripts can also be run by hand:
 |---|---|---|
 | Transformation | `SynTypeClassification.py` | [`data/output/transformed/`](data/output/transformed/README.md): the HPO |
 | Development set | `SynTypeClassification.py`, `SynTypeDevelopmentSet.py` | [`data/output/transformed/`](data/output/transformed/README.md): 500 expert and 500 layperson synonyms at random, with their concepts |
-| Distances | `SynTypeClassification.py` | [`data/output/embeded/`](data/output/embeded/README.MD): the cosine distance of every synonym to its label |
+| Distances | `SynTypeClassification.py` | [`data/output/embeded/`](data/output/embeded/README.MD): the cosine distance of every synonym to its label, for the development set (its mean and standard deviation are logged for `syntype.cosine_distance_mean` and `_std`) and for the HPO |
 | Classification | `SynTypeClassification.py <index>` | [`data/output/type/`](data/output/type/README.MD): prompts and answers per model |
 | Formatting | `SynTypeClassification.py <index>` | [`data/output/formated/`](data/output/formated/README.MD): the classification per model |
 | Merging | `SynTypeMerge.py <index>` | [`data/output/merged/`](data/output/merged/README.MD): all models of an experiment |

@@ -2,8 +2,9 @@
 
 clear
 
-# Preparation: transforms the HPO and embeds its terms for the evaluation,
-# each only if its output is missing or outdated. The jobs below classify the
+# Preparation: transforms the HPO, draws the development set and embeds the
+# development set and the HPO for the evaluation, each only if its output is
+# missing or outdated. The jobs below classify the
 # synonyms and format the answers.
 python3 ./src/SynTypeClassification.py || exit 1
 

@@ -33,7 +33,8 @@ syntypeConfig = SyntypeConfig.model_validate(configurationFile["syntype"])
 # Experiment and models of a run, given on the command line (see start.sh,
 # classify.sh and finalize.sh):
 #   (nothing)           SynTypeClassification.py: the preparation run
-#                       (transforms the HPO and embeds its terms);
+#                       (transforms the HPO, draws the development set
+#                       and embeds both);
 #   <index>             the experiment syntype.experiments[<index>], counted
 #                       from 0: SynTypeClassification.py classifies the
 #                       synonyms with every model of llm.model_id, one after
@@ -228,15 +229,27 @@ outputFileTransformed                        = os.path.join(
 
 inputFileTask = outputFileTransformed if reduceToTestIDs else outputFileTransformedFull
 
-# Cosine distances of all synonyms to their label (the preparation run), for the
-# evaluation of test and full runs.
+# Cosine distances of the synonyms to their label (the preparation run): of all
+# synonyms (hpo.csv), for the evaluation of full runs.
 outputFolderNameEmbedded            = "embeded"
-outputFileEmbedded                  = os.path.join(
+outputFileEmbeddedFull              = os.path.join(
     dataDir,
     outputFolderName,
     outputFolderNameEmbedded,
     f"embed.{csvFileFormat}"
 )
+
+# Of the synonyms of the development set (hpo.reduced.csv), for the evaluation
+# of test runs; their mean and standard deviation are logged, to be set as
+# syntype.cosine_distance_mean and _std.
+outputFileEmbedded                  = os.path.join(
+    dataDir,
+    outputFolderName,
+    outputFolderNameEmbedded,
+    f"embed.reduced.{csvFileFormat}"
+)
+
+inputFileDistances = outputFileEmbedded if reduceToTestIDs else outputFileEmbeddedFull
 
 # =============================================================================
 # Files for Synonym Classification

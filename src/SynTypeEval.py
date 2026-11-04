@@ -48,10 +48,11 @@ with l.step("Evaluating the classifications"):
     classifiedComplete = readCSV(inputFileClassEvaluation)
 
     # The distances of the synonyms to their label (the preparation run,
-    # SynTypeClassification.py without arguments). Distance columns already
-    # in the classifications are replaced.
-    if isFile(outputFileEmbedded):
-        distances = readCSV(outputFileEmbedded)
+    # SynTypeClassification.py without arguments): of the development set for
+    # test runs, of all synonyms otherwise. Distance columns already in the
+    # classifications are replaced.
+    if isFile(inputFileDistances):
+        distances = readCSV(inputFileDistances)
         keys         = [hpoidColumn, classColumn, contentColumn]
         for data in [classifiedComplete, distances]:
             data[keys] = data[keys].astype(str)
@@ -61,7 +62,7 @@ with l.step("Evaluating the classifications"):
             if c.startswith(distanceColumnPrePrefix)
         ]).merge(distances, on = keys, how = "left")
     else:
-        l.log(f"No distances found ({os.path.basename(outputFileEmbedded)}); " \
+        l.log(f"No distances found ({os.path.basename(inputFileDistances)}); " \
             "run SynTypeClassification.py without arguments for the distance plots.")
 
     ontologies = [

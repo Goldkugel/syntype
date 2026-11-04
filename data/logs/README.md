@@ -10,7 +10,7 @@ Besides the steps, the log of a run shows:
 
 - **Transformation:** the synonyms removed for conflicting gold labels, and those listed several times that count with their first class or type, with the combinations.
 - **Development set:** how many synonyms of each gold type were drawn from how many, and how many concepts, relations and labels of parents and children it holds.
-- **Distances:** mean, standard deviation, minimum and maximum of the cosine distances of all synonyms, before and after the normalization and per gold type; the same (unnormalised) for the synonyms of the development set, whose mean and standard deviation can be set as `syntype.cosine_distance_mean` and `_std`; and the strictly standardized mean difference between expert and layperson synonyms.
+- **Distances:** for the development set and for all synonyms, each embedded on its own: mean, standard deviation, minimum and maximum of the cosine distances, before and after the normalization and per gold type, and the strictly standardized mean difference between expert and layperson synonyms. For the development set also the mean and standard deviation to set as `syntype.cosine_distance_mean` and `_std`.
 - **Classification:** the experiment with its settings and prompt files, the number of synonyms and concepts per gold type, the prompt of every turn for the first synonym (in the log file only), how many answers contain a valid classification and a rationale, every wrong or undefined classification with its confidence and rationale (in the log file only), and a summary per model: a table of gold against classified types, precision, recall and F1 per type and the mean confidence.
 
 `cleanUp.sh` deletes the `.log` files.

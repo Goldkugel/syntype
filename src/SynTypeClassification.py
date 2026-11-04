@@ -1,7 +1,7 @@
 """
 The preparation run and the classification of syntype (see the comment below
-for the command line): transforms the HPO, embeds its terms for the
-evaluation, classifies the synonyms with the LLMs of llm.model_id and formats
+for the command line): transforms the HPO, draws the development set,
+embeds the development set and the HPO for the evaluation, classifies the synonyms with the LLMs of llm.model_id and formats
 their answers.
 """
 
@@ -33,8 +33,9 @@ from logger     import Logger, lockedFile, writeJSON
 # Run from the repository root (see start.sh and classify.sh):
 #
 #   python3 ./src/SynTypeClassification.py
-#       Preparation: transforms the HPO (if needed) and embeds its terms (if
-#       needed) for the evaluation.
+#       Preparation: transforms the HPO, draws the development set and
+#       embeds the development set and the HPO for the evaluation, each only
+#       if needed.
 #   python3 ./src/SynTypeClassification.py <index>
 #       Classification of the experiment syntype.experiments[<index>]:
 #       transforms the HPO (if needed), then every model of llm.model_id
@@ -269,44 +270,42 @@ def transformHPO() -> None:
     l.log("Full transformed Data written.")
 
 # ==============================================================================
-# Embedding: the cosine distance of every synonym to its label -> embed.csv,
-# for the evaluation (SynTypeEval.py).
+# Embedding: the cosine distance of every synonym to its label -> embed.csv
+# (all synonyms) and embed.reduced.csv (the development set), for the
+# evaluation (SynTypeEval.py).
 # ==============================================================================
 
-def embedTerms() -> None:
+def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None:
     """
-    Embeds the labels and synonyms of all concepts with every model of
-    embedder.model_id and writes the normalised cosine distance of every
-    synonym to its label to embed.csv, for the evaluation. Logs how well the
-    distance separates expert from layperson synonyms.
+    Embeds the synonyms of inputFile and the labels of their concepts with
+    every model of embedder.model_id and writes the normalised cosine distance
+    of every synonym to its label to outputFile, for the evaluation. Logs the
+    mean and standard deviation of the distances, which, for the development
+    set, are to be set as syntype.cosine_distance_mean and _std, and how well
+    the distance separates expert from layperson synonyms.
     """
     from embedder import Embedder
 
     # Printing header.
-    l.printHeader("Embedding HPO Terms")
-
-    # --------------------------------------------------------------------------
-    # Load the Human Phenotype Ontology (HPO) from the transformed data file.
-    # All concepts are embedded, also for test runs: the distances are
-    # standardised with one mean and standard deviation (configured, or of all
-    # synonyms), so that test and full runs share one scale.
-    # --------------------------------------------------------------------------
+    l.printHeader("Embedding the Development Set" if developmentSet else "Embedding the HPO")
 
     # Ensure the input file exists before proceeding.
-    exitIfFileNotExist(outputFileTransformedFull)
+    exitIfFileNotExist(inputFile)
 
-    data = readTransformed(outputFileTransformedFull)
+    data = readTransformed(inputFile)
 
     l.log("Filtering Labels and Synonyms of HPO Concepts...")
-    # One label per concept (the first, if a concept has several).
-    labelRows   = data[data[attributeColumn] == labelClass].drop_duplicates(
-        subset = idColumn)
-    labels      = labelRows[valueColumn].astype(str).tolist()
-
     synonymRows = synonymTable(data)
     types       = synonymRows[typeColumn]
     synonymRows = synonymRows[[hpoidColumn, classColumn, contentColumn]].copy()
     synonyms    = synonymRows[contentColumn].astype(str).tolist()
+
+    # One label per concept with synonyms (the first, if a concept has
+    # several); the labels of the parents and children in the development set
+    # are not needed.
+    labelRows   = data[(data[attributeColumn] == labelClass)
+        & data[idColumn].isin(synonymRows[hpoidColumn])].drop_duplicates(subset = idColumn)
+    labels      = labelRows[valueColumn].astype(str).tolist()
 
     # Position of the label of each synonym's concept in labels (-1 if the
     # concept has no label).
@@ -316,12 +315,6 @@ def embedTerms() -> None:
     hasLabel    = labelIndex >= 0
     l.log(f"Found {len(labels)} labels and {len(synonyms)} synonyms " \
         f"({(~hasLabel).sum()} of a concept without label).")
-
-    # The (concept, synonym) pairs of the development set, if it is drawn.
-    developmentSynonyms = None
-    if isFile(outputFileTransformed):
-        development = synonymTable(readTransformed(outputFileTransformed))
-        developmentSynonyms = set(zip(development[hpoidColumn], development[contentColumn]))
 
     def describe(values : pd.Series) -> str:
         """
@@ -402,17 +395,13 @@ def embedTerms() -> None:
                 l.log(f"Gold type {quote(synonymType)} ({ofType.sum()} synonyms): " \
                     f"{describe(values[ofType])}; normalised {describe(normalised[ofType])}.")
 
-            # The distances of the development set, whose mean and standard
-            # deviation can be set as syntype.cosine_distance_mean and _std.
-            if developmentSynonyms is not None:
-                inDevelopmentSet = pd.Series(list(zip(synonymRows[hpoidColumn],
-                    synonymRows[contentColumn]))).isin(developmentSynonyms)
-                l.log(f"Development set ({inDevelopmentSet.sum()} synonyms): " \
-                    f"{describe(values[inDevelopmentSet])}.")
-                for synonymType in synonymTypes:
-                    ofType = inDevelopmentSet & (types == synonymType)
-                    l.log(f"Development set, gold type {quote(synonymType)} " \
-                        f"({ofType.sum()} synonyms): {describe(values[ofType])}.")
+            # The mean and standard deviation of the development set, with
+            # which the distances of all synonyms are to be normalised.
+            if developmentSet:
+                l.log(f"Development set: set syntype.cosine_distance_mean to " \
+                    f"{values.mean():.4f} and cosine_distance_std to {values.std():.4f} " \
+                    f"(now {cosineDistanceMean} and {cosineDistanceStd}) to normalise " \
+                    f"the distances of {os.path.basename(outputFileTransformedFull)} with them.")
 
             # A first, quick evaluation of the distances: how well they
             # separate expert from layperson synonyms, as the strictly
@@ -433,8 +422,8 @@ def embedTerms() -> None:
     # SynTypeEval.py joins to the classified synonyms.
     # --------------------------------------------------------------------------
 
-    writeHugeCSV(synonymRows, outputFileEmbedded)
-    writeSettings(outputFileEmbedded, embedSettings)
+    writeHugeCSV(synonymRows, outputFile)
+    writeSettings(outputFile, embedSettings)
 
 # ==============================================================================
 # Classification of the synonyms with the LLM -> the raw classification file.
@@ -727,12 +716,17 @@ else:
     l.log("The development set is up to date.")
 
 if experimentIndex is None:
-    # Preparation run: the embeddings of the evaluation.
-    if outdated(outputFileEmbedded, [outputFileTransformedFull], embedSettings):
-        with l.step("Embedding the HPO terms"):
-            embedTerms()
-    else:
-        l.log("The embeddings are up to date.")
+    # Preparation run: the distances of the evaluation, of the development set
+    # first, whose mean and standard deviation are logged, then of all synonyms.
+    for name, inputFile, outputFile, developmentSet in [
+        ("the development set", outputFileTransformed, outputFileEmbedded, True),
+        ("the HPO", outputFileTransformedFull, outputFileEmbeddedFull, False)
+    ]:
+        if outdated(outputFile, [inputFile], embedSettings):
+            with l.step(f"Embedding {name}"):
+                embedTerms(inputFile, outputFile, developmentSet)
+        else:
+            l.log(f"The distances of {name} are up to date.")
 else:
     # The models classify one after the other; a failing model does not stop
     # the others. Each model is unloaded from the GPU before the next one. The

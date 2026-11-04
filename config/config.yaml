@@ -16,18 +16,19 @@ syntype:
   # The development set (data/output/transformed/hpo.reduced.csv), which runs
   # with "test" classify: size_per_type expert and layperson synonyms each,
   # drawn at random with the seed, with the information of their concepts.
-  # The preparation run logs the mean and standard deviation of their cosine
-  # distances, for cosine_distance_mean and _std.
+  # The preparation run embeds it and logs the mean and standard deviation of
+  # its cosine distances, to be set as cosine_distance_mean and _std.
   development_set:
     size_per_type: 500
     seed: 2898231092
   data_folder: "./data"
   # Mean and standard deviation of the cosine distance (SapBERT) between
-  # every synonym and the label of its concept, over all synonyms of HPO.
-  # The distances are normalised with them, (distance - mean) / std, so that
-  # every run uses the same scale; normalised distances can be below -1 and
-  # above 1. 0 and 1 leave them as they are; null computes them from the
-  # data. The evaluation plots show the normalised distances from
+  # every synonym and the label of its concept, derived from the development
+  # set (logged by the preparation run). The distances of the development set
+  # and of all synonyms of HPO are normalised with them, (distance - mean) /
+  # std, so that every run uses the same scale; normalised distances can be
+  # below -1 and above 1. 0 and 1 leave them as they are; null computes them
+  # from the synonyms of each file. The evaluation plots show the normalised distances from
   # distance_evaluation_lower_bound to _upper_bound.
   cosine_distance_mean: 0
   cosine_distance_std: 1
