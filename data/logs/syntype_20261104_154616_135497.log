@@ -1,0 +1,124 @@
+[2026-11-04 15:46:16] [INFO   ] (0 Minutes) Command: python3 /home/pallaoro/syntype/src/SynTypeClassification.py 0
+[2026-11-04 15:46:16] [INFO   ] (0 Minutes) The transformed HPO is up to date.
+[2026-11-04 15:46:16] [INFO   ] (0 Minutes) The development and evaluation set are up to date.
+[2026-11-04 15:46:16] [INFO   ] (0 Minutes) Model 1/6: "google/medgemma-4b-it"
+[2026-11-04 15:46:16] [INFO   ] (0 Minutes) Step 'Classifying the synonyms (medgemma-4b-it)'...
+[2026-11-04 15:46:42] [INFO   ] (0 Minutes) ============================================================
+[2026-11-04 15:46:42] [INFO   ] (0 Minutes) =        Classifying the Synonyms (medgemma-4b-it)         =
+[2026-11-04 15:46:42] [INFO   ] (0 Minutes) ============================================================
+[2026-11-04 15:46:42] [INFO   ] (0 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-04 15:46:42] [INFO   ] (0 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-04 15:46:42] [INFO   ] (0 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-04 15:46:42] [INFO   ] (0 Minutes) Files: "type_Test_NoDef_NoCom_NoStr_NoCOT_FS".
+[2026-11-04 15:46:42] [INFO   ] (0 Minutes) Prompt files: "single_prompt.md"
+[2026-11-04 15:46:42] [INFO   ] (0 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-04 15:46:42] [INFO   ] (0 Minutes) Setting up the LLM (medgemma-4b-it)...
+[2026-11-04 15:46:42] [INFO   ] (0 Minutes) Loading model at index 0: 'google/medgemma-4b-it'...
+[2026-11-04 15:46:42] [INFO   ] (0 Minutes) Scanning device 'cuda'...
+[2026-11-04 15:46:42] [INFO   ] (0 Minutes) Cuda available: True.
+[2026-11-04 15:46:42] [INFO   ] (0 Minutes) GPU Amount: 2.
+[2026-11-04 15:46:42] [INFO   ] (0 Minutes) Scanning device 'cuda' completed.
+[2026-11-04 15:46:42] [INFO   ] (0 Minutes) Loading model into cuda...
+[2026-11-04 15:47:09] [ERROR  ] (0 Minutes) Step 'Classifying the synonyms (medgemma-4b-it)' failed after 00:00:53.27 (RuntimeError: An attempt has been made to start a new process before the current process has finished its bootstrapping phase. This probably means that you are not using fork to start your child processes and you have forgotten to use the proper idiom in the main module: if __name__ == '__main__': freeze_support() ... The "freeze_support()" line can be omitted if the program is not going to be frozen to produce an executable. To fix this issue, refer to the "Safe importing of main module" section in https://docs.python.org/3/library/multiprocessing.html).
+[2026-11-04 15:47:09] [ERROR  ] (0 Minutes) Classifying with "google/medgemma-4b-it" failed: RuntimeError('\n        An attempt has been made to start a new process before the\n        current process has finished its bootstrapping phase.\n\n        This probably means that you are not using fork to start your\n        child processes and you have forgotten to use the proper idiom\n        in the main module:\n\n            if __name__ == \'__main__\':\n                freeze_support()\n                ...\n\n        The "freeze_support()" line can be omitted if the program\n        is not going to be frozen to produce an executable.\n\n        To fix this issue, refer to the "Safe importing of main module"\n        section in https://docs.python.org/3/library/multiprocessing.html\n        ')
+[2026-11-04 15:47:09] [INFO   ] (0 Minutes) Model 2/6: "Qwen/Qwen3-4B-Instruct-2507"
+[2026-11-04 15:47:09] [INFO   ] (0 Minutes) Step 'Classifying the synonyms (Qwen3-4B-Instruct-2507)'...
+[2026-11-04 15:47:09] [INFO   ] (0 Minutes) ============================================================
+[2026-11-04 15:47:09] [INFO   ] (0 Minutes) =    Classifying the Synonyms (Qwen3-4B-Instruct-2507)     =
+[2026-11-04 15:47:09] [INFO   ] (0 Minutes) ============================================================
+[2026-11-04 15:47:09] [INFO   ] (0 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-04 15:47:09] [INFO   ] (0 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-04 15:47:09] [INFO   ] (0 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-04 15:47:09] [INFO   ] (0 Minutes) Files: "type_Test_NoDef_NoCom_NoStr_NoCOT_FS".
+[2026-11-04 15:47:09] [INFO   ] (0 Minutes) Prompt files: "single_prompt.md"
+[2026-11-04 15:47:09] [INFO   ] (0 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-04 15:47:09] [INFO   ] (0 Minutes) Setting up the LLM (Qwen3-4B-Instruct-2507)...
+[2026-11-04 15:47:09] [INFO   ] (0 Minutes) Loading model at index 1: 'Qwen/Qwen3-4B-Instruct-2507'...
+[2026-11-04 15:47:09] [INFO   ] (0 Minutes) Scanning device 'cuda'...
+[2026-11-04 15:47:09] [INFO   ] (0 Minutes) Cuda available: True.
+[2026-11-04 15:47:09] [INFO   ] (0 Minutes) GPU Amount: 2.
+[2026-11-04 15:47:09] [INFO   ] (0 Minutes) Scanning device 'cuda' completed.
+[2026-11-04 15:47:09] [INFO   ] (0 Minutes) Loading model into cuda...
+[2026-11-04 15:47:14] [ERROR  ] (0 Minutes) Step 'Classifying the synonyms (Qwen3-4B-Instruct-2507)' failed after 00:00:04.94 (RuntimeError: An attempt has been made to start a new process before the current process has finished its bootstrapping phase. This probably means that you are not using fork to start your child processes and you have forgotten to use the proper idiom in the main module: if __name__ == '__main__': freeze_support() ... The "freeze_support()" line can be omitted if the program is not going to be frozen to produce an executable. To fix this issue, refer to the "Safe importing of main module" section in https://docs.python.org/3/library/multiprocessing.html).
+[2026-11-04 15:47:14] [ERROR  ] (0 Minutes) Classifying with "Qwen/Qwen3-4B-Instruct-2507" failed: RuntimeError('\n        An attempt has been made to start a new process before the\n        current process has finished its bootstrapping phase.\n\n        This probably means that you are not using fork to start your\n        child processes and you have forgotten to use the proper idiom\n        in the main module:\n\n            if __name__ == \'__main__\':\n                freeze_support()\n                ...\n\n        The "freeze_support()" line can be omitted if the program\n        is not going to be frozen to produce an executable.\n\n        To fix this issue, refer to the "Safe importing of main module"\n        section in https://docs.python.org/3/library/multiprocessing.html\n        ')
+[2026-11-04 15:47:14] [INFO   ] (0 Minutes) Model 3/6: "mistralai/Mistral-7B-Instruct-v0.2"
+[2026-11-04 15:47:14] [INFO   ] (0 Minutes) Step 'Classifying the synonyms (Mistral-7B-Instruct-v0.2)'...
+[2026-11-04 15:47:14] [INFO   ] (0 Minutes) ============================================================
+[2026-11-04 15:47:14] [INFO   ] (0 Minutes) =   Classifying the Synonyms (Mistral-7B-Instruct-v0.2)    =
+[2026-11-04 15:47:14] [INFO   ] (0 Minutes) ============================================================
+[2026-11-04 15:47:14] [INFO   ] (0 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-04 15:47:14] [INFO   ] (0 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-04 15:47:14] [INFO   ] (0 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-04 15:47:14] [INFO   ] (0 Minutes) Files: "type_Test_NoDef_NoCom_NoStr_NoCOT_FS".
+[2026-11-04 15:47:14] [INFO   ] (0 Minutes) Prompt files: "single_prompt.md"
+[2026-11-04 15:47:14] [INFO   ] (0 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-04 15:47:14] [INFO   ] (0 Minutes) Setting up the LLM (Mistral-7B-Instruct-v0.2)...
+[2026-11-04 15:47:14] [INFO   ] (0 Minutes) Loading model at index 2: 'mistralai/Mistral-7B-Instruct-v0.2'...
+[2026-11-04 15:47:14] [INFO   ] (0 Minutes) Scanning device 'cuda'...
+[2026-11-04 15:47:14] [INFO   ] (0 Minutes) Cuda available: True.
+[2026-11-04 15:47:14] [INFO   ] (0 Minutes) GPU Amount: 2.
+[2026-11-04 15:47:14] [INFO   ] (0 Minutes) Scanning device 'cuda' completed.
+[2026-11-04 15:47:14] [INFO   ] (0 Minutes) Loading model into cuda...
+[2026-11-04 15:47:16] [ERROR  ] (1 Minute) Step 'Classifying the synonyms (Mistral-7B-Instruct-v0.2)' failed after 00:00:01.99 (RuntimeError: An attempt has been made to start a new process before the current process has finished its bootstrapping phase. This probably means that you are not using fork to start your child processes and you have forgotten to use the proper idiom in the main module: if __name__ == '__main__': freeze_support() ... The "freeze_support()" line can be omitted if the program is not going to be frozen to produce an executable. To fix this issue, refer to the "Safe importing of main module" section in https://docs.python.org/3/library/multiprocessing.html).
+[2026-11-04 15:47:16] [ERROR  ] (1 Minute) Classifying with "mistralai/Mistral-7B-Instruct-v0.2" failed: RuntimeError('\n        An attempt has been made to start a new process before the\n        current process has finished its bootstrapping phase.\n\n        This probably means that you are not using fork to start your\n        child processes and you have forgotten to use the proper idiom\n        in the main module:\n\n            if __name__ == \'__main__\':\n                freeze_support()\n                ...\n\n        The "freeze_support()" line can be omitted if the program\n        is not going to be frozen to produce an executable.\n\n        To fix this issue, refer to the "Safe importing of main module"\n        section in https://docs.python.org/3/library/multiprocessing.html\n        ')
+[2026-11-04 15:47:16] [INFO   ] (1 Minute) Model 4/6: "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8"
+[2026-11-04 15:47:16] [INFO   ] (1 Minute) Step 'Classifying the synonyms (Qwen3-30B-A3B-Instruct-2507-FP8)'...
+[2026-11-04 15:47:16] [INFO   ] (1 Minute) ============================================================
+[2026-11-04 15:47:16] [INFO   ] (1 Minute) =Classifying the Synonyms (Qwen3-30B-A3B-Instruct-2507-FP8)=
+[2026-11-04 15:47:16] [INFO   ] (1 Minute) ============================================================
+[2026-11-04 15:47:16] [INFO   ] (1 Minute) Reading file 'hpo.development.csv'...
+[2026-11-04 15:47:16] [INFO   ] (1 Minute) Reading file 'hpo.development.csv' completed.
+[2026-11-04 15:47:16] [INFO   ] (1 Minute) Experiment 0: "test", "few_shot".
+[2026-11-04 15:47:16] [INFO   ] (1 Minute) Files: "type_Test_NoDef_NoCom_NoStr_NoCOT_FS".
+[2026-11-04 15:47:16] [INFO   ] (1 Minute) Prompt files: "single_prompt.md"
+[2026-11-04 15:47:16] [INFO   ] (1 Minute) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-04 15:47:16] [INFO   ] (1 Minute) Setting up the LLM (Qwen3-30B-A3B-Instruct-2507-FP8)...
+[2026-11-04 15:47:16] [INFO   ] (1 Minute) Loading model at index 3: 'Qwen/Qwen3-30B-A3B-Instruct-2507-FP8'...
+[2026-11-04 15:47:16] [INFO   ] (1 Minute) Scanning device 'cuda'...
+[2026-11-04 15:47:16] [INFO   ] (1 Minute) Cuda available: True.
+[2026-11-04 15:47:16] [INFO   ] (1 Minute) GPU Amount: 2.
+[2026-11-04 15:47:16] [INFO   ] (1 Minute) Scanning device 'cuda' completed.
+[2026-11-04 15:47:16] [INFO   ] (1 Minute) Loading model into cuda...
+[2026-11-04 15:47:24] [ERROR  ] (1 Minute) Step 'Classifying the synonyms (Qwen3-30B-A3B-Instruct-2507-FP8)' failed after 00:00:08.04 (RuntimeError: An attempt has been made to start a new process before the current process has finished its bootstrapping phase. This probably means that you are not using fork to start your child processes and you have forgotten to use the proper idiom in the main module: if __name__ == '__main__': freeze_support() ... The "freeze_support()" line can be omitted if the program is not going to be frozen to produce an executable. To fix this issue, refer to the "Safe importing of main module" section in https://docs.python.org/3/library/multiprocessing.html).
+[2026-11-04 15:47:24] [ERROR  ] (1 Minute) Classifying with "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8" failed: RuntimeError('\n        An attempt has been made to start a new process before the\n        current process has finished its bootstrapping phase.\n\n        This probably means that you are not using fork to start your\n        child processes and you have forgotten to use the proper idiom\n        in the main module:\n\n            if __name__ == \'__main__\':\n                freeze_support()\n                ...\n\n        The "freeze_support()" line can be omitted if the program\n        is not going to be frozen to produce an executable.\n\n        To fix this issue, refer to the "Safe importing of main module"\n        section in https://docs.python.org/3/library/multiprocessing.html\n        ')
+[2026-11-04 15:47:24] [INFO   ] (1 Minute) Model 5/6: "google/medgemma-27b-text-it"
+[2026-11-04 15:47:24] [INFO   ] (1 Minute) Step 'Classifying the synonyms (medgemma-27b-text-it)'...
+[2026-11-04 15:47:24] [INFO   ] (1 Minute) ============================================================
+[2026-11-04 15:47:24] [INFO   ] (1 Minute) =     Classifying the Synonyms (medgemma-27b-text-it)      =
+[2026-11-04 15:47:24] [INFO   ] (1 Minute) ============================================================
+[2026-11-04 15:47:24] [INFO   ] (1 Minute) Reading file 'hpo.development.csv'...
+[2026-11-04 15:47:24] [INFO   ] (1 Minute) Reading file 'hpo.development.csv' completed.
+[2026-11-04 15:47:24] [INFO   ] (1 Minute) Experiment 0: "test", "few_shot".
+[2026-11-04 15:47:24] [INFO   ] (1 Minute) Files: "type_Test_NoDef_NoCom_NoStr_NoCOT_FS".
+[2026-11-04 15:47:24] [INFO   ] (1 Minute) Prompt files: "single_prompt.md"
+[2026-11-04 15:47:24] [INFO   ] (1 Minute) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-04 15:47:24] [INFO   ] (1 Minute) Setting up the LLM (medgemma-27b-text-it)...
+[2026-11-04 15:47:24] [INFO   ] (1 Minute) Loading model at index 4: 'google/medgemma-27b-text-it'...
+[2026-11-04 15:47:24] [INFO   ] (1 Minute) Scanning device 'cuda'...
+[2026-11-04 15:47:24] [INFO   ] (1 Minute) Cuda available: True.
+[2026-11-04 15:47:24] [INFO   ] (1 Minute) GPU Amount: 2.
+[2026-11-04 15:47:24] [INFO   ] (1 Minute) Scanning device 'cuda' completed.
+[2026-11-04 15:47:24] [INFO   ] (1 Minute) Loading model into cuda...
+[2026-11-04 15:47:35] [ERROR  ] (1 Minute) Step 'Classifying the synonyms (medgemma-27b-text-it)' failed after 00:00:10.74 (RuntimeError: An attempt has been made to start a new process before the current process has finished its bootstrapping phase. This probably means that you are not using fork to start your child processes and you have forgotten to use the proper idiom in the main module: if __name__ == '__main__': freeze_support() ... The "freeze_support()" line can be omitted if the program is not going to be frozen to produce an executable. To fix this issue, refer to the "Safe importing of main module" section in https://docs.python.org/3/library/multiprocessing.html).
+[2026-11-04 15:47:35] [ERROR  ] (1 Minute) Classifying with "google/medgemma-27b-text-it" failed: RuntimeError('\n        An attempt has been made to start a new process before the\n        current process has finished its bootstrapping phase.\n\n        This probably means that you are not using fork to start your\n        child processes and you have forgotten to use the proper idiom\n        in the main module:\n\n            if __name__ == \'__main__\':\n                freeze_support()\n                ...\n\n        The "freeze_support()" line can be omitted if the program\n        is not going to be frozen to produce an executable.\n\n        To fix this issue, refer to the "Safe importing of main module"\n        section in https://docs.python.org/3/library/multiprocessing.html\n        ')
+[2026-11-04 15:47:35] [INFO   ] (1 Minute) Model 6/6: "mistralai/Mistral-Small-3.1-24B-Instruct-2503"
+[2026-11-04 15:47:35] [INFO   ] (1 Minute) Step 'Classifying the synonyms (Mistral-Small-3.1-24B-Instruct-2503)'...
+[2026-11-04 15:47:35] [INFO   ] (1 Minute) ============================================================
+[2026-11-04 15:47:35] [INFO   ] (1 Minute) =Classifying the Synonyms (Mistral-Small-3.1-24B-Instruct-2=
+[2026-11-04 15:47:35] [INFO   ] (1 Minute) ============================================================
+[2026-11-04 15:47:35] [INFO   ] (1 Minute) Reading file 'hpo.development.csv'...
+[2026-11-04 15:47:35] [INFO   ] (1 Minute) Reading file 'hpo.development.csv' completed.
+[2026-11-04 15:47:35] [INFO   ] (1 Minute) Experiment 0: "test", "few_shot".
+[2026-11-04 15:47:35] [INFO   ] (1 Minute) Files: "type_Test_NoDef_NoCom_NoStr_NoCOT_FS".
+[2026-11-04 15:47:35] [INFO   ] (1 Minute) Prompt files: "single_prompt.md"
+[2026-11-04 15:47:35] [INFO   ] (1 Minute) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-04 15:47:35] [INFO   ] (1 Minute) Setting up the LLM (Mistral-Small-3.1-24B-Instruct-2503)...
+[2026-11-04 15:47:35] [INFO   ] (1 Minute) Loading model at index 5: 'mistralai/Mistral-Small-3.1-24B-Instruct-2503'...
+[2026-11-04 15:47:35] [INFO   ] (1 Minute) Scanning device 'cuda'...
+[2026-11-04 15:47:35] [INFO   ] (1 Minute) Cuda available: True.
+[2026-11-04 15:47:35] [INFO   ] (1 Minute) GPU Amount: 2.
+[2026-11-04 15:47:35] [INFO   ] (1 Minute) Scanning device 'cuda' completed.
+[2026-11-04 15:47:35] [INFO   ] (1 Minute) Loading model into cuda...
+[2026-11-04 15:47:38] [ERROR  ] (1 Minute) Step 'Classifying the synonyms (Mistral-Small-3.1-24B-Instruct-2503)' failed after 00:00:03.42 (RuntimeError: An attempt has been made to start a new process before the current process has finished its bootstrapping phase. This probably means that you are not using fork to start your child processes and you have forgotten to use the proper idiom in the main module: if __name__ == '__main__': freeze_support() ... The "freeze_support()" line can be omitted if the program is not going to be frozen to produce an executable. To fix this issue, refer to the "Safe importing of main module" section in https://docs.python.org/3/library/multiprocessing.html).
+[2026-11-04 15:47:38] [ERROR  ] (1 Minute) Classifying with "mistralai/Mistral-Small-3.1-24B-Instruct-2503" failed: RuntimeError('\n        An attempt has been made to start a new process before the\n        current process has finished its bootstrapping phase.\n\n        This probably means that you are not using fork to start your\n        child processes and you have forgotten to use the proper idiom\n        in the main module:\n\n            if __name__ == \'__main__\':\n                freeze_support()\n                ...\n\n        The "freeze_support()" line can be omitted if the program\n        is not going to be frozen to produce an executable.\n\n        To fix this issue, refer to the "Safe importing of main module"\n        section in https://docs.python.org/3/library/multiprocessing.html\n        ')
+[2026-11-04 15:47:38] [ERROR  ] (1 Minute) 6 of 6 model(s) failed: "google/medgemma-4b-it", "Qwen/Qwen3-4B-Instruct-2507", "mistralai/Mistral-7B-Instruct-v0.2", "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8", "google/medgemma-27b-text-it", "mistralai/Mistral-Small-3.1-24B-Instruct-2503".

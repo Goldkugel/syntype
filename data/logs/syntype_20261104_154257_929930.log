@@ -1,0 +1,966 @@
+[2026-11-04 15:42:57] [INFO   ] (0 Minutes) Command: python3 ./src/SynTypeClassification.py 0
+[2026-11-04 15:42:57] [INFO   ] (0 Minutes) The transformed HPO is up to date.
+[2026-11-04 15:42:57] [INFO   ] (0 Minutes) The development and evaluation set are up to date.
+[2026-11-04 15:42:57] [INFO   ] (0 Minutes) Model 1/6: "google/medgemma-4b-it"
+[2026-11-04 15:42:57] [INFO   ] (0 Minutes) Step 'Classifying the synonyms (medgemma-4b-it)'...
+[2026-11-04 15:43:27] [INFO   ] (0 Minutes) ============================================================
+[2026-11-04 15:43:27] [INFO   ] (0 Minutes) =        Classifying the Synonyms (medgemma-4b-it)         =
+[2026-11-04 15:43:27] [INFO   ] (0 Minutes) ============================================================
+[2026-11-04 15:43:27] [INFO   ] (0 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-04 15:43:27] [INFO   ] (0 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-04 15:43:27] [INFO   ] (0 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-04 15:43:27] [INFO   ] (0 Minutes) Files: "type_Test_NoDef_NoCom_NoStr_NoCOT_FS".
+[2026-11-04 15:43:27] [INFO   ] (0 Minutes) Prompt files: "single_prompt.md"
+[2026-11-04 15:43:27] [INFO   ] (0 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-04 15:43:27] [INFO   ] (0 Minutes) Setting up the LLM (medgemma-4b-it)...
+[2026-11-04 15:43:27] [INFO   ] (0 Minutes) Loading model at index 0: 'google/medgemma-4b-it'...
+[2026-11-04 15:43:27] [INFO   ] (0 Minutes) Scanning device 'cuda'...
+[2026-11-04 15:43:27] [INFO   ] (0 Minutes) Cuda available: True.
+[2026-11-04 15:43:27] [INFO   ] (0 Minutes) GPU Amount: 2.
+[2026-11-04 15:43:27] [INFO   ] (0 Minutes) Scanning device 'cuda' completed.
+[2026-11-04 15:43:27] [INFO   ] (0 Minutes) Loading model into cuda...
+[2026-11-04 15:45:41] [INFO   ] (2 Minutes) Loading model into cuda completed.
+[2026-11-04 15:45:41] [INFO   ] (2 Minutes) Could not determine the revision of model 'google/medgemma-4b-it'.
+[2026-11-04 15:45:41] [INFO   ] (2 Minutes) Reason: IncompleteSnapshotError: The cached snapshot for 'google/medgemma-4b-it' (revision (...).
+[2026-11-04 15:45:41] [INFO   ] (2 Minutes) Loading model at index 0: 'google/medgemma-4b-it' completed.
+[2026-11-04 15:45:41] [INFO   ] (2 Minutes) Checkpoint: './data/tmp/syntype_medgemma-4b-it_Test_NoDef_NoCom_NoStr_NoCOT_FS.json'.
+[2026-11-04 15:45:41] [INFO   ] (2 Minutes) Prompt log: './data/logs/prompts_medgemma-4b-it_Test_NoDef_NoCom_NoStr_NoCOT_FS.log'.
+[2026-11-04 15:45:41] [INFO   ] (2 Minutes) Setting up the LLM (medgemma-4b-it) completed.
+[2026-11-04 15:45:41] [INFO   ] (2 Minutes) Turn 1/1: generating the answers...
+[2026-11-04 15:45:41] [INFO   ] (2 Minutes) Loading prompt from file 'single_prompt.md'...
+[2026-11-04 15:45:41] [INFO   ] (2 Minutes) Loaded prompt with base length 1979.
+[2026-11-04 15:45:41] [INFO   ] (2 Minutes) Added the prompt to 1000 histories.
+[2026-11-04 15:45:41] [INFO   ] (2 Minutes) Loading prompt from file 'single_prompt.md' completed.
+[2026-11-04 15:45:41] [INFO   ] (2 Minutes) Prompt of turn 1 for the first synonym ("2-azaniumyl-3-(1-methyl-1H-imidazol-4-yl)propanoate"):
+You are a biomedical ontology expert.
+
+Your task is to classify a synonym of a Human Phenotype Ontology (HPO) concept into one of two categories:
+
+"expert": wording that healthcare professionals would typically choose when communicating with other healthcare professionals or documenting phenotypes.
+"layperson": wording that patients or caregivers would typically choose in everyday communication or patient-facing materials.
+
+The classification concerns the synonym itself, not the underlying phenotype.
+
+Instructions:
+
+    * Use the HPO concept information only to disambiguate the intended meaning of the synonym. Do not base the classification on the wording used elsewhere in the concept description.
+    * Imagine that 100 occurrences of the synonym referring to this phenotype were sampled from real-world usage. Assign the category corresponding to the group responsible for the majority of those occurrences.
+    * Consider typical usage in patient education materials, conversations between patients and healthcare providers, clinical documentation, genetics reports, phenotype databases, and biomedical publications.
+    * Judge the synonym by its typical users rather than by how technical or plain the wording appears.
+    * If both groups commonly use the synonym, assign the category that would account for the majority of real-world occurrences.
+
+Output Format (STRICT JSON)
+
+{
+	"classification": "'expert' or 'layperson'",
+	"confidence": <integer from 1 to 5>,
+	"rationale": "<one to three sentences summarising the decisive similarities and differences.>"
+}
+
+Confidence guidelines:
+
+    5   = almost certainly correct
+    4   = likely correct
+    3   = substantial overlap or ambiguity
+    2   = slight overlap or high ambiguity
+    1   = highly uncertain
+
+Examples
+
+Example 1
+
+Input:
+* Label: "Neurogenic bladder"
+* Synonyms: "Lack of bladder control due to nervous system injury"
+* Definition: 
+* Comment: 
+* Parents: 
+* Children: 
+
+Output:
+{
+	"classification": "layperson",
+	"confidence": 5,
+	"rationale": "The synonym explains the clinical term 'neurogenic bladder' in everyday words ('lack of bladder control', 'nervous system injury'), as patient information does. Clinicians use the term itself."
+}
+
+Example 2
+
+Input:
+* Label: "Cryptorchidism"
+* Synonyms: "Undescended testis"
+* Definition: 
+* Comment: 
+* Parents: 
+* Children: 
+
+Output:
+{
+	"classification": "layperson",
+	"confidence": 4,
+	"rationale": "The synonym describes the finding in plain words instead of the Greek-derived term 'cryptorchidism', as patients and parents say. Clinicians use it as well, so the category is likely rather than certain."
+}
+
+Example 3
+
+Input:
+* Label: "1-methylhistidine zwitterion"
+* Synonyms: "2-azaniumyl-3-(1-methyl-1H-imidazol-4-yl)propanoate"
+* Definition: 
+* Comment: 
+* Parents: 
+* Children: 
+
+Output:
+{
+	"classification": "expert",
+	"confidence": 5,
+	"rationale": "The synonym is a systematic chemical name with locants and charge states, as chemistry databases and the literature use it. Patients would not use it at all."
+}
+
+Now classify the following input:
+
+* Label: "1-methylhistidine zwitterion"
+* Synonyms: "2-azaniumyl-3-(1-methyl-1H-imidazol-4-yl)propanoate"
+* Definition: 
+* Comment: 
+* Parents: 
+* Children: 
+
+[2026-11-04 15:45:41] [INFO   ] (2 Minutes) Answer store 'syntype_medgemma-4b-it_Test_NoDef_NoCom_NoStr_NoCOT_FS.json': 0 stored answers.
+[2026-11-04 15:45:41] [INFO   ] (2 Minutes) Generating answers for 1000 histories...
+[2026-11-04 15:45:41] [INFO   ] (2 Minutes) 1000 histories to generate in 2 chunk(s) of up to 500.
+[2026-11-04 15:45:42] [INFO   ] (2 Minutes) Running vLLM generation for chunk 1/2 [Indices 0 to 499]...
+[2026-11-04 15:45:53] [INFO   ] (2 Minutes) Running vLLM generation for chunk 1/2 [Indices 0 to 499] completed.
+[2026-11-04 15:45:53] [INFO   ] (2 Minutes) Chunk 1/2: 500 answers, 41390 tokens in 11.2 s (3706 tokens/s).
+[2026-11-04 15:45:53] [INFO   ] (2 Minutes) Progress: 500/1000 histories, elapsed 0:00:11, remaining ~0:00:11.
+[2026-11-04 15:45:53] [INFO   ] (2 Minutes) Running vLLM generation for chunk 2/2 [Indices 500 to 999]...
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Running vLLM generation for chunk 2/2 [Indices 500 to 999] completed.
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Chunk 2/2: 500 answers, 41230 tokens in 11.3 s (3654 tokens/s).
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Progress: 1000/1000 histories, elapsed 0:00:22, remaining ~0:00:00.
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) 1000 answers generated, 0 stored and 0 shared with identical histories.
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) 784066 prompt and 82620 generated tokens in 0:00:22 (3674 generated tokens/s).
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Generating answers for 1000 histories completed.
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Writing to a temporary file first...
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_medgemma-4b-it.csv.tmp'...
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_medgemma-4b-it.csv.tmp' completed.
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Writing to a temporary file first completed.
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Replacing original data with temporary data...
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Replacing original data with temporary data completed.
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Turn 1/1: generating the answers completed.
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Parsing the answers...
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) 1000 of 1000 answers contain a valid classification, 1000 a rationale.
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Parsing the answers completed.
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Writing to a temporary file first...
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_medgemma-4b-it.csv.tmp'...
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_medgemma-4b-it.csv.tmp' completed.
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Writing to a temporary file first completed.
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Replacing original data with temporary data...
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Replacing original data with temporary data completed.
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Writing the prompts and answers to the prompt log...
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Logging prompts in 'prompts_medgemma-4b-it_Test_NoDef_NoCom_NoStr_NoCOT_FS.log'...
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Logging prompts in 'prompts_medgemma-4b-it_Test_NoDef_NoCom_NoStr_NoCOT_FS.log' completed.
+[2026-11-04 15:46:04] [INFO   ] (3 Minutes) Writing the prompts and answers to the prompt log completed.
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) Step 'Classifying the synonyms (medgemma-4b-it)' completed in 00:03:10.12.
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) Step 'Formatting the answers (medgemma-4b-it)'...
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) ============================================================
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) =Formatting Answers of Synonym's Classification (medgemma-4=
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) ============================================================
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) Writing to a temporary file first...
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_formatted_medgemma-4b-it.csv.tmp'...
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_formatted_medgemma-4b-it.csv.tmp' completed.
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) Writing to a temporary file first completed.
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) Replacing original data with temporary data...
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) Replacing original data with temporary data completed.
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) Logging the wrong classifications...
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) Wrong or undefined classifications, as synonym (label): gold -> classified (confidence),
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) with the rationale in the next row.
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "galacto-hexose" (label "galactose"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'galacto-hexose' is a more descriptive and accessible way of referring to ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "VSMC" (label "vascular associated ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'VSMC' is a common abbreviation used in patient education materials and ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "memory IgG B-cell" (label "IgG memory B cell"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a simplified version of the technical term 'IgG memory B cell', which ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "c- Kit-positive erythroid ..." (label "Kit-positive erythroid ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a simplified version of the technical term 'c-Kit-positive erythroid ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "bone marrow stromal cell" (label "stromal cell of bone marrow"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a more accessible description of 'stromal cell of bone marrow' for ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "neuron of cerebral cortex" (label "cerebral cortex neuron"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a simple rephrasing of the term 'cerebral cortex neuron', which is ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "goblet cell of epithelium of ..." (label "large intestine goblet cell"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the location and type of cell in plain language ('goblet cell of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "leucocyte chemotaxis during ..." (label "leukocyte chemotaxis ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('leucocyte' instead of 'leukocyte', 'during' ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "down regulation of chronic ..." (label "negative regulation of ..."): expert -> layperson (4).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('down regulation') to describe the concept of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "downregulation of lymphocyte ..." (label "negative regulation of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('downregulation') to describe the concept of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "down regulation of adaptive ..." (label "negative regulation of ..."): expert -> layperson (4).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('down regulation') to describe the concept of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "sulphur metabolism" (label "sulfur compound ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'sulphur metabolism' is a more accessible and understandable description ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "anabolism" (label "biosynthetic process"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'anabolism' is a common term used in everyday language to describe the ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "response to radiation stimulus" (label "response to radiation"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses the term 'response' and 'stimulus', which are common words used by ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "upregulation of metabolic ..." (label "positive regulation of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'upregulation of metabolic process' is a more accessible description of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "downregulation of response ..." (label "negative regulation of ..."): expert -> layperson (4).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('downregulation') to describe the concept of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "directed movement in ..." (label "taxis"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the concept in simple, understandable terms ('directed ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "hormone synthesis" (label "hormone biosynthetic process"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'hormone synthesis' is a more accessible and understandable description of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "down-regulation of T cell ..." (label "negative regulation of T ..."): expert -> layperson (4).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('down-regulation') to describe the biological ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "oxidative burst at fertilization" (label "respiratory burst at ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('oxidative burst') instead of the more technical ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "downregulation of innate ..." (label "negative regulation of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'downregulation of innate immune response' is a more accessible ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "up-regulation of nucleobase, ..." (label "positive regulation of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler terms like 'up-regulation' and 'metabolic process' instead of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "down-regulation of ..." (label "negative regulation of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'down-regulation of biological process' is a more accessible description ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "up-regulation of response to ..." (label "positive regulation of ..."): expert -> layperson (4).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'up-regulation of response to stimulus' is a more accessible description ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "up-regulation of ..." (label "positive regulation of ..."): expert -> layperson (4).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('up-regulation') to describe the concept of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "upregulation of ..." (label "positive regulation of ..."): expert -> layperson (4).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('upregulation') to describe the concept of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "anti-inflammatory response" (label "negative regulation of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'anti-inflammatory response' is a more easily understandable description ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "negative regulation of ..." (label "negative regulation of ..."): expert -> layperson (4).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('organisation' instead of 'organization') and is ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "down regulation of killing ..." (label "negative regulation of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('down regulation' instead of 'negative regulation') ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "down-regulation of killing ..." (label "negative regulation of ..."): expert -> layperson (4).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('down-regulation' instead of 'negative regulation') ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "positive regulation of mucus ..." (label "positive regulation of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('production' instead of 'secretion') and is more ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "down regulation of secretion ..." (label "negative regulation of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'down regulation of secretion by cell' is a more accessible description of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Abnormality of the clitoris" (label "Abnormal clitoris morphology"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('abnormality' instead of 'morphology') and focuses ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Pelviureteric junction ..." (label "Ureteropelvic junction ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'pelviureteric junction obstruction', is a more accessible and patient- ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Ureteropelvic junction stenosis" (label "Ureteropelvic junction ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'ureteropelvic junction stenosis', is a more technical term for ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Mandibular hyperplasia" (label "Mandibular prognathia"): expert -> layperson (4).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'mandibular hyperplasia', is a more technical term than 'mandibular ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Decreased width of dorsum of ..." (label "Narrow nasal ridge"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the physical characteristic 'narrow nasal ridge' in simple terms ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Disturbed color vision" (label "Color vision defect"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Disturbed color vision' is a more accessible description of 'Color vision ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Decreased distance between ..." (label "Hypotelorism"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the clinical finding in plain language ('decreased distance ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Retinal arteriolar abnormality" (label "Abnormal retinal ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a simplified description of the clinical finding, using common terms ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Pervasive developmental disorder" (label "Autistic behavior"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'Pervasive developmental disorder', is a common and understandable way ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Thinning and bulging of ..." (label "Thinning and bulging of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses more common language ('posterior skull bones') instead of the more ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Thickened cortices of long bones" (label "Thickened cortex of long ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the condition in plain language ('thickened cortices') rather ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Abnormality involving the ..." (label "Abnormal diaphysis ..."): expert -> layperson (4).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses everyday language ('abnormality', 'diaphyses of the limbs') to ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Lens dislocation" (label "Ectopia lentis"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Lens dislocation' is a common and understandable description of the ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Congenital dislocation of ..." (label "Congenital hip dislocation"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses common, everyday language ('dislocation of the hips') instead of the ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Common arterial trunk" (label "Truncus arteriosus"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a simple, descriptive phrase that a patient or caregiver would use to ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Postaxial polydactyly of feet" (label "Postaxial foot polydactyly"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses common terms like 'feet' and 'polydactyly' which are easily ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Abnormality of the hallux" (label "Abnormal hallux morphology"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('abnormality' instead of 'morphology') and ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Transverse maxillary ..." (label "Narrow maxilla"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'transverse maxillary insufficiency', is a more technical term that would ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Morphological abnormality of ..." (label "Abnormal pyramidal tract ..."): expert -> layperson (4).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the abnormality in plain language ('morphological abnormality', ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Cortical atrophy" (label "Cerebral cortical atrophy"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Cortical atrophy' is a simplified, more accessible description of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Absent eyebrows" (label "Absent eyebrow"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a simple, direct description of the phenotype, using common language ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Abnormality of the foramen ..." (label "Abnormal foramen magnum ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('abnormality') to describe the medical term ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "High narrow palate" (label "High, narrow palate"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a simple description of the physical characteristic 'high narrow ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Arthrogryposis, congenital" (label "Arthrogryposis multiplex ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Arthrogryposis, congenital' is a more formal and technical way of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Abnormality of the radius" (label "Abnormal morphology of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a general description of a structural abnormality, which is how ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Hypoplastic iliac wings" (label "Hypoplastic iliac wing"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a simple description of the condition, using common anatomical terms ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Underdeveloped ulna" (label "Hypoplasia of the ulna"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the condition in simple terms ('underdeveloped ulna'), which is ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Radiohumeral dislocation" (label "Elbow dislocation"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'Radiohumeral dislocation', is a more descriptive and patient-friendly ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Decreased ADOCBL" (label "Decreased circulating ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Decreased ADOCBL' is a shortened, more accessible version of the ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Squaring of iliac bones" (label "Squared iliac bones"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the anatomical finding in plain language ('squaring of iliac ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Methionine synthase activity ..." (label "Decreased methionine ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a direct and simple statement of the condition, using language that a ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Increased serum pyruvate" (label "Increased circulating ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Increased serum pyruvate' uses common, everyday language ('serum' instead ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Distal muscular atrophy" (label "Distal amyotrophy"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses common terms like 'muscular atrophy' and 'distal', which are easily ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Abnormality of the trapezoid ..." (label "Abnormal trapezoid bone ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('abnormality' instead of 'morphology') and ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Abnormality of the gastric ..." (label "Abnormal gastric mucosa ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('abnormality' instead of 'morphology') and focuses ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Abnormality of macrophages" (label "Abnormal macrophage ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a general description of the finding, using simpler language ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Biconcave vertebrae" (label "Biconcave vertebral bodies"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a simple description of the shape of the vertebral bodies, which is ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Hypochromic, microcytic anemia" (label "Hypochromic microcytic ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the clinical finding ('hypochromic', 'microcytic') in plain ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Recurrent hemorrhagic stroke" (label "Recurrent cerebral ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses everyday language ('hemorrhagic stroke') instead of the more ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Left ventricular dysfunction" (label "Abnormal left ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Left ventricular dysfunction' is a more accessible description of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Spontaneous esophageal rupture" (label "Spontaneous esophageal ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('rupture' instead of 'perforation') and describes ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Butterfly facial telangiectasia" (label "Facial telangiectasia in ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses common terms like 'facial telangiectasia' and 'butterfly midface ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Abnormality involving the ..." (label "Abnormal limb epiphysis ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('abnormality', 'epiphyses of the limbs') compared ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Absent/rudimentary nipples" (label "Aplasia/Hypoplasia of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simple, descriptive terms ('absent', 'rudimentary') that a patient or ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Four-layered lissencephaly" (label "4-layered lissencephaly"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a straightforward description of the condition, using common language ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Retinal bone corpuscle ..." (label "Spicular pigmentation of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'Retinal bone corpuscle pigmentation', is a more descriptive and patient- ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Total internal and external ..." (label "Total ophthalmoplegia"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the condition in plain language ('internal and external ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Glucocorticoid insufficiency" (label "Decreased circulating ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Glucocorticoid insufficiency' is a more formal and technical term than ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Posterior wedging" (label "Posterior wedging of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a simplified description of the medical term 'posterior wedging of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Absent left hemidiaphragm" (label "Aplasia of the left ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the condition in simple terms ('absent left hemidiaphragm'), ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Symphalangism of the distal ..." (label "Distal fifth finger ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the condition in plain language ('symphalangism of the distal ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Hypoplastic/small 4th finger" (label "Short 4th finger"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses common terms like 'short' and 'small' to describe the phenotype, ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Hypoplastic index finger ..." (label "Short 2nd finger"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'Hypoplastic index finger phalanges', is a more technical description of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Metaphyseal abnormality of ..." (label "Abnormal upper limb ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('metaphysis', 'upper limbs') to describe the ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Notch of alveolar ridge" (label "Cleft maxillary alveolar ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'notch of alveolar ridge' is a more accessible description of 'cleft ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Large lateral palatal folds" (label "Prominent palatine ridges"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the anatomical feature in plain language ('large lateral palatal ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Persistent urachus" (label "Patent urachus"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'Persistent urachus', is a straightforward description of the condition, ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Agnosia" (label "Disturbed sensory perception"): expert -> layperson (4).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "Agnosia is a more specific term that is used by experts to describe a specific type of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Nocturnal enuresis" (label "Enuresis nocturna"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Nocturnal enuresis' is a common, everyday term used by patients and ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Leg edema" (label "Pedal edema"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'leg edema' is a common and easily understandable term for edema in the ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Abnormal thigmesthesia" (label "Impaired tactile sensation"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'abnormal thigmesthesia', is a technical term that would be understood by ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "EEG: localized low amplitude ..." (label "EEG with localized low ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the finding in plain words instead of the technical term 'EEG ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Abnormal number of secondary ..." (label "Abnormal number of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses everyday language ('number of teeth', 'secondary dentition') to ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Failure of development of molar" (label "Agenesis of molar"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the clinical term 'agenesis of molar' in plain language ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Abnormality of bicuspid" (label "Abnormality of premolar"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Abnormality of bicuspid' is a more common and understandable term for ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Dens evaginatus" (label "Talon cusp"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'Dens evaginatus', is a Latin term for 'tooth cusp' and is used in dental ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Antihelix, stem, serpiginous" (label "Serpiginous stem of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the anatomical feature in plain language ('serpiginous stem of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "High maternal serum alpha- ..." (label "Elevated maternal ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses common terms like 'maternal' and 'serum' to describe the maternal ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Deuteranomoly" (label "Deuteranomaly"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a common, easily understandable term for color vision deficiency, used ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Pulmonary venolobar syndrome" (label "Scimitar anomaly"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'Pulmonary venolobar syndrome', is a more technical term that would be ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Decreased horizontal ..." (label "Narrow philtrum"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the clinical finding in plain language ('decreased horizontal ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Abnormality of T cell number" (label "Abnormal total T cell count"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('abnormality' instead of 'abnormal total') and ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Abnormality of ..." (label "Abnormal ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('abnormality' instead of 'morphology') and ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Nodular transformation of liver" (label "Nodular regenerative ..."): expert -> layperson (4).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'nodular transformation of liver' is a more descriptive and less technical ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Elevated luteinizing hormone" (label "Elevated circulating ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a simplified description of the HPO concept, using everyday language ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Prostatic cancer" (label "Prostate cancer"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Prostatic cancer' is a more common and easily understandable term for ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Abnormal kidney morphology" (label "Abnormal renal morphology"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('kidney morphology') instead of the more technical ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Hypertrophic hemangioma" (label "Tufted angioma"): expert -> layperson (4).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'hypertrophic hemangioma', is a more descriptive and accessible way of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Scissoring gait" (label "Scissor gait"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a descriptive term that patients or caregivers would use to describe ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Mottled pigmentation of oral ..." (label "Reticulate pigmentation ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'mottled pigmentation', is a common and easily understandable description ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Microcytosis" (label "Decreased mean ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Microcytosis' is a common term used by patients and caregivers to ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Thalamic dysgenesis" (label "Dysgenesis of the thalamus"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Thalamic dysgenesis' is a more accessible description of the medical term ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Heat triggered symptoms" (label "Triggered by heat"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simple, everyday language ('heat triggered', 'symptoms') that a ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Lingual erythema migrans" (label "Geographic tongue"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'Lingual erythema migrans', is a more technical description of geographic ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Arnold-Chiari type II ..." (label "Chiari type II malformation"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'Arnold-Chiari type II malformation', is a more descriptive and patient- ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Cardiovascular malformations" (label "Abnormal cardiovascular ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Cardiovascular malformations' is a general term that patients and ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Germinal matrix hemorrhage" (label "Grade I preterm ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'germinal matrix hemorrhage', is a more accessible description of 'Grade ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Gastro-jejunal tube feeding ..." (label "Gastrojejunal tube ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses common terms like 'gastro-jejunal' and 'tube feeding' which are ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Palmar grasp reflex" (label "Grasp reflex"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'Palmar grasp reflex', is a common and easily understandable description ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Membranous vitreous phenotype" (label "Membranous vitreous ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the clinical finding in plain language ('membranous vitreous ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "High serum calcidiol" (label "High serum calcifediol"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'High serum calcidiol' is a more common and easily understandable term for ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Elevated circulating ..." (label "Elevated circulating ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses everyday terms like 'elevated' and 'concentration' to describe the ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Increased waist-hip ratio" (label "Increased waist to hip ratio"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a simple, descriptive phrase that patients and caregivers would use to ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Renal interstitial granulomata" (label "Renal interstitial ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a simplified version of the medical term 'renal interstitial ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Croup" (label "Subglottic laryngitis"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Croup' is a common term used by patients and caregivers to describe the ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Duodenal inflammation" (label "Duodenitis"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Duodenal inflammation' is a straightforward description of the condition, ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Nummular dermatitis" (label "Nummular eczema"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Nummular dermatitis' is a more common and easily understandable term for ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Isovalericacidemia" (label "Increased circulating ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Isovalericacidemia' is a descriptive term for the condition, using the ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Reduced mental health" (label "Diminished mental health"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Reduced mental health' is a more accessible and understandable ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Retrograde amnesia" (label "Retrograde memory impairment"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Retrograde amnesia' is a more formal and technical term than 'Retrograde ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Impaired procedural memory" (label "Procedural memory loss"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the clinical concept in plain language ('impaired procedural ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Proximal polyposis of the ..." (label "Fundic gland polyposis"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'Proximal polyposis of the stomach', is a more descriptive and patient- ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Fibro-obliterative bile-duct ..." (label "Fibro-obliterative bile- ..."): expert -> layperson (4).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the condition in plain language ('fibro-obliterative bile-duct ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Mitral chordae tendineae rupture" (label "Mitral chordae tendinae ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a more descriptive and patient-friendly version of the medical term ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "N-carbamoyl-beta-alanine ..." (label "Elevated circulating ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses everyday language ('high in blood') to describe a biochemical ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Methionine low in CSF" (label "Reduced CSF methionine ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simple language ('low in CSF') to describe a specific laboratory ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Lumbar spine osteoarthritis" (label "Lumbar spondylosis"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses common terms like 'lumbar spine' and 'osteoarthritis', which are ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Morphological abnormality of ..." (label "Abnormal lateral ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the abnormality in plain language ('morphological abnormality', ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Reduced natural killer cell ..." (label "Reduced total natural ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('number' instead of 'count') and describes the ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Hypotrichosis of eyebrow" (label "Sparse eyebrow"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'Hypotrichosis of eyebrow', is a more formal and technical description of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Duplication of the middle ..." (label "Duplication of the ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses common anatomical terms ('middle phalanx', 'fifth toe') and a simple ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Autoagression" (label "Self-injurious behavior"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Autoagression' is a common, easily understandable term for self-injurious ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Palatal tori" (label "Torus palatinus"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Palatal tori' is a more common and understandable term for patients and ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Gastric ectopia" (label "Malposition of the stomach"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Gastric ectopia' is a more common and understandable term for patients ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Hemiglossal hypertrophy" (label "Hemimacroglossia"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'Hemiglossal hypertrophy', is a more descriptive and patient-friendly way ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Renal pelvic diverticulum" (label "Renal diverticulum"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym, 'renal pelvic diverticulum', is a more descriptive and patient-friendly ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Hyperaesthesia" (label "Hyperesthesia"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a simple misspelling of 'hyperesthesia' and is used in everyday ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Skin pustule" (label "Pustule"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a simple description of a skin lesion, which is a common term used by ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Bone loss around teeth" (label "Alveolar bone loss ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Bone loss around teeth' is a simplified, patient-friendly description of ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Abnormal IgE level in blood" (label "Abnormal circulating IgE ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses everyday language ('IgE level in blood') to describe the clinical ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Abnormal circulating IgE level" (label "Abnormal circulating IgE ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('level') instead of the more technical ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Increased truncated complex ..." (label "Decreased complex ..."): expert -> layperson (4).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the finding in plain words instead of the technical term ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Decreased proportion of ..." (label "Decreased proportion of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('proportion' instead of 'proportion of') and ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Increased proportion of CD4+ ..." (label "Increased CD4+ memory T ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('proportion' instead of 'proportion') and avoids ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Large maxilla" (label "Hyperplasia of the maxilla"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Large maxilla' is a simple, descriptive term that a patient or caregiver ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Latent hyperopia" (label "Latent hypermetropia"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a simple, descriptive term that patients and caregivers would likely ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Decreased proportion ..." (label "Decreased proportion of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses everyday language ('decreased proportion', 'effector memory CD8+ T ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Abnormality of hyoglossus muscle" (label "Abnormal hyoglossus ..."): expert -> layperson (4).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the abnormality in simple terms ('abnormality of hyoglossus ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Prenatal ultrasound: bowel ..." (label "Fetal bowel dilatation"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the finding in plain words ('bowel loops dilated') rather than ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Smell hallucination" (label "Olfactory hallucination"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Smell hallucination' is a simple, understandable description of the ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Introversion" (label "Diminishment of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'Introversion' is a common term used by patients and caregivers to ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Pigmented cerumen" (label "Dark cerumen"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the appearance of cerumen ('pigmented') in plain language, as ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "Thumb CMC subluxation" (label "Thumb carpometacarpal ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses common, easily understood terms like 'thumb', 'CMC', and ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "relational spatial quality" (label "position"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the concept in plain language ('relational spatial quality'), as ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "thickened" (label "increased thickness"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'thickened' is a simple, common word used by patients and caregivers to ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "symmetric" (label "symmetrical"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'symmetric' is a common and easily understood term used in everyday ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "high concentration" (label "increased concentration"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'high concentration' is a common and easily understandable way for ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "ALB/ClvPrd" (label "albumin proteolytic ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'ALB/ClvPrd' is a short, easily understandable abbreviation for 'albumin ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "gland of intestine mucosa" (label "intestinal gland"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym describes the location of the gland in plain language ('gland of intestine ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "epithelium of large bowel" (label "colonic epithelium"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses common terms like 'large bowel' and 'epithelium' that a layperson ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "cervical nerve tree" (label "nerve of cervical vertebra"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'cervical nerve tree' is a more accessible and descriptive term for 'nerve ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "CNS" (label "central nervous system"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'CNS' is a common abbreviation used in patient education materials and ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "serratus anterior muscle" (label "serratus ventralis"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a common, everyday term for the serratus anterior muscle, which ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "small intestinal crypt of ..." (label "crypt of Lieberkuhn of ..."): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a more accessible description of the 'crypt of Lieberkuhn' which is a ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "serous membrane of bowel wall" (label "serosa of intestine"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym uses everyday terms like 'serous membrane' and 'bowel wall' to describe ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "splenic trabecula" (label "trabecula of spleen"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym is a simple, descriptive term for a structure within the spleen, which is ..."
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes) "tunica mucosa (endometrium)" (label "endometrium"): expert -> layperson (5).
+[2026-11-04 15:46:08] [INFO   ] (3 Minutes)     "The synonym 'tunica mucosa (endometrium)' is a more descriptive and technical term, ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "leg skeletal muscle tissue" (label "muscle of leg"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the muscle tissue of the leg in plain language, as patients and ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "carpal" (label "carpal bone"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'carpal' is a common term used by patients and caregivers to refer to the ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "calcaneus bone" (label "calcaneus"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a simple description of the bone itself, which is how patients and ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "oral roof" (label "secondary palate"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'oral roof' is a more accessible and understandable description of the ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "tonsil of Luschka" (label "pharyngeal tonsil"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym, 'tonsil of Luschka', is a more specific and descriptive term for the ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "cartilage of larynx" (label "laryngeal cartilage"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('cartilage of larynx') instead of the more ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "pulp of tooth" (label "dental pulp"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'pulp of tooth' is a more accessible description of 'dental pulp' for ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "retinal ganglion cell layer" (label "ganglionic layer of retina"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym, 'retinal ganglion cell layer', is a more accessible description of the ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "earlobe" (label "lobule of pinna"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'earlobe' is a common and easily understandable term for the lobule of the ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "front of thorax zone of skin" (label "skin of chest"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the location of the skin on the chest in a way that a patient or ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "trachea epithelium" (label "epithelium of trachea"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a simple, direct description of the tissue type ('trachea epithelium') ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "mid intestine epithelium" (label "epithelium of small ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a more accessible description of 'epithelium of small intestine' for ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "fibrocartilage tissue" (label "fibrocartilage"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a descriptive phrase that a patient or caregiver would use to refer to ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "bronchi epithelium" (label "epithelium of bronchus"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'bronchi epithelium' is a simplified and more easily understood version of ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "right atrium of heart" (label "right cardiac atrium"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common anatomical terms ('heart', 'atrium') that a layperson would ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "left ventricle of heart" (label "heart left ventricle"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a more descriptive and patient-friendly way of saying 'left ventricle ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "gall bladder" (label "gallbladder"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a common, simplified term for 'gallbladder' used in everyday language, ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "choroid plexus third ventricle" (label "choroid plexus of third ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a shortened, more easily understandable version of the full HPO term, ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "inferior palpebral veins set" (label "inferior palpebral vein"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the anatomical location of the veins in plain language ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "mucous membrane of oesophagus" (label "esophagus mucosa"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common, everyday language ('mucous membrane', 'oesophagus') that a ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "skull minus mandible" (label "cranium"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the skull without the lower jaw in simple terms, which is how ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "upper jaw epithelial tissue" (label "epithelium of upper jaw"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses more common language ('upper jaw', 'epithelial tissue') than the HPO ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "mesentery of gullet" (label "mesentery of oesophagus"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common, everyday language ('gullet' instead of 'oesophagus') that a ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "pinna of ear mesenchyme" (label "mesenchyme of pinna"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the location of the mesenchyme in the pinna in plain language, ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "nerve of brachial region" (label "arm nerve"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the nerve in a way that a patient or caregiver would understand, ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "blood vessel of digit of ..." (label "pedal digit blood vessel"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the blood vessel of the foot in simple terms, as patients and ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "skin of lower limb" (label "hindlimb skin"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common, everyday language ('skin of lower limb') to describe the area ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "digitus manus skin" (label "manual digit skin"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common anatomical terms ('digit', 'manus', 'skin') that a patient or ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "hand digit skin" (label "manual digit skin"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'hand digit skin' is a more accessible description of 'manual digit skin' ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "bronchi connective tissue" (label "bronchus connective tissue"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a more accessible description of 'bronchus connective tissue' for ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "foot digit 1" (label "pedal digit 1"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'foot digit 1' is a common and easily understandable way for patients and ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "toe 3" (label "pedal digit 3"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'toe 3' is a common and easily understandable way for patients and ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "digit long bone of 4 th ..." (label "manual digit 4 phalanx"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the digit long bone of the fourth digit of the hand in plain ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "big toe phalanx" (label "pedal digit 1 phalanx"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common, everyday language ('big toe', 'phalanx') that a patient or ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "fifth metatarsal bone" (label "metatarsal bone of digit 5"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a simple, descriptive term for a specific bone, as patients and ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "muscle organ of hip" (label "hip muscle"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses more descriptive and common language ('muscle organ of hip') than the ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "palate muscle" (label "palatal muscle"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'palate muscle' is a more common and understandable term for patients and ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "muscle organ of gullet" (label "esophagus muscle"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common, everyday language ('muscle', 'gullet') to describe the ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "joint of limb of superior member" (label "forelimb joint"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common anatomical terms ('limb', 'superior member') and a descriptive ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "phalanx proximalis pedis" (label "proximal phalanx of pes"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common anatomical terms ('phalanx', 'pedis') that a patient or ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "cavity of middle ear" (label "tympanic cavity"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the middle ear cavity in simple terms, as patients and ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "non-striated muscle of stomach" (label "stomach smooth muscle"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('non-striated muscle') to describe the stomach ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "urinary bladder neck muscle" (label "urinary bladder neck ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a simplified description of the anatomical structure, using common ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "involuntary muscle of iris" (label "iris smooth muscle"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the iris smooth muscle in plain language ('involuntary muscle of ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "finger bone" (label "manual digit bone"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'finger bone' is a common and easily understandable term for a manual ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "middle limb segment of hind ..." (label "hindlimb zeugopod bone"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the anatomical structure in plain language ('middle limb segment ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "thigh blood vessel" (label "upper leg blood vessel"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'thigh blood vessel' is a more common and understandable term for the ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "distal phalanx of second finger" (label "distal phalanx of manual ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common anatomical terms ('finger', 'second') that a layperson would ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "third finger middle phalanx" (label "middle phalanx of manual ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common anatomical terms ('finger', 'middle phalanx') that a patient ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "middle phalanx of 2nd toe" (label "middle phalanx of pedal ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common anatomical terms ('middle phalanx', 'toe') that a patient or ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "middle phalanx of foot digit 3" (label "middle phalanx of pedal ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common, everyday language ('middle phalanx', 'foot digit') to ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "fourth middle phalanx of foot" (label "middle phalanx of pedal ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common anatomical terms ('foot', 'digit') and a simple description ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "pedal phalanx V-1" (label "proximal phalanx of ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'pedal phalanx V-1' is a more technical and specific way of describing the ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "lower end of tibia" (label "distal epiphysis of tibia"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'lower end of tibia' is a simple, easily understandable description of the ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "base of phalanx of thumb" (label "proximal epiphysis of ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the location of the proximal epiphysis of the thumb phalanx in ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "basal epiphysis of middle ..." (label "proximal epiphysis of ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common anatomical terms ('middle phalanx', 'ring finger') and a ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "septum pellucidum of ..." (label "septum pellucidum"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the septum pellucidum in terms understandable to a layperson, ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "sperm duct epithelial tissue" (label "vas deferens epithelium"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('sperm duct', 'epithelial tissue') compared to the ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "left hepatic ductal submucosa" (label "submucosa of left ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a descriptive term that a patient or caregiver might use to describe a ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "deferent duct mucous membrane" (label "mucosa of deferent duct"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common language ('mucous membrane') to describe the lining of the ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "vas deferens mucosa" (label "mucosa of deferent duct"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'vas deferens mucosa' is a more technical term, while 'mucosa of deferent ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "common bile duct organ mucosa" (label "mucosa of common bile duct"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('organ mucosa') compared to the more technical ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "kidney pelvis mucous membrane" (label "mucosa of renal pelvis"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('kidney pelvis', 'mucous membrane') compared to the ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "mucosa of neck of bladder" (label "mucosa of neck of ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('neck of bladder' instead of 'neck of urinary ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "mucous membrane of roof of mouth" (label "mucosa of palate"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the anatomical location of the mucosa in plain language ('roof ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "nasal part of pharynx mucosa ..." (label "mucosa of nasopharynx"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses everyday language ('nasal part of pharynx', 'mucosa of organ') to ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "mucous membrane of bronchiole" (label "mucosa of bronchiole"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the location of the mucosa in plain language ('mucous membrane ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "internal auditory tube ..." (label "mucosa of ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the location of the mucosa in plain language ('internal auditory ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "mucuous membrane of ..." (label "mucosa of ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses everyday language ('mucous membrane', 'pharyngotympanic tube') to ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "enamel organ" (label "tooth enamel organ"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'enamel organ' is a simplified and more accessible description of 'tooth ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "tela choroidea (ventriculi ..." (label "tela choroidea of ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses everyday language ('tela choroidea', 'ventriculi lateralis') to ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "upper limb bud" (label "forelimb bud"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'upper limb bud' is a more accessible description of 'forelimb bud' for ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "lens subcapsular epithelium" (label "lens anterior epithelium"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym, 'lens subcapsular epithelium', is a more accessible description of 'lens ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "external nares" (label "external naris"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'external nares' is a common, everyday term for the nostrils, used by ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "glans of clitoris" (label "glans clitoris"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a descriptive term for the glans of the clitoris, which is a common ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "metacarpophalangeal joint of ..." (label "metacarpophalangeal ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common, everyday terms like 'metacarpophalangeal joint' and 'digit' ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "dorsal venous arch of foot" (label "dorsal venous arch"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a more descriptive and patient-friendly way of referring to the dorsal ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "future tympanic membrane" (label "pharyngeal membrane of ..."): expert -> layperson (4).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the future tympanic membrane in layman's terms, which is more ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "tympanic epithelium" (label "tympanic membrane epithelium"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a simplified, more accessible term for 'tympanic membrane epithelium', ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "lower jaw teeth" (label "set of lower jaw teeth"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a simple, descriptive phrase that a patient or caregiver would use to ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "section of stomach" (label "zone of stomach"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'section of stomach' is a more accessible description of the anatomical ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "pupil of right eye" (label "right pupil"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a simple, direct description of the pupil's location, which is how ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "set of phalanges" (label "acropodial skeleton"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym, 'set of phalanges', is a more accessible description of the acropodial ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "hind limb digit 3 metatarsal ..." (label "pedal digit 3 metatarsal ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses more common language ('hind limb digit 3', 'metatarsal pre-cartilage ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "ala ossis ilii" (label "iliac blade"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'ala ossis ilii' is a Latin term for 'blade of the ilium', which is a more ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "wing of the ilium" (label "iliac blade"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym, 'wing of the ilium', is a more accessible description of the anatomical ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "vertebral cartilage condensation" (label "vertebra cartilage element"): expert -> layperson (4).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the condition in plain language ('vertebral cartilage ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "nail of little toe" (label "nail of pedal digit 5"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'nail of little toe' is a common and easily understandable way for ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "urachus lumen" (label "urachal lumen"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'urachus lumen' is a more common and understandable term for patients and ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "3rd digit of intermediate ..." (label "middle phalanx of digit 3"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common anatomical terms ('digit', 'phalanx', 'intermediate') that a ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "proximal phalanx of fourth digit" (label "proximal phalanx of digit 4"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common anatomical terms ('proximal phalanx', 'digit', 'fourth digit') ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "distal epiphysis of distal ..." (label "distal epiphysis of ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common anatomical terms ('distal epiphysis', 'distal phalanx', 'pedal ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "tibia element" (label "tibia endochondral element"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a simplified description of the 'tibia endochondral element' which is a ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "lower jaw symphyseal tooth" (label "mandibular symphyseal tooth"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common, everyday language ('lower jaw', 'symphyseal tooth') to ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "lower second deciduous molar ..." (label "lower second primary ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common terms like 'lower' and 'deciduous' which are easily understood ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "molar 2 tooth" (label "molar tooth 2"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a simple, common way to refer to the second molar tooth, which is ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "embryonic neuroepithelium" (label "developing neuroepithelium"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym, 'embryonic neuroepithelium', is a more descriptive and accessible way to ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "superficial vasculature" (label "vasculature of integument"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'superficial vasculature' is a more accessible description of the HPO term ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "hepatic subserosa" (label "liver subserosa"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'hepatic subserosa' is a more common and understandable term for patients ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "ADA tooth 10" (label "left upper lateral ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'ADA tooth 10' is a common way to refer to the left upper lateral ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "Glykokoll" (label "glycine"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "Glykokoll is a common name for glycine, a chemical compound, in everyday language. ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "beta-alanyl-L-histidine" (label "carnosine"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym, 'beta-alanyl-L-histidine', is a chemical name that is unlikely to be used ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "alpha-hydroxyglutaric acid" (label "2-hydroxyglutaric acid"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'alpha-hydroxyglutaric acid' is a more common and easily understandable ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "Reichstein's substance M" (label "cortisol"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "Reichstein's substance M is a common, non-technical name for cortisol used in patient ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "1,2,3-Trihydroxypropane" (label "glycerol"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym, '1,2,3-Trihydroxypropane', is a chemical name that is unlikely to be used ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "Triglyzerid" (label "triglyceride"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a simplified spelling of the medical term 'triglyceride', which is ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "hexoses" (label "hexose"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'hexoses' is a plural form of 'hexose', which is a common term used in ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "FA 26:0" (label "fatty acid 26:0"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'FA 26:0' is a common abbreviation for 'fatty acid 26:0' used in patient ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "Kalzium" (label "calcium atom"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'Kalzium' is a common, simplified spelling of 'calcium' used in everyday ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "lactona" (label "lactone"): expert -> layperson (4).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a simplified version of the chemical term 'lactone', which is more ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "vitamin K vitamer" (label "vitamin K"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'vitamin K vitamer' is a general term for different forms of vitamin K, ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "Adrenalin" (label "(R)-adrenaline"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'Adrenalin' is a common, simplified name for adrenaline used in patient ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "acetic acid, ion(1-)" (label "acetate"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'acetic acid, ion(1-)' is a chemical description, which is unlikely to be ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "ox" (label "oxalate(2-)"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'ox' is a common abbreviation for oxalate, which patients and caregivers ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "hydrogen adipate" (label "adipate(1-)"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'hydrogen adipate' is a more accessible description of the chemical ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "metalloproteins" (label "metalloprotein"): expert -> layperson (4).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a general term for proteins containing metal ions, which is a concept ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "21-hydroxy steroids" (label "21-hydroxy steroid"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a general term for a class of steroid hormones, which is likely to be ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "acides gras" (label "fatty acid"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'acides gras' is a common French term for 'fatty acids' used in everyday ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "xenobiotic compounds" (label "xenobiotic"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'xenobiotic compounds' is a more descriptive and accessible way to refer ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "[CO3](2-)" (label "carbonate"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a chemical formula, which is unlikely to be used by patients or ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "anti-asthmatic drugs" (label "anti-asthmatic drug"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a general term used by patients and caregivers to describe medications ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "transferase inhibitors" (label "EC 2.* (transferase) ..."): expert -> layperson (4).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'transferase inhibitors' is a general term that patients or caregivers ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "organic compounds" (label "organic molecule"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a general term for molecules containing carbon, which is easily ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "E.coli metabolites" (label "Escherichia coli metabolite"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses the common abbreviation 'E.coli' and the general term 'metabolites', ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "food colorings" (label "food colouring"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a common term used by patients and caregivers to describe artificial ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "carbohydrates and derivatives" (label "carbohydrates and ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a simplified and more accessible way of describing 'carbohydrates and ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "mesenchymal precursor cell" (label "mesenchymal stem cell"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym, 'mesenchymal precursor cell', is a more descriptive and accessible way to ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "small bowel glandular cell" (label "small intestine ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'small bowel glandular cell' is a more accessible description of 'small ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "immunoglobulin production ..." (label "immunoglobulin ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses simpler language ('production during immune response') compared to ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "myelin formation" (label "myelin assembly"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'myelin formation' is a more accessible description of 'myelin assembly' ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "regulation of symbiosis, ..." (label "regulation of biological ..."): expert -> layperson (4).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses everyday terms like 'symbiosis' and 'mutualism' and 'parasitism' to ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "regulation of T cell development" (label "regulation of T cell ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'regulation of T cell development' is more easily understood by a ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "down-regulation of induction ..." (label "negative regulation of ..."): expert -> layperson (4).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses simpler language like 'down-regulation' and 'induction of apoptosis' ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "Choroid disease" (label "Abnormal choroid morphology"): expert -> layperson (4).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'Choroid disease' is a general term that patients might use to describe a ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "Large of palpebral fissures" (label "Abnormally large globe"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the physical finding ('large of palpebral fissures') in plain ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "Blood platelet disease" (label "Abnormality of thrombocytes"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'Blood platelet disease' is a common and understandable way for patients ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "Supernumerary nipples" (label "Supernumerary nipple"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a simple, descriptive term that patients and caregivers would use to ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "Hereditary elliptocytosis" (label "Elliptocytosis"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the condition in plain language ('hereditary', ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "Moderate neural deafness" (label "Moderate sensorineural ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses everyday language ('neural deafness') to describe the clinical term ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "Ventricular inversion" (label "Levotransposition of the ..."): expert -> layperson (4).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'Ventricular inversion' is a more general term that could be used by ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "Hypoxia" (label "Hypoxemia"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'Hypoxia' is a more common and understandable term for patients and ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "Eosinophilic ..." (label "Gastrointestinal ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'Eosinophilic gastrointestinal disorders' is a more descriptive and ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "Glomerulocystic kidney disease" (label "Multiple glomerular cysts"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym, 'Glomerulocystic kidney disease', is a descriptive term that a patient or ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "slender" (label "decreased thickness"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'slender' is a common descriptor of a decreased thickness, used by ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "Il2r" (label "interleukin-2 receptor ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'Il2r' is a common abbreviation used in patient-facing materials and ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "airway" (label "respiratory tube"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'airway' is a common and easily understood term for the respiratory tract, ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "Netzhaut" (label "retina"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'Netzhaut' is a common German term for 'retina' used by patients and ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "vesiculæ seminales" (label "seminal vesicle"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'vesiculæ seminales' is a Latin term for seminal vesicle, which is a ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "saccus vitellinus" (label "yolk sac"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym, 'saccus vitellinus', is a Latin term for 'yolk sac'. Patients and ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "skin exudate" (label "sweat"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'skin exudate' is a more descriptive and less technical term than 'sweat', ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "canal of Hering" (label "intralobular bile duct"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym, 'canal of Hering', is a more descriptive and less technical term than ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "long saphenous vein" (label "great saphenous vein"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a descriptive term for a common anatomical structure, as patients and ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "intermediate carpal bone" (label "intermedium"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a common, easily understandable term for the 'intermediate carpal bone' ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "foot distal carpal bone 2" (label "distal tarsal bone 2"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common anatomical terms ('foot', 'carpal bone') that a layperson ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "cavitas nasi" (label "nasal cavity"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'cavitas nasi' is a Latin term for 'nasal cavity', which is more likely to ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "inferior cardinal vein" (label "posterior cardinal vein"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a more common and easily understandable term for the medical term ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "oesophagus smooth muscle" (label "smooth muscle of esophagus"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses the common English spelling of the word 'oesophagus' and describes ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "astragalus" (label "talus"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'astragalus' is a common, everyday term for the talus bone, used by ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "iris pigmented epithelium" (label "iris epithelium"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a more descriptive and accessible way of referring to 'iris ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "eye cup" (label "optic cup"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'eye cup' is a more accessible and understandable description of the optic ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "manus quintus" (label "manual digit 5"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'manus quintus' is a Latin term for the little finger, which is a common ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "extrahepatic biliary system" (label "extrahepatic bile duct"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a more accessible description of 'extrahepatic bile duct' for patients ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "midface/lower face" (label "midface"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a common and easily understandable description of the midface region, ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "mammary sprout" (label "mammary gland cord"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'mammary sprout' is a more descriptive and understandable term for ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "skullcap" (label "vault of skull"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'skullcap' is a common, non-technical term for the 'vault of skull' used ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "urethral skeletal muscle" (label "urethra skeletal muscle ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'urethral skeletal muscle' is a simplified and more easily understandable ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "skin fluid" (label "skin secretion"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'skin fluid' is a more common and easily understandable term for 'skin ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "dioecious organism" (label "hermaphroditic organism"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'dioecious organism' is a common and understandable way to describe an ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "head muscles" (label "craniocervical region ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'head muscles' is a simplified and more accessible description of ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "caninus" (label "levator anguli oris"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'caninus' is a common, simplified term for the levator anguli oris muscle, ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "right venous valve" (label "right atrium venous valve"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a simplified description of the anatomical structure, using common ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "muscle of pelvic girdle and leg" (label "pelvic complex muscle"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the muscles of the pelvic girdle and leg in simple terms, which ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "venter frontalis musculi ..." (label "frontalis muscle belly"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a descriptive term for the frontalis muscle, using common anatomical ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "intercarpal" (label "intercarpal joint"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a shortened, common term for 'intercarpal joint', which is used in ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "colon endothelial cells" (label "colon endothelium"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses the common term 'endothelial cells' instead of the more technical ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "digit II P3" (label "distal phalanx of digit 2"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym 'digit II P3' is a shorthand notation used by clinicians and researchers, ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "dorsal coat hair" (label "dorsal hair"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym is a more descriptive and patient-friendly way of referring to 'dorsal ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "deciduous lower lateral ..." (label "lower lateral primary ..."): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym uses common terms like 'deciduous' and 'lateral incisor' which are easily ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "anatomic neck of humerus" (label "neck of humerus"): expert -> layperson (5).
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes)     "The synonym describes the anatomical location of the humerus in plain language, as ..."
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) Wrong or undefined classifications: 358.
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) Correct classifications: 642.
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) Logging the wrong classifications completed.
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) Summary of medgemma-4b-it: 997 synonyms.
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) Gold types expert, layperson, without the few-shot examples; 0 answers undefined.
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) Gold / Classified         expert   layperson   undefined
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) expert                       141         358           0
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) layperson                      0         498           0
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "expert": precision 1.000, recall 0.283, F1 0.441.
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "expert": mean confidence 5.00 of the 141 classified as expert.
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "layperson": precision 0.582, recall 1.000, F1 0.736.
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) "layperson": mean confidence 4.96 of the 856 classified as layperson.
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) Step 'Formatting the answers (medgemma-4b-it)' completed in 00:00:01.72.
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) Model 2/6: "Qwen/Qwen3-4B-Instruct-2507"
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) Step 'Classifying the synonyms (Qwen3-4B-Instruct-2507)'...
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) ============================================================
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) =    Classifying the Synonyms (Qwen3-4B-Instruct-2507)     =
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) ============================================================
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) Files: "type_Test_NoDef_NoCom_NoStr_NoCOT_FS".
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) Prompt files: "single_prompt.md"
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) Setting up the LLM (Qwen3-4B-Instruct-2507)...
+[2026-11-04 15:46:09] [INFO   ] (3 Minutes) Loading model at index 1: 'Qwen/Qwen3-4B-Instruct-2507'...
+[2026-11-04 15:46:10] [INFO   ] (3 Minutes) Scanning device 'cuda'...
+[2026-11-04 15:46:10] [INFO   ] (3 Minutes) Cuda available: True.
+[2026-11-04 15:46:10] [INFO   ] (3 Minutes) GPU Amount: 2.
+[2026-11-04 15:46:10] [INFO   ] (3 Minutes) Scanning device 'cuda' completed.
+[2026-11-04 15:46:10] [INFO   ] (3 Minutes) Loading model into cuda...
+[2026-11-04 15:47:41] [ERROR  ] (4 Minutes) Step 'Classifying the synonyms (Qwen3-4B-Instruct-2507)' failed after 00:01:31.21 (RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}).
+[2026-11-04 15:47:41] [ERROR  ] (4 Minutes) Classifying with "Qwen/Qwen3-4B-Instruct-2507" failed: RuntimeError('Engine core initialization failed. See root cause above. Failed core proc(s): {}')
+[2026-11-04 15:47:41] [INFO   ] (4 Minutes) Model 3/6: "mistralai/Mistral-7B-Instruct-v0.2"
+[2026-11-04 15:47:41] [INFO   ] (4 Minutes) Step 'Classifying the synonyms (Mistral-7B-Instruct-v0.2)'...
+[2026-11-04 15:47:41] [INFO   ] (4 Minutes) ============================================================
+[2026-11-04 15:47:41] [INFO   ] (4 Minutes) =   Classifying the Synonyms (Mistral-7B-Instruct-v0.2)    =
+[2026-11-04 15:47:41] [INFO   ] (4 Minutes) ============================================================
+[2026-11-04 15:47:41] [INFO   ] (4 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-04 15:47:41] [INFO   ] (4 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-04 15:47:41] [INFO   ] (4 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-04 15:47:41] [INFO   ] (4 Minutes) Files: "type_Test_NoDef_NoCom_NoStr_NoCOT_FS".
+[2026-11-04 15:47:41] [INFO   ] (4 Minutes) Prompt files: "single_prompt.md"
+[2026-11-04 15:47:41] [INFO   ] (4 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-04 15:47:41] [INFO   ] (4 Minutes) Setting up the LLM (Mistral-7B-Instruct-v0.2)...
+[2026-11-04 15:47:41] [INFO   ] (4 Minutes) Loading model at index 2: 'mistralai/Mistral-7B-Instruct-v0.2'...
+[2026-11-04 15:47:41] [INFO   ] (4 Minutes) Scanning device 'cuda'...
+[2026-11-04 15:47:41] [INFO   ] (4 Minutes) Cuda available: True.
+[2026-11-04 15:47:41] [INFO   ] (4 Minutes) GPU Amount: 2.
+[2026-11-04 15:47:41] [INFO   ] (4 Minutes) Scanning device 'cuda' completed.
+[2026-11-04 15:47:41] [INFO   ] (4 Minutes) Loading model into cuda...
+[2026-11-04 15:49:07] [ERROR  ] (6 Minutes) Step 'Classifying the synonyms (Mistral-7B-Instruct-v0.2)' failed after 00:01:26.09 (RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}).
+[2026-11-04 15:49:07] [ERROR  ] (6 Minutes) Classifying with "mistralai/Mistral-7B-Instruct-v0.2" failed: RuntimeError('Engine core initialization failed. See root cause above. Failed core proc(s): {}')
+[2026-11-04 15:49:07] [INFO   ] (6 Minutes) Model 4/6: "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8"
+[2026-11-04 15:49:07] [INFO   ] (6 Minutes) Step 'Classifying the synonyms (Qwen3-30B-A3B-Instruct-2507-FP8)'...
+[2026-11-04 15:49:07] [INFO   ] (6 Minutes) ============================================================
+[2026-11-04 15:49:07] [INFO   ] (6 Minutes) =Classifying the Synonyms (Qwen3-30B-A3B-Instruct-2507-FP8)=
+[2026-11-04 15:49:07] [INFO   ] (6 Minutes) ============================================================
+[2026-11-04 15:49:07] [INFO   ] (6 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-04 15:49:07] [INFO   ] (6 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-04 15:49:07] [INFO   ] (6 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-04 15:49:07] [INFO   ] (6 Minutes) Files: "type_Test_NoDef_NoCom_NoStr_NoCOT_FS".
+[2026-11-04 15:49:07] [INFO   ] (6 Minutes) Prompt files: "single_prompt.md"
+[2026-11-04 15:49:07] [INFO   ] (6 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-04 15:49:07] [INFO   ] (6 Minutes) Setting up the LLM (Qwen3-30B-A3B-Instruct-2507-FP8)...
+[2026-11-04 15:49:07] [INFO   ] (6 Minutes) Loading model at index 3: 'Qwen/Qwen3-30B-A3B-Instruct-2507-FP8'...
+[2026-11-04 15:49:07] [INFO   ] (6 Minutes) Scanning device 'cuda'...
+[2026-11-04 15:49:07] [INFO   ] (6 Minutes) Cuda available: True.
+[2026-11-04 15:49:07] [INFO   ] (6 Minutes) GPU Amount: 2.
+[2026-11-04 15:49:07] [INFO   ] (6 Minutes) Scanning device 'cuda' completed.
+[2026-11-04 15:49:07] [INFO   ] (6 Minutes) Loading model into cuda...
