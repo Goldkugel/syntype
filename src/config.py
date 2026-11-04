@@ -65,11 +65,11 @@ addStructure            = experiment.structure
 forceDrawAdditionalPlots = syntypeConfig.force_draw_additional_plots
 
 testStr                 = "Test" if reduceToTestIDs else "NoTest"
-configStr               = "Definition" if addDefinition else "NoDefinition"
-configStr              += "_Comment" if addComment else "_NoComment"
-configStr              += "_Structure" if addStructure else "_NoStructure"
-fewShotStr              = "FewShot" if fewShot else "NoFewShot"
-chainOfThoughtsStr      = "ChainOfThoughts" if chainOfThoughts else "NoChainOfThoughts"
+configStr               = "Def" if addDefinition else "NoDef"
+configStr              += "_Com" if addComment else "_NoCom"
+configStr              += "_Str" if addStructure else "_NoStr"
+fewShotStr              = "FS" if fewShot else "NoFS"
+chainOfThoughtsStr      = "COT" if chainOfThoughts else "NoCOT"
 
 # =============================================================================
 # Model Configuration
@@ -323,42 +323,43 @@ outputFileClassCalibration = outputFileClassEvaluationOf("calibration")
 # without examples, so that all runs are scored on the same synonyms.
 fewShotExamples = [
     {
-        "id"        : "HP:0008365",
-        "label"     : "Abnormal talus morphology",
-        "definition": "An abnormality of the talus.",
-        "comment"   : "",
-        "parents"   : ["Abnormality of the tarsal bones"],
-        "children"  : ["Tarsal osteovalgus", "Talar aplasia", "Shortening of the talar neck", "Rocker bottom foot", "Osteolysis of talus", "Osteochondral lesion of talus", "Os trigonum", "Fractured talus", "Delayed talus ossification"],
-        "synonym"   : "Abnormal large bone of ankle",
+        "id"        : "HP:0000011",
+        "label"     : "Neurogenic bladder",
+        "definition": "A type of bladder dysfunction caused by neurologic damage. Neurogenic bladder can be flaccid or spastic. Common manifestatios of neurogenic bladder are overflow incontinence, frequency, urgency, urge incontinence, and retention.",
+        "comment"   : "Neurogenic bladder sphincter dysfunction (NBSD) can develop as a result of a lesion at any level in the nervous system, including the cerebral cortex, spinal cord, or peripheral nervous system. Neurologic conditions in children leading to neurogenic bladder dysfunction are predominantly congenital neural tube defects (including myelomeningocele, lipomeningocele, sacral agenesis, and occult lesions causing tethered cord). Acquired causes such as spinal cord tumors or trauma or sequelae of transverse myelitis are less frequent. Whereas from an etiologic standpoint neurogenic bladder dysfunction is a heterogeneous group, medical management will be similar irrespective of the underlying cause.",
+        "parents"   : ["Functional abnormality of the bladder"],
+        "children"  : [],
+        "synonym"   : "Lack of bladder control due to nervous system injury",
         "type"      : laypersonSynonymType,
         "confidence": "5",
-        "rationale" : "The synonym replaces the anatomical term 'talus' with the plain description 'large bone of ankle', as patient-facing materials do. Clinicians and phenotype databases name the talus directly."
+        "rationale" : "The synonym explains the clinical term 'neurogenic bladder' in everyday words ('lack of bladder control', 'nervous system injury'), as patient information does. Clinicians use the term itself."
     },
     {
-        "id"        : "HP:0000132",
-        "label"     : "Menorrhagia",
-        "definition": "Prolonged and excessive menses at regular intervals in excess of 80 mL or lasting longer than 7 days.",
-        "comment"   : "",
-        "parents"   : ["Abnormal bleeding", "Abnormality of the menstrual cycle"],
-        "children"  : [],
-        "synonym"   : "Hypermenorrhea",
-        "type"      : expertSynonymType,
-        "confidence": "5",
-        "rationale" : "'Hypermenorrhea' is a Greek-derived medical term used in clinical documentation and gynaecological literature. Patients would speak of heavy or long periods instead."
-    },
-    {
-        "id"        : "HP:0000218",
-        "label"     : "High palate",
-        "definition": "Height of the palate more than 2 SD above the mean (objective) or palatal height at the level of the first permanent molar more than twice the height of the teeth (subjective).",
-        "comment"   : "The measuring device for this assessment is described in (Hall JG, Froster-Iskenius UG, Allanson JE, Gripp K, Slavotinek A. 2006. Handbook of Normal Physical Measurements. 2nd edition. Oxford Medical, publishers). A high palate is often associated with a narrow palate. However, a narrow palate can easily give a false appearance of a high palate. Height and width of the palate should be assessed and coded separately. We do not recommend the subjective determination because this term can be overused and applied inaccurately.",
-        "parents"   : ["Abnormal palate morphology"],
-        "children"  : ["High, narrow palate"],
-        "synonym"   : "Increased palatal height",
+        "id"        : "HP:0000028",
+        "label"     : "Cryptorchidism",
+        "definition": "Testis in inguinal canal. That is, absence of one or both testes from the scrotum owing to failure of the testis or testes to descend through the inguinal canal to the scrotum.",
+        "comment"   : "The gonad is mobile and can be retracted superiorly by the cremaster muscle reflex stimulated, for instance, by cold or touch. A retracted testis is not cryptorchidism. An abdominal testis cannot be distinguished by physical examination from an (Apparently) absent testis and requires radiological (or, rarely, surgical) procedures for assessment.",
+        "parents"   : ["Abnormal testis morphology"],
+        "children"  : ["Bilateral cryptorchidism", "Unilateral cryptorchidism"],
+        "synonym"   : "Undescended testis",
         "type"      : laypersonSynonymType,
         "confidence": "4",
-        "rationale" : "The synonym paraphrases the finding as an increased height of the palate instead of using the established clinical term 'high palate', as explanations for patients do. The technical word 'palatal' makes the category likely rather than certain."
+        "rationale" : "The synonym describes the finding in plain words instead of the Greek-derived term 'cryptorchidism', as patients and parents say. Clinicians use it as well, so the category is likely rather than certain."
+    },
+    {
+        "id"        : "CHEBI:133608",
+        "label"     : "1-methylhistidine zwitterion",
+        "definition": "An alpha-amino acid zwitterion obtained by transfer of a proton from the carboxy to the amino group of 1-methylhistidine; major species at pH 7.3.",
+        "comment"   : "",
+        "parents"   : ["alpha-amino-acid zwitterion"],
+        "children"  : [],
+        "synonym"   : "2-azaniumyl-3-(1-methyl-1H-imidazol-4-yl)propanoate",
+        "type"      : expertSynonymType,
+        "confidence": "5",
+        "rationale" : "The synonym is a systematic chemical name with locants and charge states, as chemistry databases and the literature use it. Patients would not use it at all."
     }
 ]
+
 
 # The number of experiments, for the shell scripts (start.sh, finalize.sh).
 if __name__ == "__main__":
