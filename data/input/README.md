@@ -4,6 +4,6 @@ The HPO release to classify, read by the preparation run (`python3 ./src/SynType
 
 | File | Content |
 |---|---|
-| `hp.owl` | The Human Phenotype Ontology in OWL, e.g. from the [HPO releases](https://github.com/obophenotype/human-phenotype-ontology/releases) |
+| `hpo/hp.owl` | The Human Phenotype Ontology in OWL, e.g. from the [HPO releases](https://github.com/obophenotype/human-phenotype-ontology/releases) |
 
-The file is not tracked. When it is replaced by a newer one, the next preparation run transforms the HPO and computes the distances again.
+The folder is set by `adapter.hpo.input_folder`; the file is not tracked. When it is replaced by a newer one, the next preparation run transforms the HPO and computes the distances again.

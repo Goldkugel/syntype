@@ -19,7 +19,7 @@ syntype/
 │   ├── config.yaml          # Configuration: syntype, adapter, logger, llm and embedder sections
 │   └── README.md
 ├── data/
-│   ├── input/               # hp.owl
+│   ├── input/hpo/           # hp.owl
 │   ├── logs/                # Log files, prompt logs and run metadata
 │   ├── output/
 │   │   ├── transformed/     # The HPO, development and evaluation set in the adapter's format
@@ -57,7 +57,7 @@ Python 3.10 or newer, and GPUs for the classification (the `model` package runs 
 pip install -e .
 ```
 
-Put the HPO release to classify at `data/input/hp.owl` (see [`data/input/README.md`](data/input/README.md)).
+Put the HPO release to classify at `data/input/hpo/hp.owl` (see [`data/input/README.md`](data/input/README.md)).
 
 ## Usage
 

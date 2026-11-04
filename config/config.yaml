@@ -35,7 +35,7 @@ syntype:
   force_draw_additional_plots: False
 adapter:
   hpo:
-    input_folder: "./data/input/"
+    input_folder: "./data/input/hpo/"
     input_files:
       - "hp.owl"
     # SynTypeClassification.py writes its own files (see config.py); these
