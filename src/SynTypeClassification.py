@@ -182,12 +182,12 @@ chainOfThoughtsPromptIndexes = [1, 2, 3]
 promptIndexes = chainOfThoughtsPromptIndexes if chainOfThoughts else [singlePromptIndex]
 
 # ==============================================================================
-# Transformation: hp.owl (adapter) -> transform.csv.
+# Transformation: hp.owl (adapter) -> hpo.csv.
 # ==============================================================================
 
 def transformHPO() -> None:
     """
-    Transforms hp.owl with the adapter into transform.csv, in the adapter's
+    Transforms hp.owl with the adapter into hpo.csv, in the adapter's
     format: the conflicting synonyms and the synonyms equal to their label
     are removed. Records the settings next to the file.
     """

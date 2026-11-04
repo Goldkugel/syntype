@@ -1,11 +1,11 @@
 # Distances
 
-Written by the preparation run (`python3 ./src/SynTypeClassification.py`) from `transform.csv`, and joined to the classifications by `SynTypeEval.py`.
+Written by the preparation run (`python3 ./src/SynTypeClassification.py`) from `hpo.csv`, and joined to the classifications by `SynTypeEval.py`.
 
 | File | Content |
 |---|---|
 | `embed.csv` | One row per synonym (synonym classes `exact` and `related`) of all HPO concepts |
-| `embed.csv.settings.json` | The settings the file was made with; the distances are computed again when they change or `transform.csv` is newer |
+| `embed.csv.settings.json` | The settings the file was made with; the distances are computed again when they change or `hpo.csv` is newer |
 
 | Column | Content |
 |---|---|

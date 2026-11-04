@@ -370,7 +370,7 @@ developmentSetSettings = {
 
 def developmentSetOutdated(log : bool = True) -> bool:
     """
-    Whether the development set is missing, older than transform.csv or drawn
+    Whether the development set is missing, older than hpo.csv or drawn
     with other settings; the reason is logged if `log`.
     """
     return outdated(outputFileTransformed, [outputFileTransformedFull],
@@ -379,7 +379,7 @@ def developmentSetOutdated(log : bool = True) -> bool:
 def writeDevelopmentSet() -> pd.DataFrame:
     """
     Draws syntype.development_set.size_per_type synonyms of every gold type
-    (expert, layperson) at random from transform.csv and writes them to
+    (expert, layperson) at random from hpo.csv and writes them to
     hpo.reduced.csv, in the adapter's format, with the information of their
     concepts: label, definition, comment, the child rows of the concepts (to
     their children and from their parents) and the labels of those parents

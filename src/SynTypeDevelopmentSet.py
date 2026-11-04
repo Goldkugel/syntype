@@ -1,5 +1,5 @@
 """
-Draws the development set from the transformed HPO (transform.csv) and
+Draws the development set from the transformed HPO (hpo.csv) and
 writes it to hpo.reduced.csv: syntype.development_set.size_per_type expert
 and layperson synonyms each, drawn at random with syntype.development_set.seed,
 with the label, definition and comment of their concepts, the parent and

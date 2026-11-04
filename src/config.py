@@ -206,7 +206,7 @@ inputFileTransformed        = os.path.join(
 
 # Contains all Information of the hp.owl needed to Generate and Classify 
 # Synonyms and perform the Evaluation.
-outputFileNameTransformedFull       = f"transform.{csvFileFormat}"
+outputFileNameTransformedFull       = f"hpo.{csvFileFormat}"
 
 outputFileTransformedFull                     = os.path.join(
     dataDir,
