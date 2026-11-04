@@ -121,6 +121,8 @@ contentColumn               = "content"
 systemColumn                = "system"
 answerColumn                = "answer"
 confidenceColumn            = "confidence"
+# The short explanation of a classification in the LLM's answer.
+rationaleColumn             = "rationale"
 
 # =============================================================================
 # Data Classes of Concepts in HPO that are being processed

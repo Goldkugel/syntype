@@ -6,4 +6,10 @@
 | `prompts_<model>_<experiment>.log` | the `model` package (`Model.logPrompts()`) | Every prompt and answer of one model and experiment, one message per line (`llm.prompt_log_file`) |
 | `run_metadata.json` | the `model` package | One record per loaded model: package versions, the model's revision, GPUs, the `llm` configuration, the hashes of the prompt files and the statistics of every generation (`llm.metadata_file`); `run_metadata.json.lock` is its lock file |
 
+Besides the steps, the log of a run shows:
+
+- **Transformation:** the synonyms removed for conflicting gold labels, and those listed several times that count with their first class or type, with the combinations.
+- **Distances:** mean, standard deviation, minimum and maximum of the cosine distances of all synonyms, before and after the normalization and per gold type, and the strictly standardized mean difference between expert and layperson synonyms.
+- **Classification:** the experiment with its settings and prompt files, the number of synonyms and concepts per gold type, the prompt of every turn for the first synonym (in the log file only), how many answers contain a valid classification and a rationale, every wrong or undefined classification with its confidence and rationale (in the log file only), and a summary per model: a table of gold against classified types, precision, recall and F1 per type and the mean confidence.
+
 `cleanUp.sh` deletes the `.log` files.

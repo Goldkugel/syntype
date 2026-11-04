@@ -160,7 +160,7 @@ def createJSONExample(cl : str = "", co : str = "5", ra : str = "") -> str:
     ret = "{\n" \
         f"\t{quote(synonymClass)}: {quote(cl)},\n" \
         f"\t{quote(confidenceColumn)}: {co},\n" \
-        f"\t{quote('rationale')}: {json.dumps(ra)}\n" \
+        f"\t{quote(rationaleColumn)}: {json.dumps(ra)}\n" \
         "}"
     
     return ret
@@ -288,6 +288,21 @@ def transformHPO() -> None:
         f"listed as both {applyFormat(sorted(conflictingSynonymTypes))}...")
     data = data.drop(additional.index[(conflictingClasses | conflictingTypes).to_numpy()])
 
+    # The other synonyms listed several times count with their first class
+    # and type, which becomes their gold label.
+    kept     = ~(conflictingClasses | conflictingTypes)
+    severals = [
+        (key, values[kept & (values.map(len) > 1)])
+        for key, values in [(semanticClass, classes), (sourceType, types)]
+    ]
+    for key, values in severals:
+        joined = additional[values.index].map(lambda a: str(a.get(key, "")))
+        combinations = joined.value_counts()
+        l.log(f"{len(values)} synonyms have several values of {quote(key)}; they " \
+            "count with the first one" + ("." if len(values) == 0 else ": " + ", ".join(
+                f"{quote(value)} {count}" for value, count in combinations.head(10).items()) +
+            (", ..." if len(combinations) > 10 else "") + "."))
+
     # --------------------------------------------------------------------------
     # Remove the synonyms that match the label of their concept (ignoring
     # case).
@@ -409,6 +424,15 @@ def embedTerms() -> None:
     l.log(f"Found {len(labels)} labels and {len(synonyms)} synonyms " \
         f"({(~hasLabel).sum()} of a concept without label).")
 
+    def describe(values : pd.Series) -> str:
+        """
+        Mean, standard deviation, minimum and maximum of the values that are
+        not NaN, for the log.
+        """
+        values = values.dropna()
+        return f"mean {values.mean():.4f}, standard deviation {values.std():.4f}, " \
+            f"min {values.min():.4f}, max {values.max():.4f}"
+
     def distance(a : np.ndarray, b : np.ndarray) -> np.ndarray:
         """
         Cosine distance of the rows of a and b: 1 minus their cosine
@@ -464,32 +488,33 @@ def embedTerms() -> None:
             values = pd.Series(values)
             mean   = values.mean() if cosineDistanceMean is None else cosineDistanceMean
             std    = values.std() if cosineDistanceStd is None else cosineDistanceStd
-            l.log(f"{embeddingModel} with {distanceMetric}: mean {values.mean()} and " \
-                f"standard deviation {values.std()} of the data, normalised with " \
-                f"mean {mean} and standard deviation {std}.")
-            synonymRows[distanceColumn] = (values - mean) / std
+            normalised = (values - mean) / std
+            synonymRows[distanceColumn] = normalised
+
+            # The distances of all synonyms with a label, before and after the
+            # normalization, and per gold type.
+            l.log(f"{embeddingModel}, {distanceMetric} distance of " \
+                f"{values.notna().sum()} synonyms to their label " \
+                f"({values.isna().sum()} without label): {describe(values)}.")
+            l.log(f"Normalised with mean {mean} and standard deviation {std}: " \
+                f"{describe(normalised)}.")
+            for synonymType in synonymTypes:
+                ofType = types == synonymType
+                l.log(f"Gold type {quote(synonymType)} ({ofType.sum()} synonyms): " \
+                    f"{describe(values[ofType])}; normalised {describe(normalised[ofType])}.")
 
             # A first, quick evaluation of the distances: how well they
-            # separate expert from layperson synonyms (gold type).
-            grouped = synonymRows[distanceColumn][types.isin(synonymTypes)].groupby(
+            # separate expert from layperson synonyms, as the strictly
+            # standardized mean difference of the normalised distances.
+            grouped = normalised[types.isin(synonymTypes)].groupby(
                 types).agg([m, s]).reindex(synonymTypes)
-
             means = grouped[m].tolist()
             stds  = grouped[s].tolist()
-
-            l.log(f"{embeddingModel} with {distanceMetric} Difference: " \
-                f"[{expertSynonymType} - {laypersonSynonymType}]")
-            l.log(f"Mean's Difference:               {means[0] - means[1]}")
-            l.log(f"Standard Deviation's Difference: {stds[0] - stds[1]}")
-            l.log(f"{embeddingModel} with {distanceMetric} Values:     " \
-                f"[{expertSynonymType},  {laypersonSynonymType}]")
-            l.log(f"Means:                           {str(means)}")
-            l.log(f"Standard Deviation:              {str(stds)}")
-
             ssmd = (means[0] - means[1]) / math.sqrt(
                 math.pow(stds[0], 2) + math.pow(stds[1], 2))
-
-            l.log("Strictly standardized mean difference: " + str(ssmd))
+            l.log(f"Strictly standardized mean difference [{expertSynonymType} - " \
+                f"{laypersonSynonymType}]: {ssmd} (difference of the means " \
+                f"{means[0] - means[1]}, of the standard deviations {stds[0] - stds[1]}).")
 
 
     # --------------------------------------------------------------------------
@@ -605,11 +630,16 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
         synonyms[targetColumn] = [""] * len(synonyms.index)
     synonyms[systemColumn] = [modelName] * len(synonyms.index)
 
-    l.log(f"Few-Shot (Zero-Shot): {fewShot}")
-    l.log(f"Chain-Of-Thoughts: {chainOfThoughts}")
-    l.log(f"Add Definitions to Prompt: {addDefinition}")
-    l.log(f"Add Comment to Prompt: {addComment}")
-    l.log(f"Add Parents and Children to Prompt: {addStructure}")
+    # The setup of this run: the experiment, its prompts and its synonyms.
+    settings = [name for name, value in experiment.model_dump().items() if value]
+    l.log(f"Experiment {experimentIndex}: {applyFormat(settings)} " \
+        f"(files {quote(filesPrefixApproachClass)}).")
+    l.log("Prompt files: " + applyFormat(
+        [configurationFile["llm"]["prompt_files"][index] for index in promptIndexes]))
+    goldTypes = synonyms[typeColumn].value_counts()
+    l.log(f"Classifying {len(synonyms.index)} synonyms of " \
+        f"{synonyms[hpoidColumn].nunique()} concepts; gold types: " + ", ".join(
+            f"{goldType} {count}" for goldType, count in goldTypes.items()) + ".")
 
     # --------------------------------------------------------------------------
     # Classification of synonyms.
@@ -634,6 +664,10 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
             # The model loads the prompt of this turn (by its index in
             # llm.prompt_files) and fills in its placeholders.
             model.addPromptsFromFile(promptIndexes[turn], values)
+            # The prompt of the first synonym, to see what the model is given.
+            l.log(f"Prompt of turn {turn + 1} for the first synonym " \
+                f"({quote(synonyms[contentColumn].iloc[0])}):\n{model.getPrompt(0, turn)}",
+                cmdline = False)
             synonyms[promptColumn] = [model.getPrompt(index, turn) for index in range(len(values))]
 
             # Generates the answers that are not in the answer store.
@@ -642,17 +676,19 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
             synonyms[targetColumn] = [model.getAnswer(index, turn) for index in range(len(values))]
             writeHugeCSV(synonyms, rawFile)
 
-        # The final answers are JSON objects with the classification and its
-        # confidence, parsed by the model package.
+        # The final answers are JSON objects with the classification, its
+        # confidence and a rationale, parsed by the model package.
         l.log("Parsing the answers...")
         parsed = [
             parseClassification(model.toJSON(index))
             for index in range(len(model.getMessageHistories()))
         ]
-        synonyms[synonymClass]     = [classification for classification, _ in parsed]
-        synonyms[confidenceColumn] = [confidence for _, confidence in parsed]
+        synonyms[synonymClass]     = [classification for classification, _, _ in parsed]
+        synonyms[confidenceColumn] = [confidence for _, confidence, _ in parsed]
+        synonyms[rationaleColumn]  = [rationale for _, _, rationale in parsed]
         l.log(f"{sum(c != undefinedSynonymType for c in synonyms[synonymClass])} of " \
-            f"{len(parsed)} answers contain a valid classification.")
+            f"{len(parsed)} answers contain a valid classification, " \
+            f"{sum(r != '' for r in synonyms[rationaleColumn])} a rationale.")
         writeHugeCSV(synonyms, rawFile)
 
         # Every prompt and answer of this model and experiment.
@@ -709,12 +745,52 @@ def formatAnswers(synonyms : pd.DataFrame, modelName : str) -> None:
                 f"{applyFormat(getElements(labels, row[hpoidColumn], labelClass))}" \
                 f", Synonym: {quote(row[contentColumn])}, " \
                 f"Correct: {quote(row[typeColumn])}, Classified: " \
-                f"{quote(row[answerColumn])}", cmdline = False)
+                f"{quote(row[answerColumn])}, Confidence: {row[confidenceColumn]}, " \
+                f"Rationale: {quote(str(row[rationaleColumn]))}", cmdline = False)
             count = count + 1
 
     l.log(f"Incorrect Classifications: {count}")
     l.log(f"Correct Classifications:   {len(classified.index) - count}")
     l.log("Logging competed.")
+
+    logClassificationSummary(classified, modelName)
+
+
+def logClassificationSummary(classified : pd.DataFrame, modelName : str) -> None:
+    """
+    Logs a summary of the formatted classification of a model, as
+    SynTypeEval.py scores it: of the synonyms with an expert or layperson gold
+    type, without those of the Few-Shot examples, a confusion table of gold
+    against classified types, the mean confidence per classified type, and
+    precision, recall and F1 per type (undefined answers count as wrong).
+    """
+    examples = [(example[hpoidColumn], example["synonym"]) for example in fewShotExamples]
+    scored = classified[
+        classified[typeColumn].isin(synonymTypes) &
+        ~classified[[hpoidColumn, contentColumn]].apply(tuple, axis = 1).isin(examples)
+    ]
+    answers = synonymTypes + [undefinedSynonymType]
+
+    l.log(f"Summary of {modelName}: {len(scored.index)} synonyms with gold type " \
+        f"{applyFormat(synonymTypes)} (without the Few-Shot examples), " \
+        f"{(scored[answerColumn] == undefinedSynonymType).sum()} answers undefined.")
+    l.log(f"{'Gold / Classified':<20}" + "".join(f"{answer:>12}" for answer in answers))
+    for goldType in synonymTypes:
+        ofType = scored[scored[typeColumn] == goldType]
+        l.log(f"{goldType:<20}" + "".join(
+            f"{(ofType[answerColumn] == answer).sum():>12}" for answer in answers))
+
+    for synonymType in synonymTypes:
+        predicted = scored[answerColumn] == synonymType
+        actual    = scored[typeColumn] == synonymType
+        tp = (predicted & actual).sum()
+        precision = tp / predicted.sum() if predicted.sum() > 0 else float("nan")
+        recall    = tp / actual.sum() if actual.sum() > 0 else float("nan")
+        f1        = 2 * tp / (predicted.sum() + actual.sum()) if predicted.sum() + actual.sum() > 0 else float("nan")
+        confidence = scored.loc[predicted, confidenceColumn]
+        l.log(f"{quote(synonymType)}: precision {precision:.3f}, recall {recall:.3f}, " \
+            f"F1 {f1:.3f}; mean confidence of the {predicted.sum()} classified as " \
+            f"{synonymType}: {confidence.mean():.2f}")
 
 # ==============================================================================
 # The steps of this run.

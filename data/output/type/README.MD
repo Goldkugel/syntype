@@ -9,5 +9,6 @@ Written by the classification (`python3 ./src/SynTypeClassification.py <index>`)
 | `user1`, `answer` | The prompt and the answer (single prompt) |
 | `user1`, `assistant1`, `user2`, `assistant2`, `user3`, `answer` | The prompts and answers of the three turns (chain-of-thoughts) |
 | `classification`, `confidence` | The classification (`expert`, `layperson`, or `undefined` for an answer without a valid one) and its confidence (1 to 5, `-1` if undefined) parsed from the last answer |
+| `rationale` | The short explanation of the decision in the last answer (`""` if it has none) |
 
 The prompts and answers themselves are stored by the `model` package in its answer store (`data/tmp/`), from which an interrupted run resumes.

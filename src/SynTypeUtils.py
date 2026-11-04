@@ -247,26 +247,32 @@ def printDataSummary(data: pd.DataFrame = None) -> None:
 
         
 
-def parseClassification(answer) -> tuple[str, int]:
+def parseClassification(answer) -> tuple[str, int, str]:
     """
-    Classification and confidence of an answer parsed by model.toJSON(), or
-    (undefinedSynonymType, -1) if the answer is no JSON object with one of
-    synonymTypes as classification and an integer confidence.
+    Classification, confidence and rationale of an answer parsed by
+    model.toJSON(). The classification is (undefinedSynonymType, -1) if the
+    answer is no JSON object with one of synonymTypes as classification and an
+    integer confidence; the rationale is "" if the answer has none, also for
+    an undefined classification.
     """
-    ret = (undefinedSynonymType, -1)
+    classification, confidence = undefinedSynonymType, -1
+    rationale = ""
 
-    if (isinstance(answer, dict) and synonymClass in answer and
-        confidenceColumn in answer):
-        classification = str(answer[synonymClass]).strip().lower()
-        try:
-            confidence = int(answer[confidenceColumn])
-        except (TypeError, ValueError):
-            confidence = None
+    if isinstance(answer, dict):
+        if answer.get(rationaleColumn) is not None:
+            rationale = str(answer[rationaleColumn]).strip()
 
-        if classification in synonymTypes and confidence is not None:
-            ret = (classification, confidence)
+        if synonymClass in answer and confidenceColumn in answer:
+            parsedClassification = str(answer[synonymClass]).strip().lower()
+            try:
+                parsedConfidence = int(answer[confidenceColumn])
+            except (TypeError, ValueError):
+                parsedConfidence = None
 
-    return ret
+            if parsedClassification in synonymTypes and parsedConfidence is not None:
+                classification, confidence = parsedClassification, parsedConfidence
+
+    return classification, confidence, rationale
 
 def getHPOIDs(data : pd.DataFrame) -> list:
     """
