@@ -348,6 +348,18 @@ embeddingPrefix = f"{outputFolderNameClass}_{testStr}"
 outputFileNameClassEmbeddingEvaluation    = f"{embeddingPrefix}_embedding_evaluation_" + "{}" + f".{plotFileFormat}"
 outputFileNameClassDistanceEvaluation   = f"{embeddingPrefix}_distance_evaluation_" + "{}" + f".{plotFileFormat}"
 
+# The summary table of the models and baselines, and the confusion matrices,
+# ROC curves and confidence calibration of the models.
+def outputFileClassEvaluationOf(name : str, fileFormat : str = plotFileFormat) -> str:
+    """The path of an evaluation output of the experiment, e.g. ..._summary.csv."""
+    return os.path.join(dataDir, outputFolderName, outputFolderNameEvaluation,
+        f"{filesPrefixApproachClass}_{name}.{fileFormat}")
+
+outputFileClassSummary     = outputFileClassEvaluationOf("summary", csvFileFormat)
+outputFileClassConfusion   = outputFileClassEvaluationOf("confusion_matrices")
+outputFileClassROC         = outputFileClassEvaluationOf("roc")
+outputFileClassCalibration = outputFileClassEvaluationOf("calibration")
+
 
 # The Few-Shot examples with their answer (classification, confidence from 1
 # to 5, rationale). Their synonyms are left out of the evaluation also in runs

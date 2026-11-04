@@ -9,7 +9,7 @@ and the cosine distance of the synonyms to their label per source type.
 import numpy                as np
 import matplotlib.pyplot    as plt
 import seaborn              as sns
-from sklearn.metrics import precision_recall_fscore_support
+from sklearn.metrics import precision_recall_fscore_support, roc_auc_score, roc_curve
 from matplotlib.lines import Line2D
 import sys
 import shlex
@@ -155,6 +155,10 @@ with l.step("Evaluating the classifications"):
         development[typeColumn] = development[additionalColumn].map(synonymTypeOf)
         development = development[development[typeColumn].isin(synonymTypes)]
     drawPlots = reduceToTestIDs or forceDrawAdditionalPlots
+    # The predictions of the distance baselines and the distances, per gold
+    # synonym, for the summary and the ROC curves.
+    baselines      = {}
+    distanceScores = {}
 
     for embeddingModel in embeddingModels.keys():
         for distanceMetric in distanceMetrics:
@@ -175,6 +179,9 @@ with l.step("Evaluating the classifications"):
             scores = np.array([thresholdScores(tuning[column].to_numpy(),
                 tuning[typeColumn].to_numpy(), t) for t in thresholds])
             best = thresholds[np.argmax(scores[:, 0])]
+            baselines[f"distance ({embeddingModel})"] = np.where(
+                gold[column].to_numpy() >= best, laypersonSynonymType, expertSynonymType)
+            distanceScores[f"distance ({embeddingModel})"] = gold[column].to_numpy()
 
             macro, expert, layperson = thresholdScores(evaluation[column].to_numpy(),
                 evaluation[typeColumn].to_numpy(), best)
@@ -229,6 +236,155 @@ with l.step("Evaluating the classifications"):
             plt.savefig(outputFileClassEmbeddingEval, dpi = 300, bbox_inches = "tight")
             plt.close()
             l.log(f"{plotting} completed.")
+
+    # ------------------------------------------------------------------------------
+    # Summary of every model and of the baselines (the most frequent gold type,
+    # and the distance threshold): macro-F1, balanced accuracy, Cohen's kappa
+    # and the share of undefined answers, with 95% bootstrap intervals.
+    # ------------------------------------------------------------------------------
+
+    answers = synonymTypes + [undefinedSynonymType.lower()]
+
+    def confusionCounts(goldTypes : np.ndarray, predicted : np.ndarray, samples : int = 0) -> np.ndarray:
+        """
+        The confusion counts gold (expert, layperson) x answer (expert,
+        layperson, other), of the data and of `samples` bootstrap samples of it
+        (shape (1 + samples, 2, 3)).
+        """
+        codes = 3 * (goldTypes == laypersonSynonymType) + np.select(
+            [predicted == expertSynonymType, predicted == laypersonSynonymType], [0, 1], 2)
+        rng = np.random.default_rng(0)
+        counts = [np.bincount(codes, minlength = 6)]
+        for _ in range(samples):
+            counts.append(np.bincount(codes[rng.integers(0, len(codes), len(codes))], minlength = 6))
+        return np.array(counts).reshape(-1, 2, 3)
+
+    def summaryMetrics(counts : np.ndarray) -> dict:
+        """The metrics of confusion counts (see confusionCounts()), per sample."""
+        n         = counts.sum(axis = (1, 2))
+        actual    = counts.sum(axis = 2)
+        columns   = counts.sum(axis = 1)
+        tp        = counts[:, [0, 1], [0, 1]]
+        f1        = 2 * tp / np.maximum(actual + columns[:, :2], 1)
+        accuracy  = tp.sum(axis = 1) / n
+        # Chance agreement for kappa; an undefined answer never agrees.
+        expected  = (actual * columns[:, :2]).sum(axis = 1) / n ** 2
+        return {
+            "macro_f1"          : f1.mean(axis = 1),
+            "balanced_accuracy" : (tp / np.maximum(actual, 1)).mean(axis = 1),
+            "kappa"             : (accuracy - expected) / np.where(expected < 1, 1 - expected, 1),
+            "accuracy"          : accuracy,
+            "undefined"         : columns[:, 2] / n,
+        }
+
+    goldTypes = gold[typeColumn].to_numpy()
+    majority  = gold[typeColumn].value_counts().idxmax()
+    predictions = {
+        system : classifiedComplete[classifiedComplete[systemColumn] == system].set_index(
+            [hpoidColumn, classColumn, contentColumn])[answerColumn].reindex(
+            pd.MultiIndex.from_frame(gold[[hpoidColumn, classColumn, contentColumn]])).to_numpy()
+        for system in systems
+    }
+    predictions[f"majority ({majority})"] = np.full(len(goldTypes), majority)
+    predictions.update(baselines)
+
+    summarising = f"Summarising {len(systems)} models and {len(predictions) - len(systems)} baselines"
+    l.log(f"{summarising}...")
+    l.log(f"{len(goldTypes)} synonyms; intervals from 1000 bootstrap samples.")
+    rows = []
+    for system, predicted in predictions.items():
+        metrics = summaryMetrics(confusionCounts(goldTypes, predicted, 1000))
+        row = {systemColumn : system, "synonyms" : len(goldTypes)}
+        for name, values in metrics.items():
+            row[name] = values[0]
+            row[f"{name}_low"], row[f"{name}_high"] = np.percentile(values[1:], [2.5, 97.5])
+        rows.append(row)
+        interval = lambda name: f"{row[name]:.3f} [{row[name + '_low']:.3f}, {row[name + '_high']:.3f}]"
+        l.log(f"{system}: macro-F1 {interval('macro_f1')}, undefined {100 * row['undefined']:.1f}%.")
+        l.log(f"{system}: balanced accuracy {interval('balanced_accuracy')}, kappa {interval('kappa')}.")
+    writeHugeCSV(pd.DataFrame(rows), outputFileClassSummary)
+    l.log(f"{summarising} completed.")
+
+    # Confusion matrices of the models, as counts and as shares of the gold type.
+    columnsCount = min(3, len(systems))
+    fig, axes = plt.subplots(nrows = math.ceil(len(systems) / columnsCount), ncols = columnsCount,
+        figsize = (4.5 * columnsCount, 3.5 * math.ceil(len(systems) / columnsCount)), squeeze = False)
+    for ax, system in zip(axes.flat, systems):
+        counts = confusionCounts(goldTypes, predictions[system])[0]
+        shares = counts / np.maximum(counts.sum(axis = 1, keepdims = True), 1)
+        sns.heatmap(shares, ax = ax, vmin = 0, vmax = 1, cmap = "Blues", cbar = False,
+            annot = np.array([[f"{c}\n({100 * r:.0f}%)" for c, r in zip(cr, rr)] for cr, rr in zip(counts, shares)]),
+            fmt = "", xticklabels = answers, yticklabels = synonymTypes)
+        ax.set_title(system, fontsize = 9)
+        ax.set_xlabel("Answer")
+        ax.set_ylabel("Gold type")
+    for ax in list(axes.flat)[len(systems):]:
+        ax.axis("off")
+    fig.suptitle("Confusion Matrices (share of the gold type)")
+    plt.tight_layout()
+    plt.savefig(outputFileClassConfusion, dpi = 300, bbox_inches = "tight")
+    plt.close()
+
+    # ROC curves with layperson as the positive type: a model ranks a synonym
+    # by its confidence, positive for layperson answers, negative for expert
+    # ones (0 if undefined); the baseline by the distance.
+    isLayperson = goldTypes == laypersonSynonymType
+    if 0 < isLayperson.sum() < len(isLayperson):
+        rankings = {}
+        for system in systems:
+            data = classifiedComplete[classifiedComplete[systemColumn] == system].set_index(
+                [hpoidColumn, classColumn, contentColumn]).reindex(
+                pd.MultiIndex.from_frame(gold[[hpoidColumn, classColumn, contentColumn]]))
+            confidence = pd.to_numeric(data[confidenceColumn], errors = "coerce").fillna(0).clip(lower = 0)
+            rankings[system] = np.select([data[answerColumn] == laypersonSynonymType,
+                data[answerColumn] == expertSynonymType], [confidence, -confidence], 0)
+        rankings.update({name : np.nan_to_num(values, nan = np.nanmedian(values))
+            for name, values in distanceScores.items()})
+
+        plt.figure(figsize = (6, 6))
+        for name, scores in rankings.items():
+            auc = roc_auc_score(isLayperson, scores)
+            falsePositives, truePositives, _ = roc_curve(isLayperson, scores)
+            plt.plot(falsePositives, truePositives, label = f"{name} (AUC {auc:.3f})",
+                color = color_map.get(name, "black"), linestyle = "-" if name in systems else "--")
+            l.log(f"{name}: ROC AUC {auc:.3f} (layperson as positive).")
+        plt.plot([0, 1], [0, 1], color = "grey", linestyle = ":", label = "Chance")
+        plt.xlabel("False positive rate (expert synonyms classified as layperson)")
+        plt.ylabel("True positive rate (layperson synonyms found)")
+        plt.title("ROC Curves, Layperson as Positive")
+        plt.legend(loc = "lower right", fontsize = 7)
+        plt.grid(axis = "both")
+        plt.savefig(outputFileClassROC, dpi = 300, bbox_inches = "tight")
+        plt.close()
+
+    # Confidence calibration: the accuracy and the share of the answers per
+    # confidence level (1 to 5) of every model.
+    levels = np.arange(1, 6)
+    fig, (top, bottom) = plt.subplots(nrows = 2, figsize = (7, 7), sharex = True)
+    for index, system in enumerate(systems):
+        data = classifiedComplete[classifiedComplete[systemColumn] == system]
+        confidence = pd.to_numeric(data[confidenceColumn], errors = "coerce")
+        correct    = data[answerColumn] == data[typeColumn]
+        accuracy   = [correct[confidence == level].mean() if (confidence == level).any() else np.nan
+            for level in levels]
+        share      = [(confidence == level).mean() for level in levels]
+        top.plot(levels, accuracy, marker = "o", color = color_map[system], label = system)
+        bottom.bar(levels + (index - (len(systems) - 1) / 2) * 0.8 / len(systems), share,
+            width = 0.8 / len(systems), color = color_map[system])
+        l.log(f"{system}: accuracy per confidence 1-5: " + ", ".join(
+            "-" if np.isnan(a) else f"{a:.2f}" for a in accuracy) + ".")
+    top.set_ylabel("Accuracy")
+    top.set_ylim(0, 1)
+    top.grid(axis = "both")
+    top.legend(fontsize = 7)
+    top.set_title("Accuracy and Share of the Answers per Confidence")
+    bottom.set_ylabel("Share of the answers")
+    bottom.set_xlabel("Confidence")
+    bottom.set_xticks(levels)
+    bottom.grid(axis = "both")
+    plt.tight_layout()
+    plt.savefig(outputFileClassCalibration, dpi = 300, bbox_inches = "tight")
+    plt.close()
 
     # ------------------------------------------------------------------------------
     # Gold counts.
