@@ -10,7 +10,7 @@ Written by the preparation run (`python3 ./src/SynTypeClassification.py`), and j
 
 | Column | Content |
 |---|---|
-| `hpoID`, `class`, `content` | The concept, the synonym class and the synonym |
+| `id`, `attribute`, `value`, `additional` | The synonym's row of the transformed HPO, as in `hpo.development.csv` and `hpo.evaluation.csv`: the concept, `synonym`, the synonym and its additional information (synonym class and source type) |
 | `distance_<model>_cosine` | Cosine distance (1 minus the cosine similarity) of the synonym to the label of its concept, for every model of `embedder.model_id`, normalised with `syntype.cosine_distance_mean` and `_std` (unchanged with the defaults 0 and 1, then from 0 to 2); empty for a concept without a label |
 
 The development set is embedded first: the preparation run logs the mean and standard deviation of its distances, which are to be set as `syntype.cosine_distance_mean` and `_std`, so that the distances of the evaluation set are normalised with them. Changing them computes both files again. The embeddings themselves are cached by the `embedder` package (`embedder.cache_folder`), so a term is encoded only once.

@@ -52,8 +52,16 @@ with l.step("Evaluating the classifications"):
     # test runs, of all synonyms otherwise. Distance columns already in the
     # classifications are replaced.
     if isFile(inputFileDistances):
-        distances = readCSV(inputFileDistances)
+        # The distance files are in the format of the transformed HPO (id,
+        # attribute, value, additional); joined by concept, synonym class and
+        # synonym.
+        distances = readTransformed(inputFileDistances)
+        distances[hpoidColumn]   = distances[idColumn]
+        distances[classColumn]   = distances[additionalColumn].map(synonymClassOf)
+        distances[contentColumn] = distances[valueColumn]
         keys         = [hpoidColumn, classColumn, contentColumn]
+        distances    = distances[keys + [
+            c for c in distances.columns if c.startswith(distanceColumnPrePrefix)]]
         for data in [classifiedComplete, distances]:
             data[keys] = data[keys].astype(str)
 
@@ -201,7 +209,8 @@ with l.step("Evaluating the classifications"):
 
 
                 if column in classified.columns and (not isFile(outputFileClassEmbeddingEval) or forceDrawAdditionalPlots):
-                    l.log(f"Plotting {distanceMetric} for Model {embeddingModel}...")
+                    plotting = f"Plotting the {distanceMetric} distance of {embeddingModel}"
+                    l.log(f"{plotting}...")
 
                     x1 = []
                     y1 = []
@@ -251,7 +260,9 @@ with l.step("Evaluating the classifications"):
 
 
                         plt.scatter(max_x, max_y, s = 200, marker = 'x', color = "red", zorder = 100, label = "(" + str(max_x) + ", " + str(max_y) + ") (Count: " + str(c) + ", " + str(p) + "%)")
-                        l.log(f"Suggested Threshold for Type {quote(laypersonSynonymType)}, Metric {quote(distanceMetric)}, and Model {quote(embeddingModel)}: {str(max_x)} with F1 of {max_y} classifying {str(p)}% of the data." )
+                        l.log(f"Suggested threshold for {quote(laypersonSynonymType)} (distance >= " \
+                            f"threshold): {str(max_x)}.")
+                        l.log(f"F1 {max_y}, classifying {str(p)}% of the synonyms.")
 
                     if not np.all(np.isnan(y2)):
                         max_index = np.nanargmax(y2)
@@ -262,7 +273,9 @@ with l.step("Evaluating the classifications"):
                         p = 100 * float(math.floor(roundFactor * c / len(classified.index)))  / roundFactor
 
                         plt.scatter(max_x, max_y, s = 200, marker = 'x', color = "blue", zorder = 100, label = "(" + str(max_x) + ", " + str(max_y) + ") (Count: " + str(c) + ", " + str(p) + "%)")
-                        l.log(f"Suggested Threshold for Type {quote(expertSynonymType)}, Metric {quote(distanceMetric)}, and Model {quote(embeddingModel)}: {str(max_x)} with F1 of {max_y} classifying {str(p)}% of the data." )
+                        l.log(f"Suggested threshold for {quote(expertSynonymType)} (distance <= " \
+                            f"threshold): {str(max_x)}.")
+                        l.log(f"F1 {max_y}, classifying {str(p)}% of the synonyms.")
 
                     plt.xlabel("Threshold")
                     plt.ylabel("F1 Score")
@@ -274,6 +287,7 @@ with l.step("Evaluating the classifications"):
 
                     plt.legend(loc = "lower left", ncol = 1)
                     plt.savefig(outputFileClassEmbeddingEval, dpi = 300, bbox_inches = "tight")
+                    l.log(f"{plotting} completed.")
 
     # ------------------------------------------------------------------------------
     # Gold counts.
@@ -370,7 +384,7 @@ with l.step("Evaluating the classifications"):
                 l.log(f"{system} ({quote(startString or 'all')}), {t}: " \
                     f"P {result[system][t][precisionLabel]:.3f}, " \
                     f"R {result[system][t][recallLabel]:.3f}, " \
-                    f"F1 {result[system][t][f1ScoreLabel]:.3f}")
+                    f"F1 {result[system][t][f1ScoreLabel]:.3f}.")
 
         metrics = [f1ScoreLabel, recallLabel, precisionLabel]
         classes = list(synonymTypes)

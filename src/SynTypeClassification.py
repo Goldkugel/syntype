@@ -84,7 +84,9 @@ embedSettings = {
     },
     "embedding_model_names" : syntypeConfig.embedding_model_names,
     "distance_metrics"    : distanceMetrics,
-    "cosine_distance"     : [cosineDistanceMean, cosineDistanceStd]
+    "cosine_distance"     : [cosineDistanceMean, cosineDistanceStd],
+    # The rows are in the format of the transformed HPO.
+    "format"              : [idColumn, attributeColumn, valueColumn, additionalColumn]
 }
 
 def transformOutdated(log : bool = True) -> bool:
@@ -227,11 +229,13 @@ def transformHPO() -> None:
 
     conflictingClasses = classes.map(lambda c: conflictingSynonymClasses <= c)
     conflictingTypes   = types.map(lambda t: conflictingSynonymTypes <= t)
-    l.log(f"Removing {conflictingClasses.sum()} synonyms listed as both " \
-        f"{applyFormat(sorted(conflictingSynonymClasses))}...")
-    l.log(f"Removing {(conflictingTypes & ~conflictingClasses).sum()} further synonyms " \
-        f"listed as both {applyFormat(sorted(conflictingSynonymTypes))}...")
+    l.log("Removing the synonyms with conflicting gold labels...")
+    l.log(f"{conflictingClasses.sum()} synonyms listed as both " \
+        f"{applyFormat(sorted(conflictingSynonymClasses))}.")
+    l.log(f"{(conflictingTypes & ~conflictingClasses).sum()} further synonyms " \
+        f"listed as both {applyFormat(sorted(conflictingSynonymTypes))}.")
     data = data.drop(additional.index[(conflictingClasses | conflictingTypes).to_numpy()])
+    l.log("Removing the synonyms with conflicting gold labels completed.")
 
     # The other synonyms listed several times count with their first class
     # and type, which becomes their gold label.
@@ -257,12 +261,12 @@ def transformHPO() -> None:
     # --------------------------------------------------------------------------
 
     rowCount = len(data.index)
-    l.log("Removing synonyms having a match with labels...")
+    l.log("Removing the synonyms that match their label...")
     terms   = data[idColumn].astype(str) + data[valueColumn].astype(str).str.lower()
     matches = synonymRows(data) & terms.isin(terms[data[attributeColumn] == labelClass])
     data    = data[~matches].reset_index(drop = True)
-    l.log(f"Removed {rowCount - len(data.index)} synonyms due to having a " \
-        "match with their label.")
+    l.log(f"{rowCount - len(data.index)} synonyms match their label.")
+    l.log("Removing the synonyms that match their label completed.")
 
     l.printRowCount(data)
     printDataSummary(data)
@@ -270,7 +274,7 @@ def transformHPO() -> None:
     l.log("Writing the transformed HPO...")
     writeHugeCSV(data, outputFileTransformedFull)
     writeSettings(outputFileTransformedFull, transformSettings)
-    l.log("Full transformed Data written.")
+    l.log("Writing the transformed HPO completed.")
 
 # ==============================================================================
 # Embedding: the cosine distance of every synonym to its label -> embed.csv
@@ -297,27 +301,33 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
 
     data = readTransformed(inputFile)
 
-    l.log("Filtering Labels and Synonyms of HPO Concepts...")
-    synonymRows = synonymTable(data)
-    types       = synonymRows[typeColumn]
-    synonymRows = synonymRows[[hpoidColumn, classColumn, contentColumn]].copy()
-    synonyms    = synonymRows[contentColumn].astype(str).tolist()
+    l.log("Filtering the labels and synonyms...")
+    # The synonym rows in the format of the transformed HPO (id, attribute,
+    # value, additional), which embed.csv keeps; synonymTable() has the same
+    # rows in the same order.
+    distanceRows = data[synonymRows(data)][
+        [idColumn, attributeColumn, valueColumn, additionalColumn]].reset_index(drop = True)
+    table       = synonymTable(data)
+    types       = table[typeColumn]
+    table = table[[hpoidColumn, classColumn, contentColumn]].copy()
+    synonyms    = table[contentColumn].astype(str).tolist()
 
     # One label per concept with synonyms (the first, if a concept has
     # several); the labels of the parents and children in the development set
     # are not needed.
     labelRows   = data[(data[attributeColumn] == labelClass)
-        & data[idColumn].isin(synonymRows[hpoidColumn])].drop_duplicates(subset = idColumn)
+        & data[idColumn].isin(table[hpoidColumn])].drop_duplicates(subset = idColumn)
     labels      = labelRows[valueColumn].astype(str).tolist()
 
     # Position of the label of each synonym's concept in labels (-1 if the
     # concept has no label).
-    labelIndex  = synonymRows[hpoidColumn].map(
+    labelIndex  = table[hpoidColumn].map(
         pd.Series(range(len(labels)), index = labelRows[idColumn])
     ).fillna(-1).astype(int).to_numpy()
     hasLabel    = labelIndex >= 0
     l.log(f"Found {len(labels)} labels and {len(synonyms)} synonyms " \
         f"({(~hasLabel).sum()} of a concept without label).")
+    l.log("Filtering the labels and synonyms completed.")
 
     def describe(values : pd.Series) -> str:
         """
@@ -340,25 +350,26 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
     # Embed and calculate the distance of labels to their synonyms.
     # --------------------------------------------------------------------------
 
-    l.log("Start to Embed Synonyms and Labels with all Embedding Models.")
+    l.log("Embedding the synonyms and labels with all embedding models...")
     embeddingModelsList = sorted(embeddingModels.keys())
     for index, embeddingModel in enumerate(embeddingModelsList):
 
         # Set up the embedding model. One model is loaded at a time, so only one
         # is held in memory.
-        l.log(f"Set up ({index + 1}/{len(embeddingModelsList)}) " \
-            f"model {quote(embeddingModel)}...")
+        setUp = f"Setting up model {index + 1}/{len(embeddingModelsList)} {quote(embeddingModel)}"
+        l.log(f"{setUp}...")
         configuration["embedder"]["model_id"] = [embeddingModels[embeddingModel]]
         embedder = Embedder(configuration)
-        l.log("Model set up.")
+        l.log(f"{setUp} completed.")
 
-        l.log("Embedding Labels...")
+        l.log("Embedding the labels...")
         labelEmbeddings   = np.asarray(
             embedder.embed(labels)[embeddingModels[embeddingModel]])
-        l.log("Embedding Synonyms...")
+        l.log("Embedding the labels completed.")
+        l.log("Embedding the synonyms...")
         synonymEmbeddings = np.asarray(
             embedder.embed(synonyms)[embeddingModels[embeddingModel]])
-        l.log("Labels and Synonyms embedded.")
+        l.log("Embedding the synonyms completed.")
 
         # The label embedding of every synonym's concept.
         a = synonymEmbeddings[hasLabel]
@@ -384,7 +395,7 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
             mean   = values.mean() if cosineDistanceMean is None else cosineDistanceMean
             std    = values.std() if cosineDistanceStd is None else cosineDistanceStd
             normalised = (values - mean) / std
-            synonymRows[distanceColumn] = normalised
+            distanceRows[distanceColumn] = normalised
 
             # The distances of all synonyms with a label, before and after the
             # normalization, and per gold type.
@@ -426,7 +437,9 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
     # SynTypeEval.py joins to the classified synonyms.
     # --------------------------------------------------------------------------
 
-    writeHugeCSV(synonymRows, outputFile)
+    l.log("Embedding the synonyms and labels with all embedding models completed.")
+
+    writeHugeCSV(distanceRows, outputFile)
     writeSettings(outputFile, embedSettings)
 
 # ==============================================================================
@@ -551,17 +564,18 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
     # it is. Its answer store (the checkpoint) and prompt log are named after
     # the model and the experiment (the postfix), since start.sh starts many
     # runs at the same time.
-    l.log(f"Set up the LLM ({modelName})...")
+    l.log(f"Setting up the LLM ({modelName})...")
     with Model(configFile, modelIndex) as model:
         model.setPostfix(f"{testStr}_{configStr}_{chainOfThoughtsStr}_{fewShotStr}")
-        l.log(f"Set up of LLM complete.")
+        l.log(f"Setting up the LLM ({modelName}) completed.")
 
         # The model uses the answers in its answer store and only generates the
         # others, so an interrupted run resumes where it stopped; without the
         # store the classification starts anew. A changed prompt has no stored
         # answers, and a store written with other model settings is refused.
         for turn, (promptColumn, targetColumn) in enumerate(turns):
-            l.log(f"({turn + 1}) Generating.")
+            generating = f"Turn {turn + 1}/{len(turns)}: generating the answers"
+            l.log(f"{generating}...")
 
             # The model loads the prompt of this turn (by its index in
             # llm.prompt_files) and fills in its placeholders.
@@ -577,6 +591,7 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
 
             synonyms[targetColumn] = [model.getAnswer(index, turn) for index in range(len(values))]
             writeHugeCSV(synonyms, rawFile)
+            l.log(f"{generating} completed.")
 
         # The final answers are JSON objects with the classification, its
         # confidence and a rationale, parsed by the model package.
@@ -591,11 +606,13 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
         l.log(f"{sum(c != undefinedSynonymType for c in synonyms[synonymClass])} of " \
             f"{len(parsed)} answers contain a valid classification, " \
             f"{sum(r != '' for r in synonyms[rationaleColumn])} a rationale.")
+        l.log("Parsing the answers completed.")
         writeHugeCSV(synonyms, rawFile)
 
         # Every prompt and answer of this model and experiment.
         l.log("Writing the prompts and answers to the prompt log...")
         model.logPrompts()
+        l.log("Writing the prompts and answers to the prompt log completed.")
 
     return synonyms
 
@@ -626,7 +643,7 @@ def formatAnswers(synonyms : pd.DataFrame, modelName : str) -> None:
 
     writeHugeCSV(classified, outputFileClassFormatted(modelName))
 
-    l.log("Logging incorrect classified Synonyms...")
+    l.log("Logging the wrong classifications...")
 
     # For logging purposes the gold standard is read and wrong classifications
     # are placed in the logging file. This is useful when it comes to prompt 
@@ -651,13 +668,13 @@ def formatAnswers(synonyms : pd.DataFrame, modelName : str) -> None:
             label = ", ".join(getElements(labels, row[hpoidColumn], labelClass))
             l.log(f"{quote(shorten(row[contentColumn], 32))} " \
                 f"(label {quote(shorten(label, 28))}): {row[typeColumn]} -> " \
-                f"{row[answerColumn]} ({row[confidenceColumn]})", cmdline = False)
+                f"{row[answerColumn]} ({row[confidenceColumn]}).", cmdline = False)
             l.log(f"    {quote(shorten(row[rationaleColumn], 90))}", cmdline = False)
             count = count + 1
 
-    l.log(f"Incorrect Classifications: {count}")
-    l.log(f"Correct Classifications:   {len(classified.index) - count}")
-    l.log("Logging completed.")
+    l.log(f"Wrong or undefined classifications: {count}.")
+    l.log(f"Correct classifications: {len(classified.index) - count}.")
+    l.log("Logging the wrong classifications completed.")
 
     logClassificationSummary(classified, modelName)
 
