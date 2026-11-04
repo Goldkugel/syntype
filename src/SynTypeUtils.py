@@ -308,8 +308,8 @@ def parseClassification(answer) -> tuple[str, int, str]:
         if answer.get(rationaleColumn) is not None:
             rationale = str(answer[rationaleColumn]).strip()
 
-        if synonymClass in answer and confidenceColumn in answer:
-            parsedClassification = str(answer[synonymClass]).strip().lower()
+        if classificationKey in answer and confidenceColumn in answer:
+            parsedClassification = str(answer[classificationKey]).strip().lower()
             try:
                 parsedConfidence = int(answer[confidenceColumn])
             except (TypeError, ValueError):
@@ -380,8 +380,8 @@ def logSynonymCounts(name : str, data : pd.DataFrame) -> None:
     counts   = pd.crosstab(synonyms[classColumn], types)[total.index]
     l.log(f"{name}: {len(synonyms.index)} synonyms: " + ", ".join(
         f"{t} {n}" for t, n in total.items()) + ".")
-    for synonymClass, row in counts.iterrows():
-        l.log(f"{name}, {synonymClass}: {row.sum()} synonyms: " + ", ".join(
+    for className, row in counts.iterrows():
+        l.log(f"{name}, {className}: {row.sum()} synonyms: " + ", ".join(
             f"{t} {n}" for t, n in row.items() if n > 0) + ".")
 
 def writeDevelopmentSet() -> pd.DataFrame:

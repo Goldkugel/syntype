@@ -13,6 +13,13 @@ import yaml
 
 from SynTypeConfig import ExperimentConfig, SyntypeConfig
 
+# The attributes, synonym classes and source types of the transformed HPO, as
+# the adapter writes them.
+from adapter                  import labelClass, definitionClass, commentClass, childrenClass
+from adapter                  import exactSynonymClass, relatedSynonymClass
+from adapter                  import expertSynonymType, laypersonSynonymType, abbreviationSynonymType
+from adapter.hpo.HPOAdapterUtils import directSynonymType
+
 sys.dont_write_bytecode = True
 
 # =============================================================================
@@ -113,33 +120,20 @@ confidenceColumn            = "confidence"
 rationaleColumn             = "rationale"
 
 # =============================================================================
-# Data Classes of Concepts in HPO that are being processed
+# The answer key, and the synonym classes and types syntype classifies
 # =============================================================================
 
-labelClass                      = "label"
-definitionClass                 = "definition"
-commentClass                    = "comment"
-
-synonymClass                    = "classification"
-exactSynonymClass               = "exact"
-relatedSynonymClass             = "related"
+# The key of the classification in the LLM's JSON answer.
+classificationKey               = "classification"
 
 # The synonym classes syntype classifies; broad and narrow synonyms name
 # another phenotype than their concept.
 synonymClasses = [exactSynonymClass, relatedSynonymClass]
 
-expertSynonymType               = "expert"
-laypersonSynonymType            = "layperson"
-abbreviationSynonymType         = "abbreviation"
-# In OWL Class Section, rather than in Axiom Section.
-directSynonymType               = "direct"
-
 undefinedSynonymType            = "undefined"
 
 # The types the LLM classifies synonyms into (see prompts/).
 synonymTypes = [expertSynonymType, laypersonSynonymType]
-
-childrenClass                   = "child"
 
 goldStandardSystem              = "gold"
 

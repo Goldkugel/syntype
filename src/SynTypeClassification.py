@@ -75,7 +75,7 @@ def createJSONExample(cl : str = "", co : str = "5", ra : str = "") -> str:
     The answer of a Few-Shot example, in the output format of the prompts.
     """
     ret = "{\n" \
-        f"\t{quote(synonymClass)}: {quote(cl)},\n" \
+        f"\t{quote(classificationKey)}: {quote(cl)},\n" \
         f"\t{quote(confidenceColumn)}: {co},\n" \
         f"\t{quote(rationaleColumn)}: {json.dumps(ra)}\n" \
         "}"
@@ -493,10 +493,10 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
             parseClassification(model.toJSON(index))
             for index in range(len(model.getMessageHistories()))
         ]
-        synonyms[synonymClass]     = [classification for classification, _, _ in parsed]
+        synonyms[classificationKey]     = [classification for classification, _, _ in parsed]
         synonyms[confidenceColumn] = [confidence for _, confidence, _ in parsed]
         synonyms[rationaleColumn]  = [rationale for _, _, rationale in parsed]
-        l.log(f"{sum(c != undefinedSynonymType for c in synonyms[synonymClass])} of " \
+        l.log(f"{sum(c != undefinedSynonymType for c in synonyms[classificationKey])} of " \
             f"{len(parsed)} answers contain a valid classification, " \
             f"{sum(r != '' for r in synonyms[rationaleColumn])} a rationale.")
         l.log("Parsing the answers completed.")
@@ -522,9 +522,9 @@ def formatAnswers(synonyms : pd.DataFrame, modelName : str) -> None:
     l.printHeader(f"Formatting Answers of Synonym's Classification ({modelName})")
 
     classified = synonyms.copy()
-    classified[answerColumn]     = classified[synonymClass].fillna(undefinedSynonymType)
+    classified[answerColumn]     = classified[classificationKey].fillna(undefinedSynonymType)
     classified[confidenceColumn] = classified[confidenceColumn].fillna(-1).astype(int)
-    classified                   = classified.drop(columns = synonymClass)
+    classified                   = classified.drop(columns = classificationKey)
 
     writeHugeCSV(classified, outputFileClassFormatted(modelName))
 
