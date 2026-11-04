@@ -378,6 +378,22 @@ def developmentSetOutdated(log : bool = True) -> bool:
     return any([outdated(output, [outputFileTransformedFull], developmentSetSettings, log)
         for output in [outputFileTransformedDevelopment, outputFileTransformedEvaluation]])
 
+def logSynonymCounts(name : str, data : pd.DataFrame) -> None:
+    """
+    Logs how many synonyms of every synonym class and gold type a transformed
+    HPO file holds, those syntype classifies (synonymTable()).
+    """
+    l = Logger()
+    synonyms = synonymTable(data)
+    types    = synonyms[typeColumn].replace("", "(none)")
+    total    = types.value_counts()
+    counts   = pd.crosstab(synonyms[classColumn], types)[total.index]
+    l.log(f"{name}: {len(synonyms.index)} synonyms; per gold type " + ", ".join(
+        f"{quote(t)} {n}" for t, n in total.items()) + ".")
+    for synonymClass, row in counts.iterrows():
+        l.log(f"{name}, synonym class {quote(synonymClass)}: {row.sum()} synonyms; " \
+            f"per gold type " + ", ".join(f"{quote(t)} {n}" for t, n in row.items() if n > 0) + ".")
+
 def writeDevelopmentSet() -> pd.DataFrame:
     """
     Draws syntype.development_set.size_per_type synonyms of every gold type
@@ -431,6 +447,7 @@ def writeDevelopmentSet() -> pd.DataFrame:
         f"concepts, {relationRows.sum()} parent and child relations, the labels of " \
         f"{len(related)} parents and children; {len(result.index)} rows.")
     printDataSummary(result)
+    logSynonymCounts("Development set", result)
 
     # The evaluation set: every row of hpo.csv except the drawn synonyms. A
     # synonym listed several times (with other classes or types) is removed
@@ -443,6 +460,7 @@ def writeDevelopmentSet() -> pd.DataFrame:
         f"{os.path.basename(outputFileTransformedFull)} without the {drawnRows.sum()} rows " \
         f"of the drawn synonyms; {synonymRows(evaluation).sum()} synonyms, " \
         f"{len(evaluation.index)} rows.")
+    logSynonymCounts("Evaluation set", evaluation)
 
     writeHugeCSV(result, outputFileTransformedDevelopment)
     writeSettings(outputFileTransformedDevelopment, developmentSetSettings)
