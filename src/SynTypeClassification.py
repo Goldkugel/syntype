@@ -29,10 +29,7 @@ from config     import *
 
 from logger     import Logger, lockedFile, writeJSON
 
-# The log file is named after the start of the run only, so the command line
-# is its first line.
 l = Logger(config = configFile)
-l.log(f"Command: python3 {shlex.join(sys.argv)}")
 
 # Adapter and embedder read this copy (the embedding model is set on it); the
 # model package reads the llm section from the file itself.
@@ -598,53 +595,69 @@ def logClassificationSummary(classified : pd.DataFrame, modelName : str) -> None
 # The steps of this run.
 # ==============================================================================
 
-# Only the first of the runs started at the same time transforms the HPO; the
-# others wait for the lock. The reason is logged only once the lock is taken.
-if transformOutdated(log = False):
-    with lockedFile(outputFileTransformedFull):
-        if transformOutdated():
-            with l.step("Transforming the HPO"):
-                transformHPO()
-else:
-    l.log("The transformed HPO is up to date.")
+def main() -> None:
+    """
+    Runs the steps: the preparation without an experiment index, otherwise
+    the classification of the experiment.
+    """
+    # The log file is named after the start of the run only, so the command
+    # line is its first line.
+    l.log(f"Command: python3 {shlex.join(sys.argv)}")
 
-# Drawn once in the same way.
-if developmentSetOutdated(log = False):
-    with lockedFile(outputFileTransformedDevelopment):
-        if developmentSetOutdated():
-            with l.step("Drawing the development and evaluation set"):
-                writeDevelopmentSet()
-else:
-    l.log("The development and evaluation set are up to date.")
+    # Only the first of the runs started at the same time transforms the HPO; the
+    # others wait for the lock. The reason is logged only once the lock is taken.
+    if transformOutdated(log = False):
+        with lockedFile(outputFileTransformedFull):
+            if transformOutdated():
+                with l.step("Transforming the HPO"):
+                    transformHPO()
+    else:
+        l.log("The transformed HPO is up to date.")
 
-if experimentIndex is None:
-    # Preparation run: the distances of the development set, then of the
-    # evaluation set.
-    for name, inputFile, outputFile, developmentSet in [
-        ("the development set", outputFileTransformedDevelopment, outputFileEmbeddedDevelopment, True),
-        ("the evaluation set", outputFileTransformedEvaluation, outputFileEmbeddedEvaluation, False)
-    ]:
-        if outdated(outputFile, [inputFile], embedSettings):
-            with l.step(f"Embedding {name}"):
-                embedTerms(inputFile, outputFile, developmentSet)
-        else:
-            l.log(f"The distances of {name} are up to date.")
-else:
-    # A failing model does not stop the others; each is unloaded from the GPU
-    # before the next one.
-    failed = []
-    for index, modelID in enumerate(modelIDs):
-        l.log(f"Model {index + 1}/{len(modelIDs)}: {quote(modelID)}")
-        modelName = modelNameOf(modelID)
-        try:
-            with l.step(f"Classifying the synonyms ({modelName})"):
-                synonyms = classifySynonyms(modelID)
-            with l.step(f"Formatting the answers ({modelName})"):
-                formatAnswers(synonyms, modelName)
-        except (Exception, SystemExit) as e:
-            l.error(f"Classifying with {quote(modelID)} failed: {e!r}")
-            failed.append(modelID)
+    # Drawn once in the same way.
+    if developmentSetOutdated(log = False):
+        with lockedFile(outputFileTransformedDevelopment):
+            if developmentSetOutdated():
+                with l.step("Drawing the development and evaluation set"):
+                    writeDevelopmentSet()
+    else:
+        l.log("The development and evaluation set are up to date.")
 
-    if len(failed) > 0:
-        l.error(f"{len(failed)} of {len(modelIDs)} model(s) failed: {applyFormat(failed)}.")
-        sys.exit(1)
+    if experimentIndex is None:
+        # Preparation run: the distances of the development set, then of the
+        # evaluation set.
+        for name, inputFile, outputFile, developmentSet in [
+            ("the development set", outputFileTransformedDevelopment, outputFileEmbeddedDevelopment, True),
+            ("the evaluation set", outputFileTransformedEvaluation, outputFileEmbeddedEvaluation, False)
+        ]:
+            if outdated(outputFile, [inputFile], embedSettings):
+                with l.step(f"Embedding {name}"):
+                    embedTerms(inputFile, outputFile, developmentSet)
+            else:
+                l.log(f"The distances of {name} are up to date.")
+    else:
+        # A failing model does not stop the others; each is unloaded from the GPU
+        # before the next one.
+        failed = []
+        for index, modelID in enumerate(modelIDs):
+            l.log(f"Model {index + 1}/{len(modelIDs)}: {quote(modelID)}")
+            modelName = modelNameOf(modelID)
+            try:
+                with l.step(f"Classifying the synonyms ({modelName})"):
+                    synonyms = classifySynonyms(modelID)
+                with l.step(f"Formatting the answers ({modelName})"):
+                    formatAnswers(synonyms, modelName)
+            except (Exception, SystemExit) as e:
+                # The step's error row gives the reason.
+                l.error(f"Classifying with {quote(modelID)} failed.")
+                failed.append(modelID)
+
+        if len(failed) > 0:
+            l.error(f"{len(failed)} of {len(modelIDs)} model(s) failed: {applyFormat(failed)}.")
+            sys.exit(1)
+
+
+# vLLM starts its workers with "spawn", which imports this script again: the
+# steps must only run in the main process.
+if __name__ == "__main__":
+    main()
