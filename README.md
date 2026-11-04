@@ -23,7 +23,7 @@ syntype/
 │   ├── logs/                # Log files, prompt logs and run metadata
 │   ├── output/
 │   │   ├── transformed/     # The HPO, development and evaluation set in the adapter's format
-│   │   ├── embeded/         # Distance of every synonym to its label (development and evaluation set)
+│   │   ├── embeded/         # Distance of every synonym to its label (development and evaluation set), embedding cache
 │   │   ├── type/            # Raw classifications (prompts and answers)
 │   │   ├── formated/        # Formatted classifications, one file per model
 │   │   ├── merged/          # Classifications of all models of an experiment
