@@ -90,11 +90,11 @@ The Python scripts can also be run by hand:
 |---|---|---|
 | Transformation | `SynTypeClassification.py` | [`data/output/transformed/`](data/output/transformed/README.md): the HPO |
 | Development and evaluation set | `SynTypeClassification.py`, `SynTypeDevelopmentSet.py` | [`data/output/transformed/`](data/output/transformed/README.md): 500 expert and 500 layperson synonyms at random, with their concepts, and the HPO without them |
-| Distances | `SynTypeClassification.py` | [`data/output/embedded/`](data/output/embedded/README.MD): the cosine distance of every synonym to its label, for the development set (its mean and standard deviation are logged for `syntype.cosine_distance_mean` and `_std`) and for the evaluation set |
-| Classification | `SynTypeClassification.py <index>` | [`data/output/type/`](data/output/type/README.MD): prompts and answers per model |
-| Formatting | `SynTypeClassification.py <index>` | [`data/output/formatted/`](data/output/formatted/README.MD): the classification per model |
-| Merging | `SynTypeMerge.py <index>` | [`data/output/merged/`](data/output/merged/README.MD): all models of an experiment |
-| Evaluation | `SynTypeEval.py <index>` | [`data/output/evaluated/`](data/output/evaluated/README.MD): plots |
+| Distances | `SynTypeClassification.py` | [`data/output/embedded/`](data/output/embedded/README.md): the cosine distance of every synonym to its label, for the development set (its mean and standard deviation are logged for `syntype.cosine_distance_mean` and `_std`) and for the evaluation set |
+| Classification | `SynTypeClassification.py <index>` | [`data/output/type/`](data/output/type/README.md): prompts and answers per model |
+| Formatting | `SynTypeClassification.py <index>` | [`data/output/formatted/`](data/output/formatted/README.md): the classification per model |
+| Merging | `SynTypeMerge.py <index>` | [`data/output/merged/`](data/output/merged/README.md): all models of an experiment |
+| Evaluation | `SynTypeEval.py <index>` | [`data/output/evaluated/`](data/output/evaluated/README.md): plots |
 
 The prompts are described in [`prompts/README.md`](prompts/README.md), the logs in [`data/logs/README.md`](data/logs/README.md).
 
