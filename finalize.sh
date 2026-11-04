@@ -11,6 +11,6 @@ python3 ./src/SynTypeClassification.py || exit 1
 # of all models are merged and evaluated.
 EXPERIMENTS=$(python3 ./src/config.py) || exit 1
 for ((INDEX = 0; INDEX < EXPERIMENTS; INDEX++)); do
-    python3 ./src/SynTypeMerge.py "$INDEX"
-    python3 ./src/SynTypeEval.py "$INDEX"
+    # An experiment without any classification is not evaluated.
+    python3 ./src/SynTypeMerge.py "$INDEX" && python3 ./src/SynTypeEval.py "$INDEX"
 done

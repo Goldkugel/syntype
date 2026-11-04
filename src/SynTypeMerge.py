@@ -41,52 +41,68 @@ l.printHeader(f"Merging Generated Classifications")
 # The logger logs the start, end and duration of the step.
 with l.step("Merging the classifications"):
     # ------------------------------------------------------------------------------
-    # Load Data.
+    # The formatted classifications of the models of llm.model_id for this
+    # experiment. Other files with the prefix of the experiment (e.g. of a
+    # model no longer in the list) are left out.
     # ------------------------------------------------------------------------------
 
-    # The formatted classifications of all models of this experiment.
-    inputFileClassMerged = []
-    if os.path.isdir(inputFolderClassMerged):
-        inputFileClassMerged = [
-            os.path.join(inputFolderClassMerged, file)
-            for file in os.listdir(inputFolderClassMerged)
-            if file.startswith(outputFileNameClassFormattedPrefix) and
-                file.endswith(csvFileFormat)
-        ]
+    files   = {
+        modelID : outputFileClassFormatted(modelNameOf(modelID))
+        for modelID in configurationFile["llm"]["model_id"]
+    }
+    present = {modelID : file for modelID, file in files.items() if isFile(file)}
+    missing = [modelID for modelID in files if modelID not in present]
 
-    # Merging Generated Classes.
-    if len(inputFileClassMerged) == 0:
-        l.log(f"No '{csvFileFormat}' files with prefix " + 
-            f"'{outputFileNameClassFormattedPrefix}' found in " + 
-            f"'{outputFolderNameFormatted}'")
-    else:
-        # Read and merge CSV files.
-        dataframes = []
-        l.log("Reading files...")
-        with newProgress() as progress:
-            task = newTask(progress, len(inputFileClassMerged), 
-                "Processing Files")
+    if len(missing) > 0:
+        l.warning(f"No classification of {len(missing)} of {len(files)} model(s) " \
+            f"for this experiment, e.g. a job that failed or is still running: " \
+            f"{applyFormat(missing)}.")
 
-            for file in sorted(inputFileClassMerged):
-                dataframes.append(pd.read_csv(file))
-                progress.update(task, advance = 1)
+    others = sorted(
+        file for file in (os.listdir(inputFolderClassMerged) if os.path.isdir(inputFolderClassMerged) else [])
+        if file.startswith(outputFileNameClassFormattedPrefix) and file.endswith(csvFileFormat)
+            and os.path.join(inputFolderClassMerged, file) not in files.values()
+    )
+    if len(others) > 0:
+        l.warning(f"Leaving out {len(others)} file(s) of models not in llm.model_id: " \
+            f"{applyFormat(others)}.")
 
-            progress.refresh()
+    if len(present) == 0:
+        l.error(f"No classification of any model of llm.model_id found in " \
+            f"{quote(inputFolderClassMerged)} for this experiment " \
+            f"({quote(outputFileNameClassFormattedPrefix)}).")
+        sys.exit(1)
 
-        # Read and merge CSV files.
-        l.log("Files read.")
+    # ------------------------------------------------------------------------------
+    # Load the classifications. All models must have classified the same
+    # synonyms; differences (e.g. classifications of another HPO version) are
+    # logged.
+    # ------------------------------------------------------------------------------
 
-        l.log("Merging Data...")
-        merged_df = pd.concat(dataframes, ignore_index = True)
-        merged_df = merged_df.reset_index(drop = True)
-        l.log("Data merged.")
+    dataframes = {modelID : readCSV(file) for modelID, file in present.items()}
 
-        # --------------------------------------------------------------------------
-        # Persist the merged classifications to disk.
-        # --------------------------------------------------------------------------
+    def synonymsOf(data : pd.DataFrame) -> set:
+        """
+        The (concept, synonym) pairs of a classification.
+        """
+        return set(zip(data[hpoidColumn].astype(str), data[contentColumn].astype(str)))
 
-        # Write merged CSV
-        writeHugeCSV(merged_df, outputFileClassMerged)
+    first, reference = next(iter(dataframes.items()))
+    referenceSynonyms = synonymsOf(reference)
+    for modelID, data in dataframes.items():
+        modelSynonyms = synonymsOf(data)
+        l.log(f"{quote(modelID)}: {len(data.index)} classified synonyms.")
+        if modelSynonyms != referenceSynonyms:
+            l.warning(f"{quote(modelID)} classified other synonyms than {quote(first)}: " \
+                f"{len(modelSynonyms - referenceSynonyms)} only by {quote(modelID)}, " \
+                f"{len(referenceSynonyms - modelSynonyms)} only by {quote(first)}.")
 
-        l.log(f"Merged {len(inputFileClassMerged)} files into " + 
-            f"'{os.path.basename(outputFileClassMerged)}'")
+    # ------------------------------------------------------------------------------
+    # Persist the merged classifications to disk.
+    # ------------------------------------------------------------------------------
+
+    merged = pd.concat(dataframes.values(), ignore_index = True)
+    writeHugeCSV(merged, outputFileClassMerged)
+
+    l.log(f"Merged the classifications of {len(dataframes)} model(s) " \
+        f"({len(merged.index)} rows) into {quote(os.path.basename(outputFileClassMerged))}.")

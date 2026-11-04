@@ -72,7 +72,7 @@ The Python scripts can also be run by hand:
 | `python3 ./src/SynTypeClassification.py` | Preparation run: transforms the HPO and embeds its terms, if needed |
 | `python3 ./src/SynTypeClassification.py <index>` | Classifies the synonyms of experiment `syntype.experiments[<index>]` (counted from 0) with every model of `llm.model_id`, one after the other |
 | `python3 ./src/SynTypeClassification.py <index> <model ID>` | The same with only this model |
-| `python3 ./src/SynTypeMerge.py <index>` | Merges the formatted classifications of all models of the experiment |
+| `python3 ./src/SynTypeMerge.py <index>` | Merges the formatted classifications of the models of `llm.model_id` for the experiment |
 | `python3 ./src/SynTypeEval.py <index>` | Evaluates the merged classifications of the experiment |
 | `python3 ./src/config.py` | Prints the number of experiments |
 

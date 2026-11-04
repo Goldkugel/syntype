@@ -88,13 +88,6 @@ with l.step("Evaluating the classifications"):
     classifiedComplete[answerColumn]  = classifiedComplete[answerColumn].str.lower()
     classifiedComplete[typeColumn]    = classifiedComplete[typeColumn  ].str.lower()
 
-    # Synonyms without a source type are set to "expert" (synonymTypeOf() in
-    # SynTypeUtils.py does this already; "direct" remains in classifications
-    # made before that).
-    classifiedComplete[typeColumn]    = classifiedComplete[typeColumn].replace(
-        [np.nan, directSynonymType], expertSynonymType.lower()
-    )
-
     # ------------------------------------------------------------------------------
     # The synonyms are classified into the source types synonymTypes (expert,
     # layperson); only synonyms with one of these as gold type are evaluated.
