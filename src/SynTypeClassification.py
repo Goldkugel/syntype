@@ -266,13 +266,15 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
         f"({(~hasLabel).sum()} of a concept without label).")
     l.log("Filtering the labels and synonyms completed.")
 
-    def describe(values : pd.Series) -> str:
+    def describe(name : str, values : pd.Series) -> None:
         """
-        Mean, standard deviation, minimum and maximum of the non-NaN values.
+        Logs the mean, standard deviation, minimum and maximum of the non-NaN
+        values, below a row naming them.
         """
         values = values.dropna()
-        return f"mean {values.mean():.4f}, std {values.std():.4f}, " \
-            f"min {values.min():.4f}, max {values.max():.4f}"
+        l.log(f"{name}:")
+        l.log(f"  mean {values.mean():.4f}, std {values.std():.4f}.")
+        l.log(f"  min {values.min():.4f}, max {values.max():.4f}.")
 
     def distance(a : np.ndarray, b : np.ndarray) -> np.ndarray:
         """
@@ -326,19 +328,20 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
 
             l.log(f"{embeddingModel}, {distanceMetric} distance to the label: " \
                 f"{values.notna().sum()} synonyms ({values.isna().sum()} without label).")
-            l.log(f"All: {describe(values)}.")
+            describe("All", values)
             for synonymType in synonymTypes:
                 ofType = types == synonymType
-                l.log(f"Gold type {quote(synonymType)} ({ofType.sum()}): {describe(values[ofType])}.")
-            l.log(f"Normalised with mean {mean} and std {std}: {describe(normalised)}.")
+                describe(f"Gold type {quote(synonymType)} ({ofType.sum()})", values[ofType])
+            l.log(f"Normalised with mean {mean} and std {std}.")
+            describe("Normalised, all", normalised)
             for synonymType in synonymTypes:
                 ofType = types == synonymType
-                l.log(f"Normalised, gold type {quote(synonymType)}: {describe(normalised[ofType])}.")
+                describe(f"Normalised, gold type {quote(synonymType)}", normalised[ofType])
 
             if developmentSet:
-                l.log(f"Set syntype.cosine_distance_mean: {values.mean():.4f} and " \
-                    f"cosine_distance_std: {values.std():.4f} (now {cosineDistanceMean} " \
-                    f"and {cosineDistanceStd}).")
+                l.log("Set in config.yaml:")
+                l.log(f"  syntype.cosine_distance_mean: {values.mean():.4f} (now {cosineDistanceMean}).")
+                l.log(f"  syntype.cosine_distance_std: {values.std():.4f} (now {cosineDistanceStd}).")
 
             # A quick check how well the distances separate expert from
             # layperson synonyms: the strictly standardized mean difference.
