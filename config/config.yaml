@@ -84,7 +84,7 @@ llm:
     - "multiple_prompt3.md"
   # The answer store (checkpoint) and the prompt log; the model package adds
   # the model name and the experiment to their names, e.g.
-  # syntype_medgemma-4b-it_Test_..._FewShot.json.
+  # syntype_medgemma-4b-it_Test_..._FS.json.
   prompt_tmp_folder: "./data/tmp/"
   prompt_tmp_file: "syntype.json"
   prompt_log_folder: "./data/logs/"

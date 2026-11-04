@@ -39,4 +39,4 @@ A setting that is not given is off.
 | `comment` | Add the comment of the concept to the prompts |
 | `structure` | Add the labels of the parents and children of the concept to the prompts |
 
-The settings of an experiment name its files, e.g. `type_Test_Definition_NoComment_Structure_NoChainOfThoughts_FewShot_...`.
+The settings of an experiment name its files, e.g. `type_Test_Def_NoCom_Str_NoCOT_FS_...` (`Def`/`Com`/`Str`: definition, comment and structure in the prompts; `COT`: chain of thoughts; `FS`: few-shot examples; `No...` if off).

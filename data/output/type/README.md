@@ -1,6 +1,6 @@
 # Raw classifications
 
-Written by the classification (`python3 ./src/SynTypeClassification.py <index>`): one file per experiment and model, `type_<experiment>_raw_<model>.csv`, written after every turn of the conversation. `<experiment>` names the settings of the experiment, e.g. `Test_Definition_NoComment_Structure_NoChainOfThoughts_FewShot`.
+Written by the classification (`python3 ./src/SynTypeClassification.py <index>`): one file per experiment and model, `type_<experiment>_raw_<model>.csv`, written after every turn of the conversation. `<experiment>` names the settings of the experiment, e.g. `Test_Def_NoCom_Str_NoCOT_FS`.
 
 | Column | Content |
 |---|---|
