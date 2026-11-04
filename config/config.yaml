@@ -28,8 +28,9 @@ adapter:
     input_folder: "./data/input/hpo/"
     input_files:
       - "hp.owl"
-    # SynTypeClassification.py writes its own files (see config.py); these
-    # two are only used by HPOAdapter.to_csv(), which syntype does not call.
+    # The transformed HPO, which SynTypeClassification.py writes; the
+    # development and evaluation set are named after it in the same folder
+    # (hpo.development.csv, hpo.evaluation.csv).
     output_folder: "./data/output/transformed/"
     output_file: "hpo.csv"
     skip_if_present: False

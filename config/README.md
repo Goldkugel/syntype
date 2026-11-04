@@ -5,7 +5,7 @@
 | Section | Read by | Content |
 |---|---|---|
 | `syntype` | `src/config.py` (validated by `src/SynTypeConfig.py`) | The experiments and syntype's own settings (below) |
-| `adapter` | the `adapter` package (`HPOAdapter`) | Where `hp.owl` is; `output_folder` and `output_file` are not used, since syntype writes its own files |
+| `adapter` | the `adapter` package (`HPOAdapter`) | Where `hp.owl` is, and where the transformed HPO goes (`output_folder`, `output_file`); the development and evaluation set are named after it in the same folder |
 | `logger` | the `logger` package | Log folder and file name (one file per run), format and runtime display |
 | `llm` | the `model` package | The models (`model_id`), sampling and vLLM settings, the prompt templates (`prompt_folder`, `prompt_files`) and the answer store and prompt log (`prompt_tmp_*`, `prompt_log_*`) |
 | `embedder` | the `embedder` package | The embedding model of the distances (SapBERT) with its pinned revision, pooling, device and cache |

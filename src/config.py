@@ -155,7 +155,6 @@ outputFolderName                    = "output"
 # The folders of the steps: transformation (and the development and
 # evaluation set), formatting, merging and evaluation; the raw classification
 # is in outputFolderNameClass, the distances in outputFolderNameEmbedded.
-outputFolderNameTransformed         = "transformed"
 outputFolderNameFormatted           = "formatted"
 outputFolderNameMerged              = "merged"
 outputFolderNameEvaluation          = "evaluated"
@@ -167,38 +166,23 @@ inputFileTransformed        = os.path.join(
     configurationFile["adapter"]["hpo"]["input_files"][0]
 )
 
-# hp.owl transformed by SynTypeClassification.py: everything the
-# classification and the evaluation need.
-outputFileNameTransformedFull       = f"hpo.{csvFileFormat}"
-
-outputFileTransformedFull                     = os.path.join(
-    dataDir,
-    outputFolderName,
-    outputFolderNameTransformed,
-    outputFileNameTransformedFull
+# hp.owl transformed by SynTypeClassification.py, where adapter.hpo.output_folder
+# and output_file say: everything the classification and the evaluation need.
+# The development and evaluation set are named after it in the same folder,
+# e.g. hpo.development.csv and hpo.evaluation.csv.
+outputFileTransformedFull = os.path.join(
+    configurationFile["adapter"]["hpo"]["output_folder"],
+    configurationFile["adapter"]["hpo"]["output_file"]
 )
+transformedStem, transformedExtension = os.path.splitext(outputFileTransformedFull)
 
 # The development set (syntype.development_set): the synonyms drawn at random
 # and the information of their concepts, classified by runs with "test".
-outputFileNameTransformedDevelopment = f"hpo.development.{csvFileFormat}"
-
-outputFileTransformedDevelopment     = os.path.join(
-    dataDir,
-    outputFolderName,
-    outputFolderNameTransformed,
-    outputFileNameTransformedDevelopment
-)
+outputFileTransformedDevelopment = f"{transformedStem}.development{transformedExtension}"
 
 # The evaluation set: hpo.csv without the synonyms of the development set,
 # classified by runs without "test".
-outputFileNameTransformedEvaluation  = f"hpo.evaluation.{csvFileFormat}"
-
-outputFileTransformedEvaluation      = os.path.join(
-    dataDir,
-    outputFolderName,
-    outputFolderNameTransformed,
-    outputFileNameTransformedEvaluation
-)
+outputFileTransformedEvaluation  = f"{transformedStem}.evaluation{transformedExtension}"
 
 inputFileTask = outputFileTransformedDevelopment if reduceToTestIDs else outputFileTransformedEvaluation
 
