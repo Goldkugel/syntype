@@ -358,10 +358,12 @@ def applyFormat(l : list[str] = []) -> str:
 # ------------------------------------------------------------------------------
 # The development set (syntype.development_set): synonyms drawn at random from
 # the transformed HPO with the information of their concepts, classified by
-# runs with "test" (hpo.reduced.csv).
+# runs with "test" (hpo.development.csv); and the evaluation set, the
+# transformed HPO without these synonyms, classified by the other runs
+# (hpo.evaluation.csv).
 # ------------------------------------------------------------------------------
 
-# The development set depends on its settings and on the format of the
+# Both sets depend on the settings of the development set and on the format of the
 # transformed HPO.
 developmentSetSettings = {
     "development_set" : syntypeConfig.development_set.model_dump(),
@@ -370,20 +372,22 @@ developmentSetSettings = {
 
 def developmentSetOutdated(log : bool = True) -> bool:
     """
-    Whether the development set is missing, older than hpo.csv or drawn
-    with other settings; the reason is logged if `log`.
+    Whether the development or the evaluation set is missing, older than
+    hpo.csv or drawn with other settings; the reason is logged if `log`.
     """
-    return outdated(outputFileTransformed, [outputFileTransformedFull],
-        developmentSetSettings, log)
+    return any([outdated(output, [outputFileTransformedFull], developmentSetSettings, log)
+        for output in [outputFileTransformedDevelopment, outputFileTransformedEvaluation]])
 
 def writeDevelopmentSet() -> pd.DataFrame:
     """
     Draws syntype.development_set.size_per_type synonyms of every gold type
     (expert, layperson) at random from hpo.csv and writes them to
-    hpo.reduced.csv, in the adapter's format, with the information of their
+    hpo.development.csv, in the adapter's format, with the information of their
     concepts: label, definition, comment, the child rows of the concepts (to
     their children and from their parents) and the labels of those parents
-    and children, but no other synonym. Records the settings next to it.
+    and children, but no other synonym. Writes hpo.csv without these synonyms
+    to hpo.evaluation.csv, so that the development synonyms are never
+    evaluated. Records the settings next to both.
 
     :return: The development set.
     """
@@ -428,6 +432,20 @@ def writeDevelopmentSet() -> pd.DataFrame:
         f"{len(related)} parents and children; {len(result.index)} rows.")
     printDataSummary(result)
 
-    writeHugeCSV(result, outputFileTransformed)
-    writeSettings(outputFileTransformed, developmentSetSettings)
+    # The evaluation set: every row of hpo.csv except the drawn synonyms. A
+    # synonym listed several times (with other classes or types) is removed
+    # with all its rows.
+    drawn       = set(zip(data.loc[selectedRows, idColumn], data.loc[selectedRows, valueColumn]))
+    drawnRows   = synonyms & pd.Series(list(zip(data[idColumn], data[valueColumn])),
+        index = data.index).isin(drawn)
+    evaluation  = data[~drawnRows].reset_index(drop = True)
+    l.log(f"Evaluation set: {len(data.index)} rows of " \
+        f"{os.path.basename(outputFileTransformedFull)} without the {drawnRows.sum()} rows " \
+        f"of the drawn synonyms; {synonymRows(evaluation).sum()} synonyms, " \
+        f"{len(evaluation.index)} rows.")
+
+    writeHugeCSV(result, outputFileTransformedDevelopment)
+    writeSettings(outputFileTransformedDevelopment, developmentSetSettings)
+    writeHugeCSV(evaluation, outputFileTransformedEvaluation)
+    writeSettings(outputFileTransformedEvaluation, developmentSetSettings)
     return result

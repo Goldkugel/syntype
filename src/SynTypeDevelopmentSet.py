@@ -1,13 +1,15 @@
 """
 Draws the development set from the transformed HPO (hpo.csv) and
-writes it to hpo.reduced.csv: syntype.development_set.size_per_type expert
+writes it to hpo.development.csv: syntype.development_set.size_per_type expert
 and layperson synonyms each, drawn at random with syntype.development_set.seed,
 with the label, definition and comment of their concepts, the parent and
 child relations of the concepts and the labels of those parents and
 children, but no other synonym. Runs with "test" classify these synonyms.
+Writes hpo.csv without these synonyms to hpo.evaluation.csv, which the other
+runs classify, so that the development synonyms are never evaluated.
 
 The preparation run (python3 ./src/SynTypeClassification.py) draws the set
-itself when it is missing or outdated; this script draws it again in any
+itself when one of them is missing or outdated; this script draws it again in any
 case, e.g. after changing the seed while formulating the prompts.
 
     python3 ./src/SynTypeDevelopmentSet.py
@@ -30,9 +32,9 @@ from logger       import Logger, lockedFile
 l = Logger(config = configFile)
 l.log(f"Command: python3 {shlex.join(sys.argv)}")
 
-l.printHeader("Drawing the Development Set")
+l.printHeader("Drawing the Development and Evaluation Set")
 
 # Under the lock of the preparation runs, which draw the set as well.
-with lockedFile(outputFileTransformed):
-    with l.step("Drawing the development set"):
+with lockedFile(outputFileTransformedDevelopment):
+    with l.step("Drawing the development and evaluation set"):
         writeDevelopmentSet()

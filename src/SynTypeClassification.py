@@ -271,7 +271,7 @@ def transformHPO() -> None:
 
 # ==============================================================================
 # Embedding: the cosine distance of every synonym to its label -> embed.csv
-# (all synonyms) and embed.reduced.csv (the development set), for the
+# (the evaluation set) and embed.development.csv (the development set), for the
 # evaluation (SynTypeEval.py).
 # ==============================================================================
 
@@ -287,7 +287,7 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
     from embedder import Embedder
 
     # Printing header.
-    l.printHeader("Embedding the Development Set" if developmentSet else "Embedding the HPO")
+    l.printHeader("Embedding the Development Set" if developmentSet else "Embedding the Evaluation Set")
 
     # Ensure the input file exists before proceeding.
     exitIfFileNotExist(inputFile)
@@ -401,7 +401,7 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
                 l.log(f"Development set: set syntype.cosine_distance_mean to " \
                     f"{values.mean():.4f} and cosine_distance_std to {values.std():.4f} " \
                     f"(now {cosineDistanceMean} and {cosineDistanceStd}) to normalise " \
-                    f"the distances of {os.path.basename(outputFileTransformedFull)} with them.")
+                    f"the distances of {os.path.basename(outputFileTransformedEvaluation)} with them.")
 
             # A first, quick evaluation of the distances: how well they
             # separate expert from layperson synonyms, as the strictly
@@ -705,22 +705,24 @@ if transformOutdated(log = False):
 else:
     l.log("The transformed HPO is up to date.")
 
-# The development set is drawn from the transformed HPO, once by the first of
-# the runs started at the same time that finds it missing or outdated.
+# The development and the evaluation set are drawn from the transformed HPO,
+# once by the first of the runs started at the same time that finds them
+# missing or outdated.
 if developmentSetOutdated(log = False):
-    with lockedFile(outputFileTransformed):
+    with lockedFile(outputFileTransformedDevelopment):
         if developmentSetOutdated():
-            with l.step("Drawing the development set"):
+            with l.step("Drawing the development and evaluation set"):
                 writeDevelopmentSet()
 else:
-    l.log("The development set is up to date.")
+    l.log("The development and evaluation set are up to date.")
 
 if experimentIndex is None:
     # Preparation run: the distances of the evaluation, of the development set
-    # first, whose mean and standard deviation are logged, then of all synonyms.
+    # first, whose mean and standard deviation are logged, then of the
+    # evaluation set.
     for name, inputFile, outputFile, developmentSet in [
-        ("the development set", outputFileTransformed, outputFileEmbedded, True),
-        ("the HPO", outputFileTransformedFull, outputFileEmbeddedFull, False)
+        ("the development set", outputFileTransformedDevelopment, outputFileEmbeddedDevelopment, True),
+        ("the evaluation set", outputFileTransformedEvaluation, outputFileEmbeddedEvaluation, False)
     ]:
         if outdated(outputFile, [inputFile], embedSettings):
             with l.step(f"Embedding {name}"):

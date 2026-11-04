@@ -13,8 +13,9 @@ class ExperimentConfig(BaseModel):
     """
     model_config = ConfigDict(extra = "forbid")
 
-    # Only the synonyms of the development set (hpo.reduced.csv, see
-    # syntype.development_set).
+    # Only the synonyms of the development set (hpo.development.csv, see
+    # syntype.development_set); otherwise those of the evaluation set
+    # (hpo.evaluation.csv, hpo.csv without the development synonyms).
     test: bool                                  = False
     # Examples in the prompts.
     few_shot: bool                              = False
@@ -30,7 +31,7 @@ class ExperimentConfig(BaseModel):
 
 class DevelopmentSetConfig(BaseModel):
     """
-    The development set (hpo.reduced.csv, written by SynTypeDevelopmentSet.py
+    The development set (hpo.development.csv, written by SynTypeDevelopmentSet.py
     and the preparation run): synonyms drawn at random from the transformed
     HPO, to formulate the prompts and to find the mean and standard deviation
     of the cosine distances; runs with "test" classify them.
@@ -66,8 +67,8 @@ class SyntypeConfig(BaseModel):
     embedding_model_names: dict[str, str]       = {}
 
     # Mean and standard deviation of the cosine distance between every
-    # synonym and the label of its concept, over all synonyms of HPO, with
-    # which the distances are normalised. The defaults 0 and 1 leave them as
+    # synonym and the label of its concept, derived from the development set,
+    # with which the distances are normalised. The defaults 0 and 1 leave them as
     # they are; None computes them from the data.
     cosine_distance_mean: float | None          = 0.0
     cosine_distance_std: float | None           = Field(default = 1.0, gt = 0)

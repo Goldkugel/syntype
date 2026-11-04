@@ -4,7 +4,7 @@ syntype:
   # The experiments, picked by their index (counted from 0): start.sh starts
   # one classification job per experiment, finalize.sh merges and evaluates
   # every one of them. Settings of an experiment: test (only the synonyms of
-  # the development set), few_shot, chain_of_thoughts, definition, comment
+  # the development set; otherwise those of the evaluation set), few_shot, chain_of_thoughts, definition, comment
   # and structure (the parents and children of a concept); a setting that is
   # not given is off.
   experiments:
@@ -13,9 +13,11 @@ syntype:
     - {test: True, few_shot: True, definition: True, structure: True}
     - {test: True, few_shot: True, definition: True, comment: True, structure: True}
     - {test: True, few_shot: True, definition: True, comment: True}
-  # The development set (data/output/transformed/hpo.reduced.csv), which runs
+  # The development set (data/output/transformed/hpo.development.csv), which runs
   # with "test" classify: size_per_type expert and layperson synonyms each,
   # drawn at random with the seed, with the information of their concepts.
+  # The other runs classify the evaluation set (hpo.evaluation.csv): hpo.csv
+  # without these synonyms.
   # The preparation run embeds it and logs the mean and standard deviation of
   # its cosine distances, to be set as cosine_distance_mean and _std.
   development_set:
@@ -25,7 +27,7 @@ syntype:
   # Mean and standard deviation of the cosine distance (SapBERT) between
   # every synonym and the label of its concept, derived from the development
   # set (logged by the preparation run). The distances of the development set
-  # and of all synonyms of HPO are normalised with them, (distance - mean) /
+  # and of the evaluation set are normalised with them, (distance - mean) /
   # std, so that every run uses the same scale; normalised distances can be
   # below -1 and above 1. 0 and 1 leave them as they are; null computes them
   # from the synonyms of each file. The evaluation plots show the normalised distances from

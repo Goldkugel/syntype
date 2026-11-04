@@ -218,38 +218,48 @@ outputFileTransformedFull                     = os.path.join(
 
 # The development set (syntype.development_set): the synonyms drawn at random
 # and the information of their concepts, classified by runs with "test".
-outputFileNameTransformed           = f"hpo.reduced.{csvFileFormat}"
+outputFileNameTransformedDevelopment = f"hpo.development.{csvFileFormat}"
 
-outputFileTransformed                        = os.path.join(
+outputFileTransformedDevelopment     = os.path.join(
     dataDir,
     outputFolderName,
     outputFolderNameTransformed,
-    outputFileNameTransformed
+    outputFileNameTransformedDevelopment
 )
 
-inputFileTask = outputFileTransformed if reduceToTestIDs else outputFileTransformedFull
+# The evaluation set: hpo.csv without the synonyms of the development set,
+# classified by runs without "test".
+outputFileNameTransformedEvaluation  = f"hpo.evaluation.{csvFileFormat}"
 
-# Cosine distances of the synonyms to their label (the preparation run): of all
-# synonyms (hpo.csv), for the evaluation of full runs.
-outputFolderNameEmbedded            = "embeded"
-outputFileEmbeddedFull              = os.path.join(
+outputFileTransformedEvaluation      = os.path.join(
+    dataDir,
+    outputFolderName,
+    outputFolderNameTransformed,
+    outputFileNameTransformedEvaluation
+)
+
+inputFileTask = outputFileTransformedDevelopment if reduceToTestIDs else outputFileTransformedEvaluation
+
+# Cosine distances of the synonyms to their label (the preparation run): of the
+# development set, for the evaluation of test runs; their mean and standard
+# deviation are logged, to be set as syntype.cosine_distance_mean and _std.
+outputFolderNameEmbedded             = "embeded"
+outputFileEmbeddedDevelopment        = os.path.join(
+    dataDir,
+    outputFolderName,
+    outputFolderNameEmbedded,
+    f"embed.development.{csvFileFormat}"
+)
+
+# Of the evaluation set, for the evaluation of the other runs.
+outputFileEmbeddedEvaluation         = os.path.join(
     dataDir,
     outputFolderName,
     outputFolderNameEmbedded,
     f"embed.{csvFileFormat}"
 )
 
-# Of the synonyms of the development set (hpo.reduced.csv), for the evaluation
-# of test runs; their mean and standard deviation are logged, to be set as
-# syntype.cosine_distance_mean and _std.
-outputFileEmbedded                  = os.path.join(
-    dataDir,
-    outputFolderName,
-    outputFolderNameEmbedded,
-    f"embed.reduced.{csvFileFormat}"
-)
-
-inputFileDistances = outputFileEmbedded if reduceToTestIDs else outputFileEmbeddedFull
+inputFileDistances = outputFileEmbeddedDevelopment if reduceToTestIDs else outputFileEmbeddedEvaluation
 
 # =============================================================================
 # Files for Synonym Classification
