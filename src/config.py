@@ -162,7 +162,7 @@ outputFolderName                    = "output"
 # evaluation set), formatting, merging and evaluation; the raw classification
 # is in outputFolderNameClass, the distances in outputFolderNameEmbedded.
 outputFolderNameTransformed         = "transformed"
-outputFolderNameFormatted           = "formated"
+outputFolderNameFormatted           = "formatted"
 outputFolderNameMerged              = "merged"
 outputFolderNameEvaluation          = "evaluated"
 
@@ -210,7 +210,7 @@ inputFileTask = outputFileTransformedDevelopment if reduceToTestIDs else outputF
 
 # Distances of the synonyms to their label (the preparation run): of the
 # development set, for the evaluation of test runs.
-outputFolderNameEmbedded             = "embeded"
+outputFolderNameEmbedded             = "embedded"
 outputFileEmbeddedDevelopment        = os.path.join(
     dataDir,
     outputFolderName,

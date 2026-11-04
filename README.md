@@ -23,9 +23,9 @@ syntype/
 │   ├── logs/                # Log files, prompt logs and run metadata
 │   ├── output/
 │   │   ├── transformed/     # The HPO, development and evaluation set in the adapter's format
-│   │   ├── embeded/         # Distance of every synonym to its label (development and evaluation set), embedding cache
+│   │   ├── embedded/        # Distance of every synonym to its label (development and evaluation set), embedding cache
 │   │   ├── type/            # Raw classifications (prompts and answers)
-│   │   ├── formated/        # Formatted classifications, one file per model
+│   │   ├── formatted/       # Formatted classifications, one file per model
 │   │   ├── merged/          # Classifications of all models of an experiment
 │   │   └── evaluated/       # Evaluation plots
 │   ├── slurmlogs/           # Output of the Slurm jobs
@@ -90,9 +90,9 @@ The Python scripts can also be run by hand:
 |---|---|---|
 | Transformation | `SynTypeClassification.py` | [`data/output/transformed/`](data/output/transformed/README.md): the HPO |
 | Development and evaluation set | `SynTypeClassification.py`, `SynTypeDevelopmentSet.py` | [`data/output/transformed/`](data/output/transformed/README.md): 500 expert and 500 layperson synonyms at random, with their concepts, and the HPO without them |
-| Distances | `SynTypeClassification.py` | [`data/output/embeded/`](data/output/embeded/README.MD): the cosine distance of every synonym to its label, for the development set (its mean and standard deviation are logged for `syntype.cosine_distance_mean` and `_std`) and for the evaluation set |
+| Distances | `SynTypeClassification.py` | [`data/output/embedded/`](data/output/embedded/README.MD): the cosine distance of every synonym to its label, for the development set (its mean and standard deviation are logged for `syntype.cosine_distance_mean` and `_std`) and for the evaluation set |
 | Classification | `SynTypeClassification.py <index>` | [`data/output/type/`](data/output/type/README.MD): prompts and answers per model |
-| Formatting | `SynTypeClassification.py <index>` | [`data/output/formated/`](data/output/formated/README.MD): the classification per model |
+| Formatting | `SynTypeClassification.py <index>` | [`data/output/formatted/`](data/output/formatted/README.MD): the classification per model |
 | Merging | `SynTypeMerge.py <index>` | [`data/output/merged/`](data/output/merged/README.MD): all models of an experiment |
 | Evaluation | `SynTypeEval.py <index>` | [`data/output/evaluated/`](data/output/evaluated/README.MD): plots |
 

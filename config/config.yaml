@@ -111,5 +111,5 @@ embedder:
   batch_size: 128
   # One file per model (about 0.6-0.8 GB): only new terms are encoded, and an
   # interrupted run resumes from it.
-  cache_folder: "./data/output/embeded/"
+  cache_folder: "./data/output/embedded/"
   dimensionality_reduction: False
