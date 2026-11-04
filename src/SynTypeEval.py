@@ -365,11 +365,12 @@ with l.step("Evaluating the classifications"):
                 for i, sourceType in enumerate(synonymTypes)
             }
 
-            l.log(f"{system} ({quote(startString or 'all')}): " + ", ".join(
-                f"{t}: P {result[system][t][precisionLabel]:.3f}, " \
-                f"R {result[system][t][recallLabel]:.3f}, " \
-                f"F1 {result[system][t][f1ScoreLabel]:.3f}"
-                for t in synonymTypes))
+            # One row per source type.
+            for t in synonymTypes:
+                l.log(f"{system} ({quote(startString or 'all')}), {t}: " \
+                    f"P {result[system][t][precisionLabel]:.3f}, " \
+                    f"R {result[system][t][recallLabel]:.3f}, " \
+                    f"F1 {result[system][t][f1ScoreLabel]:.3f}")
 
         metrics = [f1ScoreLabel, recallLabel, precisionLabel]
         classes = list(synonymTypes)

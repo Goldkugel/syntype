@@ -13,8 +13,8 @@ authors = [{ name = "Peter Pallaoro", email = "peter.pallaoro@tum.de" }]
 dependencies = [
     "logger @ git+https://github.com/Goldkugel/logger.git@v1.5.0",
     "adapter @ git+https://github.com/Goldkugel/adapter.git@v1.5.0",
-    "embedder @ git+https://github.com/Goldkugel/embedder.git@v2.2.3",
-    "model @ git+https://github.com/Goldkugel/model.git@v3.0.1",
+    "embedder @ git+https://github.com/Goldkugel/embedder.git@v2.2.4",
+    "model @ git+https://github.com/Goldkugel/model.git@v3.0.2",
     # config.py reads and validates the configuration file itself.
     "pydantic>=2",
     "pyyaml",

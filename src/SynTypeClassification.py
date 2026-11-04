@@ -228,8 +228,8 @@ def transformHPO() -> None:
     conflictingClasses = classes.map(lambda c: conflictingSynonymClasses <= c)
     conflictingTypes   = types.map(lambda t: conflictingSynonymTypes <= t)
     l.log(f"Removing {conflictingClasses.sum()} synonyms listed as both " \
-        f"{applyFormat(sorted(conflictingSynonymClasses))} and " \
-        f"{(conflictingTypes & ~conflictingClasses).sum()} further synonyms " \
+        f"{applyFormat(sorted(conflictingSynonymClasses))}...")
+    l.log(f"Removing {(conflictingTypes & ~conflictingClasses).sum()} further synonyms " \
         f"listed as both {applyFormat(sorted(conflictingSynonymTypes))}...")
     data = data.drop(additional.index[(conflictingClasses | conflictingTypes).to_numpy()])
 
@@ -244,9 +244,12 @@ def transformHPO() -> None:
         joined = additional[values.index].map(lambda a: str(a.get(key, "")))
         combinations = joined.value_counts()
         l.log(f"{len(values)} synonyms have several values of {quote(key)}; they " \
-            "count with the first one" + ("." if len(values) == 0 else ": " + ", ".join(
-                f"{quote(value)} {count}" for value, count in combinations.head(5).items()) +
-            (", ..." if len(combinations) > 5 else "") + "."))
+            "count with the first one" + ("." if len(values) == 0 else ":"))
+        # One row per combination, the 10 most frequent.
+        for value, count in combinations.head(10).items():
+            l.log(f"- {quote(shorten(value, 60))}: {count}")
+        if len(combinations) > 10:
+            l.log(f"- and {len(combinations) - 10} other combinations.")
 
     # --------------------------------------------------------------------------
     # Remove the synonyms that match the label of their concept (ignoring
@@ -413,8 +416,9 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
             ssmd = (means[0] - means[1]) / math.sqrt(
                 math.pow(stds[0], 2) + math.pow(stds[1], 2))
             l.log(f"Strictly standardized mean difference [{expertSynonymType} - " \
-                f"{laypersonSynonymType}]: {ssmd:.4f} (difference of the means " \
-                f"{means[0] - means[1]:.4f}, of the stds {stds[0] - stds[1]:.4f}).")
+                f"{laypersonSynonymType}]: {ssmd:.4f}.")
+            l.log(f"Difference of the means {means[0] - means[1]:.4f}, " \
+                f"of the stds {stds[0] - stds[1]:.4f}.")
 
 
     # --------------------------------------------------------------------------
@@ -530,8 +534,8 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
 
     # The setup of this run: the experiment, its prompts and its synonyms.
     settings = [name for name, value in experiment.model_dump().items() if value]
-    l.log(f"Experiment {experimentIndex}: {applyFormat(settings)} " \
-        f"(files {quote(filesPrefixApproachClass)}).")
+    l.log(f"Experiment {experimentIndex}: {applyFormat(settings)}.")
+    l.log(f"Files: {quote(filesPrefixApproachClass)}.")
     l.log("Prompt files: " + applyFormat(
         [configurationFile["llm"]["prompt_files"][index] for index in promptIndexes]))
     goldTypes = synonyms[typeColumn].value_counts()
@@ -632,7 +636,8 @@ def formatAnswers(synonyms : pd.DataFrame, modelName : str) -> None:
     count  = 0
 
     l.log("Wrong or undefined classifications, as synonym (label): gold -> " \
-        "classified (confidence): rationale.", cmdline = False)
+        "classified (confidence),", cmdline = False)
+    l.log("with the rationale in the next row.", cmdline = False)
     for index, row in classified.iterrows():
         # It should log, when:
         # - The answer could not be formatted e.g. is undefined.
@@ -641,12 +646,13 @@ def formatAnswers(synonyms : pd.DataFrame, modelName : str) -> None:
         if (str(row[answerColumn]).lower() == undefinedSynonymType.lower() or
             (str(row[typeColumn]).lower() in synonymTypes and
             str(row[answerColumn]).lower() != str(row[typeColumn]).lower())):
-            # Shortened; the full texts are in the raw and formatted files.
+            # Two rows, with shortened texts; the full texts are in the raw and
+            # formatted files.
             label = ", ".join(getElements(labels, row[hpoidColumn], labelClass))
-            l.log(f"{quote(shorten(row[contentColumn], 40))} " \
-                f"(label {quote(shorten(label, 30))}): {row[typeColumn]} -> " \
-                f"{row[answerColumn]} ({row[confidenceColumn]}): " \
-                f"{quote(shorten(row[rationaleColumn], 60))}", cmdline = False)
+            l.log(f"{quote(shorten(row[contentColumn], 32))} " \
+                f"(label {quote(shorten(label, 28))}): {row[typeColumn]} -> " \
+                f"{row[answerColumn]} ({row[confidenceColumn]})", cmdline = False)
+            l.log(f"    {quote(shorten(row[rationaleColumn], 90))}", cmdline = False)
             count = count + 1
 
     l.log(f"Incorrect Classifications: {count}")
@@ -671,8 +677,8 @@ def logClassificationSummary(classified : pd.DataFrame, modelName : str) -> None
     ]
     answers = synonymTypes + [undefinedSynonymType]
 
-    l.log(f"Summary of {modelName}: {len(scored.index)} synonyms (" + ", ".join(synonymTypes) +
-        f"; without the few-shot examples), " \
+    l.log(f"Summary of {modelName}: {len(scored.index)} synonyms.")
+    l.log(f"Gold types " + ", ".join(synonymTypes) + ", without the few-shot examples; " \
         f"{(scored[answerColumn] == undefinedSynonymType).sum()} answers undefined.")
     l.log(f"{'Gold / Classified':<20}" + "".join(f"{answer:>12}" for answer in answers))
     for goldType in synonymTypes:
@@ -689,8 +695,9 @@ def logClassificationSummary(classified : pd.DataFrame, modelName : str) -> None
         f1        = 2 * tp / (predicted.sum() + actual.sum()) if predicted.sum() + actual.sum() > 0 else float("nan")
         confidence = scored.loc[predicted, confidenceColumn]
         l.log(f"{quote(synonymType)}: precision {precision:.3f}, recall {recall:.3f}, " \
-            f"F1 {f1:.3f}; mean confidence of the {predicted.sum()} classified as " \
-            f"{synonymType}: {confidence.mean():.2f}")
+            f"F1 {f1:.3f}.")
+        l.log(f"{quote(synonymType)}: mean confidence {confidence.mean():.2f} " \
+            f"of the {predicted.sum()} classified as {synonymType}.")
 
 # ==============================================================================
 # The steps of this run.

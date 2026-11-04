@@ -455,8 +455,9 @@ def writeDevelopmentSet() -> pd.DataFrame:
 
     result = data[selectedRows | conceptRows | relationRows | relatedLabelRows].reset_index(drop = True)
     l.log(f"Development set: {selectedRows.sum()} synonyms of {len(concepts)} concepts, " \
-        f"{relationRows.sum()} relations, {len(related)} labels of parents and children; " \
         f"{len(result.index)} rows.")
+    l.log(f"Development set: {relationRows.sum()} relations, {len(related)} labels " \
+        f"of parents and children.")
     printDataSummary(result)
     logSynonymCounts("Development set", result)
 
@@ -470,10 +471,10 @@ def writeDevelopmentSet() -> pd.DataFrame:
         index = data.index).isin(drawn)
     otherRows   = (data[attributeColumn] == synonymAttribute) & ~types.isin(synonymTypes)
     evaluation  = data[~(drawnRows | otherRows)].reset_index(drop = True)
-    l.log(f"Evaluation set: the {len(data.index)} rows of " \
-        f"{os.path.basename(outputFileTransformedFull)} without the {drawnRows.sum()} " \
-        f"of the drawn synonyms and {(otherRows & ~drawnRows).sum()} of other gold types; " \
-        f"{len(evaluation.index)} rows.")
+    l.log(f"Evaluation set: {len(evaluation.index)} of the {len(data.index)} rows of " \
+        f"{os.path.basename(outputFileTransformedFull)}.")
+    l.log(f"Left out: {drawnRows.sum()} rows of the drawn synonyms, " \
+        f"{(otherRows & ~drawnRows).sum()} of other gold types.")
     logSynonymCounts("Evaluation set", evaluation)
 
     writeHugeCSV(result, outputFileTransformedDevelopment)
