@@ -17,6 +17,8 @@ The settings of the package sections are described in the READMEs of the package
 | Key | Type | Default | Description |
 |---|---|---|---|
 | `experiments` | list | (required) | The experiments, picked by their index (counted from 0) on the command line; `start.sh` starts one classification job per experiment, `finalize.sh` merges and evaluates each. Every experiment is a mapping of the settings below |
+| `development_set.size_per_type` | `int` (> 0) | `500` | Number of expert and of layperson synonyms drawn for the development set |
+| `development_set.seed` | `int` | `0` | Seed of the random selection, so the same development set is drawn again |
 | `data_folder` | `str` | `"./data"` | Folder of the data |
 | `embedding_model_names` | mapping | `{}` | Name of a model of `embedder.model_id` in the distance column names (`distance_<name>_cosine`); a model without a name is named by its ID without the organisation |
 | `cosine_distance_mean` | `float` or `null` | `0` | Mean the cosine distances (1 minus the cosine similarity) are normalised with, `(distance - mean) / std`; `null` takes the mean of all synonyms |
@@ -30,7 +32,7 @@ A setting that is not given is off.
 
 | Key | Description |
 |---|---|
-| `test` | Classify only the synonyms of the test concepts (`testIDs` in `src/config.py`) |
+| `test` | Classify only the synonyms of the development set (`hpo.reduced.csv`, see `development_set`) |
 | `few_shot` | Add the few-shot examples (`fewShotExamples` in `src/config.py`) to the prompts |
 | `chain_of_thoughts` | Classify in three prompts (`llm.prompt_files` 1 to 3) instead of one (index 0) |
 | `definition` | Add the definition of the concept to the prompts |

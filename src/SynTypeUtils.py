@@ -7,6 +7,7 @@ LLMs, progress bars and the data summary.
 import pandas       as pd
 import numpy as np
 import ast
+import json
 import sys
 import os
 
@@ -20,7 +21,7 @@ sys.dont_write_bytecode = True
 
 from config         import * 
 
-from logger         import Logger
+from logger         import Logger, writeJSON
 
 from adapter                    import BaseAdapterConfig, semanticClass, sourceType
 from adapter                    import synonymClass as synonymAttribute
@@ -59,6 +60,64 @@ def synonymTypeOf(additional) -> str:
     """
     ret = additionalValues(additional, sourceType)[0]
     return expertSynonymType if ret == directSynonymType else ret
+
+# ------------------------------------------------------------------------------
+# The settings an output was made with are stored next to it
+# (<output>.settings.json), so that it is made again when they change, not
+# only when one of its input files is newer.
+# ------------------------------------------------------------------------------
+
+def isOutdated(output : str, inputs : list) -> bool:
+    """
+    Whether a file is missing or older than one of the files it is made from.
+    """
+    return not isFile(output) or any(
+        os.path.getmtime(output) < os.path.getmtime(i) for i in inputs if isFile(i))
+
+def settingsFile(output : str) -> str:
+    """
+    The file holding the settings an output was made with.
+    """
+    return output + ".settings.json"
+
+def changedSettings(output : str, settings : dict) -> list:
+    """
+    The settings (top-level keys) that differ from those the output was made
+    with; all of them if they were not recorded.
+    """
+    try:
+        with open(settingsFile(output), "r", encoding = "utf-8") as f:
+            recorded = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return list(settings.keys())
+
+    # Through JSON, as the recorded settings were, e.g. tuples become lists.
+    current = json.loads(json.dumps(settings))
+    return [key for key in current if recorded.get(key) != current[key]]
+
+def writeSettings(output : str, settings : dict) -> None:
+    """
+    Records the settings an output was made with, next to it (atomically).
+    """
+    writeJSON(settings, settingsFile(output))
+
+def outdated(output : str, inputs : list, settings : dict, log : bool = True) -> bool:
+    """
+    Whether an output is missing, older than one of its inputs, or made with
+    other settings; logs why, unless log is False.
+    """
+    if isOutdated(output, inputs):
+        if log: Logger().log(f"{os.path.basename(output)} is missing or older than " \
+            f"{applyFormat([os.path.basename(i) for i in inputs])}.")
+        return True
+
+    changed = changedSettings(output, settings)
+    if len(changed) > 0:
+        if log: Logger().log(f"{os.path.basename(output)} was made with other or unrecorded " \
+            f"settings: {applyFormat(changed)}.")
+        return True
+
+    return False
 
 def readTransformed(file : str) -> pd.DataFrame:
     """
@@ -274,24 +333,6 @@ def parseClassification(answer) -> tuple[str, int, str]:
 
     return classification, confidence, rationale
 
-def getHPOIDs(data : pd.DataFrame) -> list:
-    """
-    The concepts whose synonyms are classified: the test concepts (testIDs in
-    config.py) in test runs, otherwise every concept in `data`.
-    """
-    ret = []
-
-    if reduceToTestIDs:
-        ret = testIDs
-    else:
-        if data is not None and len(data.index) > 0 and hpoidColumn in data.columns:
-            ret = list(set(data[hpoidColumn].tolist()))
-
-    return ret
-
-    
-
-
 def quote(string : str) -> str:
     """
     The string in quotation marks, e.g. for the prompts and the log.
@@ -312,3 +353,81 @@ def applyFormat(l : list[str] = []) -> str:
             string = quote((quotationCharacter + ", " + 
                 quotationCharacter).join(l))
     return string
+
+
+# ------------------------------------------------------------------------------
+# The development set (syntype.development_set): synonyms drawn at random from
+# the transformed HPO with the information of their concepts, classified by
+# runs with "test" (hpo.reduced.csv).
+# ------------------------------------------------------------------------------
+
+# The development set depends on its settings and on the format of the
+# transformed HPO.
+developmentSetSettings = {
+    "development_set" : syntypeConfig.development_set.model_dump(),
+    "format"          : [idColumn, attributeColumn, valueColumn, additionalColumn]
+}
+
+def developmentSetOutdated(log : bool = True) -> bool:
+    """
+    Whether the development set is missing, older than transform.csv or drawn
+    with other settings; the reason is logged if `log`.
+    """
+    return outdated(outputFileTransformed, [outputFileTransformedFull],
+        developmentSetSettings, log)
+
+def writeDevelopmentSet() -> pd.DataFrame:
+    """
+    Draws syntype.development_set.size_per_type synonyms of every gold type
+    (expert, layperson) at random from transform.csv and writes them to
+    hpo.reduced.csv, in the adapter's format, with the information of their
+    concepts: label, definition, comment, the child rows of the concepts (to
+    their children and from their parents) and the labels of those parents
+    and children, but no other synonym. Records the settings next to it.
+
+    :return: The development set.
+    """
+    l = Logger()
+    settings = syntypeConfig.development_set
+
+    exitIfFileNotExist(outputFileTransformedFull)
+    data  = readTransformed(outputFileTransformedFull)
+    types = data[additionalColumn].map(synonymTypeOf)
+    synonyms = synonymRows(data)
+
+    # The synonyms of every gold type, drawn with the configured seed.
+    selected = []
+    for synonymType in synonymTypes:
+        candidates = data[synonyms & (types == synonymType)]
+        if len(candidates.index) < settings.size_per_type:
+            l.error(f"Only {len(candidates.index)} synonyms of gold type " \
+                f"{quote(synonymType)}, fewer than syntype.development_set." \
+                f"size_per_type ({settings.size_per_type}).")
+            sys.exit(1)
+        selected.append(candidates.sample(n = settings.size_per_type,
+            random_state = settings.seed).index)
+        l.log(f"Drawing {settings.size_per_type} of {len(candidates.index)} " \
+            f"synonyms of gold type {quote(synonymType)} (seed {settings.seed}).")
+    selectedRows = data.index.isin(np.concatenate(selected))
+
+    # The information of their concepts, and the labels of their parents and
+    # children (a child row reads "id has child value").
+    concepts  = set(data.loc[selectedRows, idColumn])
+    attribute = data[attributeColumn]
+    conceptRows  = data[idColumn].isin(concepts) & attribute.isin(
+        [labelClass, definitionClass, commentClass])
+    relationRows = (attribute == childrenClass) & (
+        data[idColumn].isin(concepts) | data[valueColumn].isin(concepts))
+    related   = (set(data.loc[relationRows, idColumn]) |
+        set(data.loc[relationRows, valueColumn])) - concepts
+    relatedLabelRows = data[idColumn].isin(related) & (attribute == labelClass)
+
+    result = data[selectedRows | conceptRows | relationRows | relatedLabelRows].reset_index(drop = True)
+    l.log(f"Development set: {selectedRows.sum()} synonyms of {len(concepts)} " \
+        f"concepts, {relationRows.sum()} parent and child relations, the labels of " \
+        f"{len(related)} parents and children; {len(result.index)} rows.")
+    printDataSummary(result)
+
+    writeHugeCSV(result, outputFileTransformed)
+    writeSettings(outputFileTransformed, developmentSetSettings)
+    return result

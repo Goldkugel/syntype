@@ -4,7 +4,7 @@ Classifies the source type of the synonyms of [Human Phenotype Ontology](https:/
 
 ## Features
 
-- **Experiments in the configuration** — every experiment of `syntype.experiments` in [`config/config.yaml`](config/config.yaml) sets which information about a concept the prompts contain (definition, comment, parents and children), whether they contain few-shot examples, whether a synonym is classified in one prompt or in three chain-of-thoughts prompts, and whether only the test concepts are classified.
+- **Experiments in the configuration** — every experiment of `syntype.experiments` in [`config/config.yaml`](config/config.yaml) sets which information about a concept the prompts contain (definition, comment, parents and children), whether they contain few-shot examples, whether a synonym is classified in one prompt or in three chain-of-thoughts prompts, and whether only the synonyms of the development set are classified.
 - **Several models per experiment** — all models of `llm.model_id` classify the synonyms one after the other, in one Slurm job per experiment.
 - **Resumable classification** — the [`model`](https://github.com/Goldkugel/model) package stores every prompt and answer, so an interrupted job resumes where it stopped and answers are never generated twice.
 - **Distance baseline** — the cosine distance of every synonym to the label of its concept (SapBERT, via the [`embedder`](https://github.com/Goldkugel/embedder) package) shows how well wording alone separates expert from layperson synonyms.
@@ -33,6 +33,7 @@ syntype/
 ├── prompts/                 # Prompt templates of the classification
 ├── src/
 │   ├── SynTypeClassification.py  # Preparation run and classification
+│   ├── SynTypeDevelopmentSet.py  # Draws the development set
 │   ├── SynTypeMerge.py      # Merges the classifications of all models
 │   ├── SynTypeEval.py       # Evaluates the classifications
 │   ├── SynTypeUtils.py      # Helpers shared by the scripts
@@ -62,7 +63,7 @@ Put the HPO release to classify at `data/input/hp.owl` (see [`data/input/README.
 
 All scripts are run from the repository root.
 
-1. **Classify:** `./start.sh` runs the preparation (transforms the HPO and computes the distances, each only if needed) and starts one Slurm job (`classify.sh`) per experiment, in which every model classifies the synonyms and its answers are formatted.
+1. **Classify:** `./start.sh` runs the preparation (transforms the HPO, draws the development set and computes the distances, each only if needed) and starts one Slurm job (`classify.sh`) per experiment, in which every model classifies the synonyms and its answers are formatted.
 2. **Evaluate:** when the jobs are done, `./finalize.sh` merges the classifications of all models per experiment and evaluates them.
 
 The Python scripts can also be run by hand:
@@ -72,6 +73,7 @@ The Python scripts can also be run by hand:
 | `python3 ./src/SynTypeClassification.py` | Preparation run: transforms the HPO and embeds its terms, if needed |
 | `python3 ./src/SynTypeClassification.py <index>` | Classifies the synonyms of experiment `syntype.experiments[<index>]` (counted from 0) with every model of `llm.model_id`, one after the other |
 | `python3 ./src/SynTypeClassification.py <index> <model ID>` | The same with only this model |
+| `python3 ./src/SynTypeDevelopmentSet.py` | Draws the development set again (e.g. after changing `syntype.development_set.seed`) |
 | `python3 ./src/SynTypeMerge.py <index>` | Merges the formatted classifications of the models of `llm.model_id` for the experiment |
 | `python3 ./src/SynTypeEval.py <index>` | Evaluates the merged classifications of the experiment |
 | `python3 ./src/config.py` | Prints the number of experiments |
@@ -86,7 +88,8 @@ The Python scripts can also be run by hand:
 
 | Step | Script | Output |
 |---|---|---|
-| Transformation | `SynTypeClassification.py` | [`data/output/transformed/`](data/output/transformed/README.md): the HPO, all concepts and the test concepts |
+| Transformation | `SynTypeClassification.py` | [`data/output/transformed/`](data/output/transformed/README.md): the HPO |
+| Development set | `SynTypeClassification.py`, `SynTypeDevelopmentSet.py` | [`data/output/transformed/`](data/output/transformed/README.md): 500 expert and 500 layperson synonyms at random, with their concepts |
 | Distances | `SynTypeClassification.py` | [`data/output/embeded/`](data/output/embeded/README.MD): the cosine distance of every synonym to its label |
 | Classification | `SynTypeClassification.py <index>` | [`data/output/type/`](data/output/type/README.MD): prompts and answers per model |
 | Formatting | `SynTypeClassification.py <index>` | [`data/output/formated/`](data/output/formated/README.MD): the classification per model |

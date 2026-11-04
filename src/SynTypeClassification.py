@@ -58,24 +58,16 @@ l.log(f"Command: python3 {shlex.join(sys.argv)}")
 # package reads the llm section from the file itself.
 configuration = copy.deepcopy(configurationFile)
 
-def isOutdated(output : str, inputs : list) -> bool:
-    """
-    Whether a file is missing or older than one of the files it is made from.
-    """
-    return not isFile(output) or any(
-        os.path.getmtime(output) < os.path.getmtime(i) for i in inputs if isFile(i))
-
 # ------------------------------------------------------------------------------
 # The settings an output was made with are stored next to it
 # (<output>.settings.json), so that it is made again when they change, not
 # only when one of its input files is newer.
 # ------------------------------------------------------------------------------
 
-# The transformation depends on the adapter settings, the test set and the
-# format of the transformed HPO (the columns of the adapter package).
+# The transformation depends on the adapter settings and the format of the
+# transformed HPO (the columns of the adapter package).
 transformSettings = {
     "adapter"  : configurationFile["adapter"],
-    "test_ids" : testIDs,
     "format"   : [idColumn, attributeColumn, valueColumn, additionalColumn]
 }
 
@@ -94,58 +86,12 @@ embedSettings = {
     "cosine_distance"     : [cosineDistanceMean, cosineDistanceStd]
 }
 
-def settingsFile(output : str) -> str:
-    """
-    The file holding the settings an output was made with.
-    """
-    return output + ".settings.json"
-
-def changedSettings(output : str, settings : dict) -> list:
-    """
-    The settings (top-level keys) that differ from those the output was made
-    with; all of them if they were not recorded.
-    """
-    try:
-        with open(settingsFile(output), "r", encoding = "utf-8") as f:
-            recorded = json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        return list(settings.keys())
-
-    # Through JSON, as the recorded settings were, e.g. tuples become lists.
-    current = json.loads(json.dumps(settings))
-    return [key for key in current if recorded.get(key) != current[key]]
-
-def writeSettings(output : str, settings : dict) -> None:
-    """
-    Records the settings an output was made with, next to it (atomically).
-    """
-    writeJSON(settings, settingsFile(output))
-
-def outdated(output : str, inputs : list, settings : dict, log : bool = True) -> bool:
-    """
-    Whether an output is missing, older than one of its inputs, or made with
-    other settings; logs why, unless log is False.
-    """
-    if isOutdated(output, inputs):
-        if log: l.log(f"{os.path.basename(output)} is missing or older than " \
-            f"{applyFormat([os.path.basename(i) for i in inputs])}.")
-        return True
-
-    changed = changedSettings(output, settings)
-    if len(changed) > 0:
-        if log: l.log(f"{os.path.basename(output)} was made with other or unrecorded " \
-            f"settings: {applyFormat(changed)}.")
-        return True
-
-    return False
-
 def transformOutdated(log : bool = True) -> bool:
     """
-    Whether the transformed HPO (and its test set) is missing, older than
-    hp.owl or made with other settings; the reason is logged if `log`.
+    Whether the transformed HPO is missing, older than hp.owl or made with
+    other settings; the reason is logged if `log`.
     """
-    outputs = [outputFileTransformedFull] + ([outputFileTransformed] if len(testIDs) > 0 else [])
-    return any(outdated(output, [inputFileTransformed], transformSettings, log) for output in outputs)
+    return outdated(outputFileTransformedFull, [inputFileTransformed], transformSettings, log)
 
 # ==============================================================================
 # Prompts: the model loads the templates of the experiment (llm.prompt_files)
@@ -236,16 +182,14 @@ chainOfThoughtsPromptIndexes = [1, 2, 3]
 promptIndexes = chainOfThoughtsPromptIndexes if chainOfThoughts else [singlePromptIndex]
 
 # ==============================================================================
-# Transformation: hp.owl (adapter) -> transform.csv, transform.reduced.csv.
+# Transformation: hp.owl (adapter) -> transform.csv.
 # ==============================================================================
 
 def transformHPO() -> None:
     """
-    Transforms hp.owl with the adapter into transform.csv (all concepts) and
-    transform.reduced.csv (the test concepts with their parents and
-    children), in the adapter's format: the conflicting synonyms and the
-    synonyms equal to their label are removed. Records the settings next to
-    both files.
+    Transforms hp.owl with the adapter into transform.csv, in the adapter's
+    format: the conflicting synonyms and the synonyms equal to their label
+    are removed. Records the settings next to the file.
     """
     from adapter    import HPOAdapter
 
@@ -324,57 +268,6 @@ def transformHPO() -> None:
     writeSettings(outputFileTransformedFull, transformSettings)
     l.log("Full transformed Data written.")
 
-    # --------------------------------------------------------------------------
-    # Filter data to keep only selected HPO concepts.
-    # --------------------------------------------------------------------------
-
-    if len(testIDs) > 0:
-        l.log("Creating a reduced set of HPO Concepts...")
-
-        rowCount = len(data.index)
-
-        # Limit the data to:
-        # - the test IDs themselves
-        # - their children
-        # - their parents
-        parentIDs = data.loc[
-            (data[valueColumn].isin(testIDs)) &
-            (data[attributeColumn] == childrenClass),
-            idColumn
-        ].tolist()
-
-        childIDs = data.loc[
-            (data[idColumn].isin(testIDs)) &
-            (data[attributeColumn] == childrenClass),
-            valueColumn
-        ].tolist()
-
-        hpoIDs = list(set(testIDs + childIDs + parentIDs))
-
-        # ----------------------------------------------------------------------
-        # Reduce content to only the selected HPO concepts.
-        # ----------------------------------------------------------------------
-
-        result = data[data[idColumn].isin(hpoIDs)].copy().reset_index(
-            drop = True)
-        l.log(f"Content Reduced by {rowCount - len(result.index)} Rows.")
-
-        # ----------------------------------------------------------------------
-        # Output summary statistics.
-        # ----------------------------------------------------------------------
-
-        l.printRowCount(result)
-        printDataSummary(result)
-
-        # ----------------------------------------------------------------------
-        # Persist transformed data to disk.
-        # ----------------------------------------------------------------------
-
-        l.log("Write reduced transformated Data...")
-        writeHugeCSV(result, outputFileTransformed)
-        writeSettings(outputFileTransformed, transformSettings)
-        l.log("Reduced transformed Data written.")
-
 # ==============================================================================
 # Embedding: the cosine distance of every synonym to its label -> embed.csv,
 # for the evaluation (SynTypeEval.py).
@@ -423,6 +316,12 @@ def embedTerms() -> None:
     hasLabel    = labelIndex >= 0
     l.log(f"Found {len(labels)} labels and {len(synonyms)} synonyms " \
         f"({(~hasLabel).sum()} of a concept without label).")
+
+    # The (concept, synonym) pairs of the development set, if it is drawn.
+    developmentSynonyms = None
+    if isFile(outputFileTransformed):
+        development = synonymTable(readTransformed(outputFileTransformed))
+        developmentSynonyms = set(zip(development[hpoidColumn], development[contentColumn]))
 
     def describe(values : pd.Series) -> str:
         """
@@ -503,6 +402,18 @@ def embedTerms() -> None:
                 l.log(f"Gold type {quote(synonymType)} ({ofType.sum()} synonyms): " \
                     f"{describe(values[ofType])}; normalised {describe(normalised[ofType])}.")
 
+            # The distances of the development set, whose mean and standard
+            # deviation can be set as syntype.cosine_distance_mean and _std.
+            if developmentSynonyms is not None:
+                inDevelopmentSet = pd.Series(list(zip(synonymRows[hpoidColumn],
+                    synonymRows[contentColumn]))).isin(developmentSynonyms)
+                l.log(f"Development set ({inDevelopmentSet.sum()} synonyms): " \
+                    f"{describe(values[inDevelopmentSet])}.")
+                for synonymType in synonymTypes:
+                    ofType = inDevelopmentSet & (types == synonymType)
+                    l.log(f"Development set, gold type {quote(synonymType)} " \
+                        f"({ofType.sum()} synonyms): {describe(values[ofType])}.")
+
             # A first, quick evaluation of the distances: how well they
             # separate expert from layperson synonyms, as the strictly
             # standardized mean difference of the normalised distances.
@@ -553,11 +464,9 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
 
     gold     = readTransformed(inputFileClass)
 
-    # The synonyms of the concepts to classify, with their gold type.
+    # The synonyms to classify, with their gold type: all of the HPO, or those
+    # of the development set ("test").
     synonyms = synonymTable(gold)
-    hpoIDs   = getHPOIDs(synonyms)
-    synonyms = synonyms[synonyms[hpoidColumn].isin(hpoIDs)].copy().reset_index(
-        drop = True)
 
     # --------------------------------------------------------------------------
     # Concept information for the prompts.
@@ -806,6 +715,16 @@ if transformOutdated(log = False):
                 transformHPO()
 else:
     l.log("The transformed HPO is up to date.")
+
+# The development set is drawn from the transformed HPO, once by the first of
+# the runs started at the same time that finds it missing or outdated.
+if developmentSetOutdated(log = False):
+    with lockedFile(outputFileTransformed):
+        if developmentSetOutdated():
+            with l.step("Drawing the development set"):
+                writeDevelopmentSet()
+else:
+    l.log("The development set is up to date.")
 
 if experimentIndex is None:
     # Preparation run: the embeddings of the evaluation.

@@ -335,7 +335,7 @@ with l.step("Evaluating the classifications"):
         """
         classified = data[data[hpoidColumn].str.startswith(startString, na=False)].reset_index(drop = True).copy()
 
-        # E.g. the test set has only HPO concepts.
+        # E.g. the development set may have only HPO concepts.
         if len(classified.index) == 0:
             l.log(f"No synonyms of concepts starting with {quote(startString)}; skipping the plot {quote(title)}.")
             return

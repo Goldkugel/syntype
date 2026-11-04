@@ -13,8 +13,8 @@ class ExperimentConfig(BaseModel):
     """
     model_config = ConfigDict(extra = "forbid")
 
-    # Only the test concepts (testIDs in config.py) and their parents and
-    # children.
+    # Only the synonyms of the development set (hpo.reduced.csv, see
+    # syntype.development_set).
     test: bool                                  = False
     # Examples in the prompts.
     few_shot: bool                              = False
@@ -28,6 +28,21 @@ class ExperimentConfig(BaseModel):
     structure: bool                             = False
 
 
+class DevelopmentSetConfig(BaseModel):
+    """
+    The development set (hpo.reduced.csv, written by SynTypeDevelopmentSet.py
+    and the preparation run): synonyms drawn at random from the transformed
+    HPO, to formulate the prompts and to find the mean and standard deviation
+    of the cosine distances; runs with "test" classify them.
+    """
+    model_config = ConfigDict(extra = "forbid")
+
+    # Number of synonyms drawn per gold type (expert, layperson).
+    size_per_type: int                          = Field(default = 500, gt = 0)
+    # Seed of the random selection, so the same set is drawn again.
+    seed: int                                   = 0
+
+
 class SyntypeConfig(BaseModel):
     """
     The "syntype" section of the configuration file: the settings of syntype
@@ -39,6 +54,9 @@ class SyntypeConfig(BaseModel):
     # The experiments, picked by their index on the command line (see
     # start.sh and finalize.sh); at least one.
     experiments: list[ExperimentConfig]         = Field(min_length = 1)
+
+    # The development set ("test").
+    development_set: DevelopmentSetConfig       = DevelopmentSetConfig()
 
     # Folder of the data, relative to the repository root.
     data_folder: str                            = "./data"
