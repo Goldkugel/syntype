@@ -41,7 +41,7 @@ logger:
   # runs started at the same time get their own file.
   file_name: "syntype_{start:%Y%m%d_%H%M%S_%f}.log"
   header_char: "="
-  header_length: 60
+  header_length: 90
   log_runtime: True
   format: "%Y-%m-%d %H:%M:%S"
   encoding: "utf-8"
