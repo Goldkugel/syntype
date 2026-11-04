@@ -1,3 +1,10 @@
+"""
+The preparation run and the classification of syntype (see the comment below
+for the command line): transforms the HPO, embeds its terms for the
+evaluation, classifies the synonyms with the LLMs of llm.model_id and formats
+their answers.
+"""
+
 import os
 import sys
 import copy
@@ -13,7 +20,7 @@ import pandas as pd
 sys.dont_write_bytecode = True
 
 # Import necessary modules and configuration settings
-from utils      import *
+from SynTypeUtils import *
 from config     import *
 
 from logger     import Logger, lockedFile, writeJSON
@@ -25,17 +32,16 @@ from logger     import Logger, lockedFile, writeJSON
 #
 # Run from the repository root (see start.sh and classify.sh):
 #
-#   python3 ./src/syntype.py ""                  Preparation: transforms the
-#                                                HPO (if needed) and embeds its
-#                                                terms (if needed) for the
-#                                                evaluation.
-#   python3 ./src/syntype.py all <words...>      Classification: transforms
-#                                                the HPO (if needed), then every
-#                                                model of llm.model_id
-#                                                classifies the synonyms and
-#                                                its answers are formatted, one
-#                                                model after the other.
-#   python3 ./src/syntype.py <model> <words...>  The same with only this model.
+#   python3 ./src/SynTypeClassification.py
+#       Preparation: transforms the HPO (if needed) and embeds its terms (if
+#       needed) for the evaluation.
+#   python3 ./src/SynTypeClassification.py <index>
+#       Classification of the experiment syntype.experiments[<index>]:
+#       transforms the HPO (if needed), then every model of llm.model_id
+#       classifies the synonyms and its answers are formatted, one model after
+#       the other.
+#   python3 ./src/SynTypeClassification.py <index> <model ID>
+#       The same with only this model.
 
 # ------------------------------------------------------------------------------
 # Initialization.
@@ -48,8 +54,8 @@ l = Logger(config = configFile)
 l.log(f"Command: python3 {shlex.join(sys.argv)}")
 
 # The adapter and the embedder take their sections from this copy of the
-# configuration file, on which syntype.py sets the embedding model of a run;
-# the model package reads the llm section from the file itself.
+# configuration file, on which the embedding model of a run is set; the model
+# package reads the llm section from the file itself.
 configuration = copy.deepcopy(configurationFile)
 
 def isOutdated(output : str, inputs : list) -> bool:
@@ -74,7 +80,7 @@ transformSettings = {
 }
 
 # The embedding depends on every embedder setting except those that do not
-# change the vectors, on the names and metrics of the similarity columns, and
+# change the vectors, on the names and metrics of the distance columns, and
 # on the mean and standard deviation they are normalised with.
 embedderSettingsWithoutEffect = ["device", "backend", "num_threads",
     "batch_size", "cache_folder", "cache_decimals", "progress_interval"]
@@ -84,11 +90,14 @@ embedSettings = {
         if key not in embedderSettingsWithoutEffect
     },
     "embedding_model_names" : syntypeConfig.embedding_model_names,
-    "similarity_metrics"    : similarityMetrics,
-    "cosine_similarity"     : [cosineSimilarityMean, cosineSimilarityStd]
+    "distance_metrics"    : distanceMetrics,
+    "cosine_distance"     : [cosineDistanceMean, cosineDistanceStd]
 }
 
 def settingsFile(output : str) -> str:
+    """
+    The file holding the settings an output was made with.
+    """
     return output + ".settings.json"
 
 def changedSettings(output : str, settings : dict) -> list:
@@ -107,6 +116,9 @@ def changedSettings(output : str, settings : dict) -> list:
     return [key for key in current if recorded.get(key) != current[key]]
 
 def writeSettings(output : str, settings : dict) -> None:
+    """
+    Records the settings an output was made with, next to it (atomically).
+    """
     writeJSON(settings, settingsFile(output))
 
 def outdated(output : str, inputs : list, settings : dict, log : bool = True) -> bool:
@@ -128,13 +140,17 @@ def outdated(output : str, inputs : list, settings : dict, log : bool = True) ->
     return False
 
 def transformOutdated(log : bool = True) -> bool:
+    """
+    Whether the transformed HPO (and its test set) is missing, older than
+    hp.owl or made with other settings; the reason is logged if `log`.
+    """
     outputs = [outputFileTransformedFull] + ([outputFileTransformed] if len(testIDs) > 0 else [])
     return any(outdated(output, [inputFileTransformed], transformSettings, log) for output in outputs)
 
 # ==============================================================================
 # Prompts: the model loads the templates of the experiment (llm.prompt_files)
 # and fills in the concept information, the synonym and the Few-Shot examples
-# (fewShotExamples in config.py); syntype.py gives their order and values.
+# (fewShotExamples in config.py); this script gives their order and values.
 # ==============================================================================
 
 def createJSONExample(cl : str = "", co : str = "5", ra : str = "") -> str:
@@ -164,6 +180,10 @@ def formatInput(label : str = "", definition : str = "", comment : str = "", par
         f"* Children: {values['hpo_children']}"
 
 def getExamples() -> str:
+    """
+    The Few-Shot examples (fewShotExamples in config.py), each with its input
+    and its answer in the format of the prompts.
+    """
     ret = "Examples"
 
     for index, example in enumerate(fewShotExamples):
@@ -203,8 +223,8 @@ def promptValues(
         "hpo_synonyms"   : quote(synonym),
         "hpo_definition" : quote(definition) if addDefinition else "",
         "hpo_comment"    : quote(comment) if addComment else "",
-        "hpo_parents"    : applyFormat(parents) if addParents else "",
-        "hpo_children"   : applyFormat(children) if addChildren else ""
+        "hpo_parents"    : applyFormat(parents) if addStructure else "",
+        "hpo_children"   : applyFormat(children) if addStructure else ""
     }
 
 # The prompts of the experiment, one per turn, by their index in
@@ -220,6 +240,13 @@ promptIndexes = chainOfThoughtsPromptIndexes if chainOfThoughts else [singleProm
 # ==============================================================================
 
 def transformHPO() -> None:
+    """
+    Transforms hp.owl with the adapter into transform.csv (all concepts) and
+    transform.reduced.csv (the test concepts with their parents and
+    children), in the adapter's format: the conflicting synonyms and the
+    synonyms equal to their label are removed. Records the settings next to
+    both files.
+    """
     from adapter    import HPOAdapter
 
     # A synonym of a concept with all classes or all types of one of these sets
@@ -334,11 +361,17 @@ def transformHPO() -> None:
         l.log("Reduced transformed Data written.")
 
 # ==============================================================================
-# Embedding: the similarity of every synonym to its label -> embed.csv, for
-# the evaluation (syntypeeval.py).
+# Embedding: the cosine distance of every synonym to its label -> embed.csv,
+# for the evaluation (SynTypeEval.py).
 # ==============================================================================
 
 def embedTerms() -> None:
+    """
+    Embeds the labels and synonyms of all concepts with every model of
+    embedder.model_id and writes the normalised cosine distance of every
+    synonym to its label to embed.csv, for the evaluation. Logs how well the
+    distance separates expert from layperson synonyms.
+    """
     from embedder import Embedder
 
     # Printing header.
@@ -346,7 +379,7 @@ def embedTerms() -> None:
 
     # --------------------------------------------------------------------------
     # Load the Human Phenotype Ontology (HPO) from the transformed data file.
-    # All concepts are embedded, also for test runs: the similarities are
+    # All concepts are embedded, also for test runs: the distances are
     # standardised with one mean and standard deviation (configured, or of all
     # synonyms), so that test and full runs share one scale.
     # --------------------------------------------------------------------------
@@ -376,15 +409,16 @@ def embedTerms() -> None:
     l.log(f"Found {len(labels)} labels and {len(synonyms)} synonyms " \
         f"({(~hasLabel).sum()} of a concept without label).")
 
-    def similarity(a : np.ndarray, b : np.ndarray) -> np.ndarray:
+    def distance(a : np.ndarray, b : np.ndarray) -> np.ndarray:
         """
-        Cosine similarity of the rows of a and b.
+        Cosine distance of the rows of a and b: 1 minus their cosine
+        similarity, from 0 (same direction) to 2 (opposite directions).
         """
-        return np.sum(a * b, axis = 1) / (
+        return 1 - np.sum(a * b, axis = 1) / (
             np.linalg.norm(a, axis = 1) * np.linalg.norm(b, axis = 1))
 
     # --------------------------------------------------------------------------
-    # Embed and calculate the similarity of labels with their respective synonyms.
+    # Embed and calculate the distance of labels to their synonyms.
     # --------------------------------------------------------------------------
 
     l.log("Start to Embed Synonyms and Labels with all Embedding Models.")
@@ -414,39 +448,40 @@ def embedTerms() -> None:
         m = "mean"
         s = "std"
 
-        for similarityMetric in similarityMetrics:
-            similarityColumn = similarityColumnPrefix.format(embeddingModel,
-                similarityMetric)
+        for distanceMetric in distanceMetrics:
+            distanceColumn = distanceColumnPrefix.format(embeddingModel,
+                distanceMetric)
 
-            # Standard value for no similarity is np.nan.
+            # Standard value for no distance (no label) is np.nan.
             values           = np.full(len(synonyms), np.nan)
-            values[hasLabel] = similarity(a, b)
+            values[hasLabel] = distance(a, b)
 
-            # Normalization: the values are subtracted by the mean and divided
-            # by the standard deviation, those of syntype.cosine_similarity_mean
-            # and _std if set, so that every run uses the same scale, otherwise
-            # those of the data.
+            # Normalization: the distances are subtracted by the mean and
+            # divided by the standard deviation, those of
+            # syntype.cosine_distance_mean and _std if set, so that every run
+            # uses the same scale, otherwise those of the data. Normalised
+            # distances can be below -1 and above 1.
             values = pd.Series(values)
-            mean   = values.mean() if cosineSimilarityMean is None else cosineSimilarityMean
-            std    = values.std() if cosineSimilarityStd is None else cosineSimilarityStd
-            l.log(f"{embeddingModel} with {similarityMetric}: mean {values.mean()} and " \
+            mean   = values.mean() if cosineDistanceMean is None else cosineDistanceMean
+            std    = values.std() if cosineDistanceStd is None else cosineDistanceStd
+            l.log(f"{embeddingModel} with {distanceMetric}: mean {values.mean()} and " \
                 f"standard deviation {values.std()} of the data, normalised with " \
                 f"mean {mean} and standard deviation {std}.")
-            synonymRows[similarityColumn] = (values - mean) / std
+            synonymRows[distanceColumn] = (values - mean) / std
 
-            # A first, quick evaluation of the similarity scores: how well they
+            # A first, quick evaluation of the distances: how well they
             # separate expert from layperson synonyms (gold type).
-            grouped = synonymRows[similarityColumn][types.isin(synonymTypes)].groupby(
+            grouped = synonymRows[distanceColumn][types.isin(synonymTypes)].groupby(
                 types).agg([m, s]).reindex(synonymTypes)
 
             means = grouped[m].tolist()
             stds  = grouped[s].tolist()
 
-            l.log(f"{embeddingModel} with {similarityMetric} Difference: " \
+            l.log(f"{embeddingModel} with {distanceMetric} Difference: " \
                 f"[{expertSynonymType} - {laypersonSynonymType}]")
-            l.log(f"Mean's Differnece:               {means[0] - means[1]}")
+            l.log(f"Mean's Difference:               {means[0] - means[1]}")
             l.log(f"Standard Deviation's Difference: {stds[0] - stds[1]}")
-            l.log(f"{embeddingModel} with {similarityMetric} Values:     " \
+            l.log(f"{embeddingModel} with {distanceMetric} Values:     " \
                 f"[{expertSynonymType},  {laypersonSynonymType}]")
             l.log(f"Means:                           {str(means)}")
             l.log(f"Standard Deviation:              {str(stds)}")
@@ -458,8 +493,8 @@ def embedTerms() -> None:
 
 
     # --------------------------------------------------------------------------
-    # Persist data to disk: the synonyms with their similarities, which
-    # syntypeeval.py joins to the classified synonyms.
+    # Persist data to disk: the synonyms with their distances, which
+    # SynTypeEval.py joins to the classified synonyms.
     # --------------------------------------------------------------------------
 
     writeHugeCSV(synonymRows, outputFileEmbedded)
@@ -526,6 +561,9 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
         return [label for i in relatedIDs.get(hpoID, []) for label in labels.get(i, [])]
 
     def text(values : dict, hpoID : str) -> str:
+        """
+        The values of a concept joined into one text ("" if it has none).
+        """
         return "".join(str(v) for v in values.get(hpoID, []))
 
     # --------------------------------------------------------------------------
@@ -571,8 +609,7 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
     l.log(f"Chain-Of-Thoughts: {chainOfThoughts}")
     l.log(f"Add Definitions to Prompt: {addDefinition}")
     l.log(f"Add Comment to Prompt: {addComment}")
-    l.log(f"Add Parents to Prompt: {addParents}")
-    l.log(f"Add Children to Prompt: {addChildren}")
+    l.log(f"Add Parents and Children to Prompt: {addStructure}")
 
     # --------------------------------------------------------------------------
     # Classification of synonyms.
@@ -626,10 +663,15 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
 
 # ==============================================================================
 # Formatting of the answers -> the formatted classification file (merged by
-# syntypemerge.py).
+# SynTypeMerge.py).
 # ==============================================================================
 
 def formatAnswers(synonyms : pd.DataFrame, modelName : str) -> None:
+    """
+    Writes the formatted classification of a model (its parsed answers, see
+    classifySynonyms()), which SynTypeMerge.py merges, and logs every wrong or
+    undefined classification.
+    """
     l.printHeader(f"Formatting Answers of Synonym's Classification ({modelName})")
 
     # classifySynonyms() parsed the answers with the model package
@@ -689,7 +731,7 @@ if transformOutdated(log = False):
 else:
     l.log("The transformed HPO is up to date.")
 
-if len(modelIDs) == 0:
+if experimentIndex is None:
     # Preparation run: the embeddings of the evaluation.
     if outdated(outputFileEmbedded, [outputFileTransformedFull], embedSettings):
         with l.step("Embedding the HPO terms"):
@@ -699,8 +741,7 @@ if len(modelIDs) == 0:
 else:
     # The models classify one after the other; a failing model does not stop
     # the others. Each model is unloaded from the GPU before the next one. The
-    # logger logs the start, end and duration of every step (data/logs/done.sh
-    # counts the completed classifications).
+    # logger logs the start, end and duration of every step.
     failed = []
     for index, modelID in enumerate(modelIDs):
         l.log(f"Model {index + 1}/{len(modelIDs)}: {quote(modelID)}")

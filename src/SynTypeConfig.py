@@ -1,5 +1,32 @@
+"""
+Pydantic schema of the "syntype" section of config/config.yaml and of its
+experiments, validated by config.py.
+"""
+
 from pydantic import BaseModel, ConfigDict, Field
 from typing   import Literal
+
+class ExperimentConfig(BaseModel):
+    """
+    One experiment of syntype.experiments: how the synonyms are classified.
+    A setting that is not given is off.
+    """
+    model_config = ConfigDict(extra = "forbid")
+
+    # Only the test concepts (testIDs in config.py) and their parents and
+    # children.
+    test: bool                                  = False
+    # Examples in the prompts.
+    few_shot: bool                              = False
+    # Three prompts instead of one.
+    chain_of_thoughts: bool                     = False
+    # Information about the concept added to the prompts: its definition,
+    # its comment, and its structure (the labels of its parents and
+    # children).
+    definition: bool                            = False
+    comment: bool                               = False
+    structure: bool                             = False
+
 
 class SyntypeConfig(BaseModel):
     """
@@ -9,37 +36,29 @@ class SyntypeConfig(BaseModel):
     """
     model_config = ConfigDict(extra = "forbid")
 
-    # Only the test concepts (testIDs in config.py) and their parents and 
-    # children ("test").
-    test: bool                                  = False
-    # Examples in the prompts ("few-shot").
-    few_shot: bool                              = False
-    # Three prompts instead of one ("chain-of-thoughts").
-    chain_of_thoughts: bool                     = False
-    # Information about the concept added to the prompts ("definition",
-    # "comment", "parents", "children").
-    definition: bool                            = False
-    comment: bool                               = False
-    parents: bool                               = False
-    children: bool                              = False
+    # The experiments, picked by their index on the command line (see
+    # start.sh and finalize.sh); at least one.
+    experiments: list[ExperimentConfig]         = Field(min_length = 1)
 
     # Folder of the data, relative to the repository root.
     data_folder: str                            = "./data"
 
-    # Name used in the similarity column names for every model in
+    # Name used in the distance column names for every model in
     # embedder.model_id.
     embedding_model_names: dict[str, str]       = {}
 
-    # Mean and standard deviation of the cosine similarity between every
+    # Mean and standard deviation of the cosine distance between every
     # synonym and the label of its concept, over all synonyms of HPO, with
-    # which the similarities are normalised; None computes them from the data.
-    cosine_similarity_mean: float | None        = None
-    cosine_similarity_std: float | None         = Field(default = None, gt = 0)
+    # which the distances are normalised. The defaults 0 and 1 leave them as
+    # they are; None computes them from the data.
+    cosine_distance_mean: float | None          = 0.0
+    cosine_distance_std: float | None           = Field(default = 1.0, gt = 0)
 
-    # Range of the normalised similarities in the evaluation plots.
-    similarity_evaluation_lower_bound: float    = -4
-    similarity_evaluation_upper_bound: float    = 4
+    # Range of the normalised distances in the evaluation plots and of the
+    # thresholds tried.
+    distance_evaluation_lower_bound: float      = -4
+    distance_evaluation_upper_bound: float      = 4
 
-    # Draw the similarity plots of the evaluation also without "test", and
+    # Draw the distance plots of the evaluation also without "test", and
     # again if they exist already.
     force_draw_additional_plots: bool           = False

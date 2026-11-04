@@ -1,3 +1,11 @@
+"""
+Evaluates the merged classifications of an experiment: counts of the gold and
+classified source types, precision, recall and F1 per model and source type,
+and the cosine distance of the synonyms to their label per source type.
+
+    python3 ./src/SynTypeEval.py <index>   (index in syntype.experiments)
+"""
+
 import numpy                as np
 import matplotlib.pyplot    as plt
 import seaborn              as sns
@@ -11,7 +19,7 @@ import math
 sys.dont_write_bytecode = True
 
 # Import necessary modules and configuration settings
-from utils      import *
+from SynTypeUtils import *
 from config     import *
 
 from logger     import Logger
@@ -24,6 +32,12 @@ from collections import Counter
 l             = Logger(config = configFile)
 l.log(f"Command: python3 {shlex.join(sys.argv)}")
 
+# The experiment whose classifications are evaluated (see config.py).
+if experimentIndex is None:
+    l.error("Give the index of the experiment in syntype.experiments, e.g. " \
+        f"python3 {sys.argv[0]} 0.")
+    sys.exit(1)
+
 l.printHeader("Evaluating the Results of Synonym Classification")
 
 # The logger logs the start, end and duration of the step.
@@ -33,22 +47,22 @@ with l.step("Evaluating the classifications"):
 
     classifiedComplete = readCSV(inputFileClassEvaluation)
 
-    # The similarities of the synonyms to their label (the preparation run,
-    # syntype.py ""). Similarity columns of classifications made before the
-    # embeddings got their own file are replaced.
+    # The distances of the synonyms to their label (the preparation run,
+    # SynTypeClassification.py without arguments). Distance columns already
+    # in the classifications are replaced.
     if isFile(outputFileEmbedded):
-        similarities = readCSV(outputFileEmbedded)
+        distances = readCSV(outputFileEmbedded)
         keys         = [hpoidColumn, classColumn, contentColumn]
-        for data in [classifiedComplete, similarities]:
+        for data in [classifiedComplete, distances]:
             data[keys] = data[keys].astype(str)
 
         classifiedComplete = classifiedComplete.drop(columns = [
             c for c in classifiedComplete.columns
-            if c.startswith(similarityColumnPrePrefix)
-        ]).merge(similarities, on = keys, how = "left")
+            if c.startswith(distanceColumnPrePrefix)
+        ]).merge(distances, on = keys, how = "left")
     else:
-        l.log(f"No similarities found ({os.path.basename(outputFileEmbedded)}); " \
-            "run syntype.py \"\" for the similarity plots.")
+        l.log(f"No distances found ({os.path.basename(outputFileEmbedded)}); " \
+            "run SynTypeClassification.py without arguments for the distance plots.")
 
     ontologies = [
         str(s).split(":", 1)[0] for s in classifiedComplete[hpoidColumn].to_list()
@@ -75,8 +89,8 @@ with l.step("Evaluating the classifications"):
     classifiedComplete[typeColumn]    = classifiedComplete[typeColumn  ].str.lower()
 
     # Synonyms without a source type are set to "expert" (synonymTypeOf() in
-    # utils.py does this already; "direct" remains in classifications made
-    # before that).
+    # SynTypeUtils.py does this already; "direct" remains in classifications
+    # made before that).
     classifiedComplete[typeColumn]    = classifiedComplete[typeColumn].replace(
         [np.nan, directSynonymType], expertSynonymType.lower()
     )
@@ -127,15 +141,16 @@ with l.step("Evaluating the classifications"):
         return (2 * TP) / (2 * TP + FP + FN)
 
     # ------------------------------------------------------------------------------
-    # Similarity of the synonyms to their label per gold type, and the threshold
-    # that best separates layperson synonyms (below) from expert synonyms (above).
+    # Distance of the synonyms to their label per gold type, and the threshold
+    # that best separates layperson synonyms (above, further from the label)
+    # from expert synonyms (below, closer to it).
     # ------------------------------------------------------------------------------
 
     if reduceToTestIDs or forceDrawAdditionalPlots:
         classified = classifiedComplete[classifiedComplete[systemColumn] == systems[0]].copy().reset_index(drop = True)
         for embeddingModel in embeddingModels.keys():
-            for similarityMetric in similarityMetrics:
-                column = similarityColumnPrefix.format(embeddingModel, similarityMetric)
+            for distanceMetric in distanceMetrics:
+                column = distanceColumnPrefix.format(embeddingModel, distanceMetric)
 
                 outputFileClassEmbeddingEval              = os.path.join(
                     dataDir,
@@ -144,14 +159,14 @@ with l.step("Evaluating the classifications"):
                     outputFileNameClassEmbeddingEvaluation.format(column)
                 )
 
-                outputFileClassSimilarityEval              = os.path.join(
+                outputFileClassDistanceEval              = os.path.join(
                     dataDir,
                     outputFolderName,
                     outputFolderNameClassEmbedding,
-                    outputFileNameClassSimilarityEvaluation.format(column)
+                    outputFileNameClassDistanceEvaluation.format(column)
                 )
 
-                if column in classified.columns and (not isFile(outputFileClassSimilarityEval) or forceDrawAdditionalPlots):
+                if column in classified.columns and (not isFile(outputFileClassDistanceEval) or forceDrawAdditionalPlots):
                     plt.figure(figsize=(8, 5))
 
                     palette = {
@@ -169,12 +184,12 @@ with l.step("Evaluating the classifications"):
                         fill=False           # set True if you want filled curves
                     )
 
-                    plt.xlabel("Similarity")
+                    plt.xlabel("Distance")
                     plt.ylabel("Density")
-                    plt.title("Density Curves of Similarity by Source Type")
+                    plt.title("Density Curves of Distance by Source Type")
                     plt.yticks(np.linspace(0, 1, 6))
-                    plt.xticks(np.linspace(similarityEvaluationLowerBound, similarityEvaluationUperBound, 9))
-                    plt.xlim(similarityEvaluationLowerBound, similarityEvaluationUperBound)
+                    plt.xticks(np.linspace(distanceEvaluationLowerBound, distanceEvaluationUpperBound, 9))
+                    plt.xlim(distanceEvaluationLowerBound, distanceEvaluationUpperBound)
 
                     handles = [
                         Line2D([0], [0], color=color, lw=2, label=cls)
@@ -186,11 +201,11 @@ with l.step("Evaluating the classifications"):
                     plt.grid(axis = "both")
 
                     plt.tight_layout()
-                    plt.savefig(outputFileClassSimilarityEval, dpi = 300, bbox_inches = "tight")
+                    plt.savefig(outputFileClassDistanceEval, dpi = 300, bbox_inches = "tight")
 
 
                 if column in classified.columns and (not isFile(outputFileClassEmbeddingEval) or forceDrawAdditionalPlots):
-                    l.log(f"Plotting {similarityMetric} for Model {embeddingModel}...")
+                    l.log(f"Plotting {distanceMetric} for Model {embeddingModel}...")
 
                     x1 = []
                     y1 = []
@@ -199,17 +214,17 @@ with l.step("Evaluating the classifications"):
 
                     with newProgress() as progress:
 
-                        task = newTask(progress, similarityEvaluationParts, "Evaluating")
+                        task = newTask(progress, distanceEvaluationParts, "Evaluating")
 
-                        for i in np.linspace(similarityEvaluationLowerBound,
-                                            similarityEvaluationUperBound,
-                                            similarityEvaluationParts):
+                        for i in np.linspace(distanceEvaluationLowerBound,
+                                            distanceEvaluationUpperBound,
+                                            distanceEvaluationParts):
                             x1.append(i)
                             x2.append(i)
 
-                            y1.append(f1Score(classified[column] <= i,
+                            y1.append(f1Score(classified[column] >= i,
                                 classified[typeColumn], laypersonSynonymType))
-                            y2.append(f1Score(classified[column] >= i,
+                            y2.append(f1Score(classified[column] <= i,
                                 classified[typeColumn], expertSynonymType))
 
                             progress.update(task, advance = 1)
@@ -228,38 +243,38 @@ with l.step("Evaluating the classifications"):
                     x2 = np.array(x2)
                     y2 = np.array(y2)
 
-                    roundFactor = float(math.pow(10, len(str(similarityEvaluationParts)) - 1))
+                    roundFactor = float(math.pow(10, len(str(distanceEvaluationParts)) - 1))
 
                     if not np.all(np.isnan(y1)):
                         max_index = np.nanargmax(y1)
                         max_x = math.ceil(roundFactor * x1[max_index]) / roundFactor
                         max_y = math.ceil(roundFactor * y1[max_index]) / roundFactor
 
-                        c = sum(classified[column] <= max_x)
+                        c = sum(classified[column] >= max_x)
                         p = 100 * float(math.floor(roundFactor * c / len(classified.index))) / roundFactor
 
 
                         plt.scatter(max_x, max_y, s = 200, marker = 'x', color = "red", zorder = 100, label = "(" + str(max_x) + ", " + str(max_y) + ") (Count: " + str(c) + ", " + str(p) + "%)")
-                        l.log(f"Suggested Threshold for Type {quote(laypersonSynonymType)}, Metric {quote(similarityMetric)}, and Model {quote(embeddingModel)}: {str(max_x)} with F1 of {max_y} classifying {str(p)}% of the data." )
+                        l.log(f"Suggested Threshold for Type {quote(laypersonSynonymType)}, Metric {quote(distanceMetric)}, and Model {quote(embeddingModel)}: {str(max_x)} with F1 of {max_y} classifying {str(p)}% of the data." )
 
                     if not np.all(np.isnan(y2)):
                         max_index = np.nanargmax(y2)
                         max_x = math.ceil(roundFactor * x2[max_index]) / roundFactor
                         max_y = math.ceil(roundFactor * y2[max_index]) / roundFactor
 
-                        c = sum(classified[column] >= max_x)
+                        c = sum(classified[column] <= max_x)
                         p = 100 * float(math.floor(roundFactor * c / len(classified.index)))  / roundFactor
 
                         plt.scatter(max_x, max_y, s = 200, marker = 'x', color = "blue", zorder = 100, label = "(" + str(max_x) + ", " + str(max_y) + ") (Count: " + str(c) + ", " + str(p) + "%)")
-                        l.log(f"Suggested Threshold for Type {quote(expertSynonymType)}, Metric {quote(similarityMetric)}, and Model {quote(embeddingModel)}: {str(max_x)} with F1 of {max_y} classifying {str(p)}% of the data." )
+                        l.log(f"Suggested Threshold for Type {quote(expertSynonymType)}, Metric {quote(distanceMetric)}, and Model {quote(embeddingModel)}: {str(max_x)} with F1 of {max_y} classifying {str(p)}% of the data." )
 
                     plt.xlabel("Threshold")
                     plt.ylabel("F1 Score")
-                    plt.title(f"Normalized {similarityMetric.capitalize()}-Similarity for Model {quote(embeddingModel)}")
+                    plt.title(f"Normalized {distanceMetric.capitalize()} Distance for Model {quote(embeddingModel)}")
                     plt.grid(axis = "both")
 
                     plt.yticks(np.linspace(0, 1.0, 11))
-                    plt.xticks(np.linspace(similarityEvaluationLowerBound, similarityEvaluationUperBound, 17))
+                    plt.xticks(np.linspace(distanceEvaluationLowerBound, distanceEvaluationUpperBound, 17))
 
                     plt.legend(loc = "lower left", ncol = 1)
                     plt.savefig(outputFileClassEmbeddingEval, dpi = 300, bbox_inches = "tight")
@@ -320,6 +335,11 @@ with l.step("Evaluating the classifications"):
     # ------------------------------------------------------------------------------
 
     def ontologySubplot(data : pd.DataFrame = None, startString : str = "", outputFile : str = "", title : str = "") -> None:
+        """
+        Plots precision, recall and F1 per model and source type for the
+        synonyms of the concepts whose ID starts with `startString` ("" for
+        all), and logs them; does nothing if there are none.
+        """
         classified = data[data[hpoidColumn].str.startswith(startString, na=False)].reset_index(drop = True).copy()
 
         # E.g. the test set has only HPO concepts.

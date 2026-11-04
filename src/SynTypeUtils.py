@@ -1,3 +1,9 @@
+"""
+Helpers shared by the scripts of syntype: the transformed HPO in the format of
+the adapter package, reading and writing CSV files, parsing the answers of the
+LLMs, progress bars and the data summary.
+"""
+
 import pandas       as pd
 import numpy as np
 import ast
@@ -87,12 +93,12 @@ def synonymTable(data : pd.DataFrame) -> pd.DataFrame:
         systemColumn  : goldStandardSystem
     })
 
-# The similarity of every synonym to its label (syntype.py, syntypeeval.py):
-# the cosine similarity of every model of embedder.model_id. A model is named
-# in the similarity columns by syntype.embedding_model_names, or by its ID
-# without the organisation.
-cosineSimilarity  = "cosine"
-similarityMetrics = [cosineSimilarity]
+# The distance of every synonym to its label (SynTypeClassification.py,
+# SynTypeEval.py): the cosine distance of every model of embedder.model_id.
+# A model is named in the distance columns by syntype.embedding_model_names,
+# or by its ID without the organisation.
+cosineDistance  = "cosine"
+distanceMetrics = [cosineDistance]
 
 embeddingModels = {
     syntypeConfig.embedding_model_names.get(m, modelNameOf(m)) : m
@@ -263,6 +269,10 @@ def parseClassification(answer) -> tuple[str, int]:
     return ret
 
 def getHPOIDs(data : pd.DataFrame) -> list:
+    """
+    The concepts whose synonyms are classified: the test concepts (testIDs in
+    config.py) in test runs, otherwise every concept in `data`.
+    """
     ret = []
 
     if reduceToTestIDs:
@@ -277,9 +287,17 @@ def getHPOIDs(data : pd.DataFrame) -> list:
 
 
 def quote(string : str) -> str:
+    """
+    The string in quotation marks, e.g. for the prompts and the log.
+    """
     return quotationCharacter + string + quotationCharacter
 
 def applyFormat(l : list[str] = []) -> str:
+    """
+    A list of strings as one text, each quoted and separated by commas, e.g.
+    '"a", "b"'; a single string is only quoted, and an empty list gives
+    "None".
+    """
     string = "None"
     if len(l) > 0:
         if isinstance(l, str):

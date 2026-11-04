@@ -1,8 +1,17 @@
+"""
+The configuration of syntype: reads config/config.yaml, picks the experiment
+and the models of a run from the command line, and defines the column and
+class names, the file names of every step, the Few-Shot examples and the test
+concepts. Imported by every script with `from config import *`.
+
+    python3 ./src/config.py   prints the number of experiments
+"""
+
 import os
 import sys
 import yaml
 
-from SynTypeConfig import SyntypeConfig
+from SynTypeConfig import ExperimentConfig, SyntypeConfig
 
 # Prevent Python from generating .pyc files (compiled bytecode files)
 sys.dont_write_bytecode = True
@@ -21,33 +30,45 @@ with open(configFile, "r", encoding = "utf-8") as f:
 syntypeConfig = SyntypeConfig.model_validate(configurationFile["syntype"])
 
 # =============================================================================
-# Experiment: the words after the model ID on the command line (see
-# start.sh) set every setting of the run, a missing word switches its
-# setting off. Without such words the configuration file sets them.
+# Experiment and models of a run, given on the command line (see start.sh,
+# classify.sh and finalize.sh):
+#   (nothing)           SynTypeClassification.py: the preparation run
+#                       (transforms the HPO and embeds its terms);
+#   <index>             the experiment syntype.experiments[<index>], counted
+#                       from 0: SynTypeClassification.py classifies the
+#                       synonyms with every model of llm.model_id, one after
+#                       the other; SynTypeMerge.py and SynTypeEval.py merge
+#                       and evaluate the classifications of all models;
+#   <index> <model ID>  SynTypeClassification.py: the same with only this
+#                       model.
+# `python3 ./src/config.py` prints the number of experiments.
 # =============================================================================
 
-experiment = syntypeConfig
+experimentIndex = None
+if len(sys.argv) > 1:
+    experimentCount = len(syntypeConfig.experiments)
+    if not sys.argv[1].isdigit() or int(sys.argv[1]) >= experimentCount:
+        sys.exit(f"The experiment '{sys.argv[1]}' does not exist: give its index in " \
+            f"syntype.experiments, 0 to {experimentCount - 1}.")
+    experimentIndex = int(sys.argv[1])
 
-def experimentSetting(word : str, configured : bool) -> bool:
-    if len(sys.argv) > 2:
-        return word in sys.argv[2:]
-    return configured
+# The preparation run classifies nothing, so it has no experiment.
+experiment = (ExperimentConfig() if experimentIndex is None
+    else syntypeConfig.experiments[experimentIndex])
 
-reduceToTestIDs         = experimentSetting("test", experiment.test)
-fewShot                 = experimentSetting("few-shot", experiment.few_shot)
-chainOfThoughts         = experimentSetting("chain-of-thoughts", experiment.chain_of_thoughts)
-addDefinition           = experimentSetting("definition", experiment.definition)
-addComment              = experimentSetting("comment", experiment.comment)
-addParents              = experimentSetting("parents", experiment.parents)
-addChildren             = experimentSetting("children", experiment.children)
+reduceToTestIDs         = experiment.test
+fewShot                 = experiment.few_shot
+chainOfThoughts         = experiment.chain_of_thoughts
+addDefinition           = experiment.definition
+addComment              = experiment.comment
+addStructure            = experiment.structure
 
 forceDrawAdditionalPlots = syntypeConfig.force_draw_additional_plots
 
 testStr                 = "Test" if reduceToTestIDs else "NoTest"
 configStr               = "Definition" if addDefinition else "NoDefinition"
 configStr              += "_Comment" if addComment else "_NoComment"
-configStr              += "_Parents" if addParents else "_NoParents"
-configStr              += "_Children" if addChildren else "_NoChildren"
+configStr              += "_Structure" if addStructure else "_NoStructure"
 fewShotStr              = "FewShot" if fewShot else "NoFewShot"
 chainOfThoughtsStr      = "ChainOfThoughts" if chainOfThoughts else "NoChainOfThoughts"
 
@@ -55,19 +76,12 @@ chainOfThoughtsStr      = "ChainOfThoughts" if chainOfThoughts else "NoChainOfTh
 # Model Configuration
 # =============================================================================
 
-# The LLMs of syntype.py, classifying one after the other, depend on the
-# first command-line argument (see classify.sh):
-#   ""         no model: the preparation run of syntype.py, and
-#              syntypemerge.py and syntypeeval.py, which combine all models;
-#   "all"      all models of llm.model_id (also without any arguments);
-#   a model ID only this model.
-allModelsArgument = "all"
-
-modelIDs = list(configurationFile["llm"]["model_id"])
-if len(sys.argv) > 1 and sys.argv[1] != allModelsArgument:
-    modelIDs = []
-    if len(sys.argv[1]) > 0 and sys.argv[1][0] != "-":
-        modelIDs = [sys.argv[1]]
+# The LLMs of SynTypeClassification.py, classifying one after the other: none
+# in the preparation run, the one given after the experiment, or all of
+# llm.model_id.
+modelIDs = []
+if experimentIndex is not None:
+    modelIDs = sys.argv[2:3] or list(configurationFile["llm"]["model_id"])
 
 def modelNameOf(modelID : str) -> str:
     """
@@ -76,17 +90,17 @@ def modelNameOf(modelID : str) -> str:
     """
     return modelID[modelID.index("/") + 1:] if "/" in modelID else modelID
 
-similarityColumnPrePrefix   = "similarity_"
-similarityColumnPrefix      = f"{similarityColumnPrePrefix}" + "{}_{}"
+distanceColumnPrePrefix   = "distance_"
+distanceColumnPrefix      = f"{distanceColumnPrePrefix}" + "{}_{}"
 
-similarityEvaluationLowerBound = syntypeConfig.similarity_evaluation_lower_bound
-similarityEvaluationUperBound  = syntypeConfig.similarity_evaluation_upper_bound
-similarityEvaluationParts      = int((similarityEvaluationUperBound - similarityEvaluationLowerBound) * 1000 + 1)
+distanceEvaluationLowerBound = syntypeConfig.distance_evaluation_lower_bound
+distanceEvaluationUpperBound  = syntypeConfig.distance_evaluation_upper_bound
+distanceEvaluationParts      = int((distanceEvaluationUpperBound - distanceEvaluationLowerBound) * 1000 + 1)
 
-# Mean and standard deviation of the cosine similarity with which the
-# similarities are normalised (None: computed from the data).
-cosineSimilarityMean           = syntypeConfig.cosine_similarity_mean
-cosineSimilarityStd            = syntypeConfig.cosine_similarity_std
+# Mean and standard deviation of the cosine distance with which the distances
+# are normalised (None: computed from the data).
+cosineDistanceMean           = syntypeConfig.cosine_distance_mean
+cosineDistanceStd            = syntypeConfig.cosine_distance_std
 
 # =============================================================================
 # For Simplification
@@ -123,7 +137,9 @@ relatedSynonymClass             = "related"
 broadSynonymClass               = "broad"
 narrowSynonymClass              = "narrow"
 
-synonymClasses = [exactSynonymClass, relatedSynonymClass]#, broadSynonymClass, narrowSynonymClass]
+# The synonym classes syntype classifies; broad and narrow synonyms name
+# another phenotype than their concept.
+synonymClasses = [exactSynonymClass, relatedSynonymClass]
 
 expertSynonymType               = "expert"
 laypersonSynonymType            = "layperson"
@@ -173,11 +189,11 @@ logFolderName                       = "logs"
 outputFolderNameTransformed         = "transformed"
 # The second Step is the actual job e.g. generation or classification.
 # Third step.
-outputFolderNameFormatted           = "format"
+outputFolderNameFormatted           = "formated"
 # Fourth step.
-outputFolderNameMerged              = "merge"
+outputFolderNameMerged              = "merged"
 # Fifth step.
-outputFolderNameEvaluation          = "evaluate"
+outputFolderNameEvaluation          = "evaluated"
 
 
 # The HPO file read by the adapter (adapter.hpo section).
@@ -209,9 +225,9 @@ outputFileTransformed                        = os.path.join(
 
 inputFileTask = outputFileTransformed if reduceToTestIDs else outputFileTransformedFull
 
-# Similarities of all synonyms to their label (syntype.py ""), for the
+# Cosine distances of all synonyms to their label (the preparation run), for the
 # evaluation of test and full runs.
-outputFolderNameEmbedded            = "embed"
+outputFolderNameEmbedded            = "embeded"
 outputFileEmbedded                  = os.path.join(
     dataDir,
     outputFolderName,
@@ -243,13 +259,13 @@ def outputFileClass(modelName : str) -> str:
 
 def outputFileClassFormatted(modelName : str) -> str:
     """
-    The formatted classification of a model, merged by syntypemerge.py.
+    The formatted classification of a model, merged by SynTypeMerge.py.
     """
     return os.path.join(dataDir, outputFolderName, outputFolderNameFormatted,
         f"{outputFileNameClassFormattedPrefix}_{modelName}.{csvFileFormat}")
 
 # The formatted classifications of all models of this experiment are read
-# from here by syntypemerge.py.
+# from here by SynTypeMerge.py.
 inputFolderClassMerged                 = os.path.join(dataDir, outputFolderName, outputFolderNameFormatted)
 
 outputFileNameClassMerged              = f"{filesPrefixApproachClass}_merged_classes.{csvFileFormat}"
@@ -321,16 +337,16 @@ outputFolderNameClassEmbedding = outputFolderNameEvaluation
 embeddingPrefix = f"{outputFolderNameClass}_{testStr}"
 
 outputFileNameClassEmbeddingEvaluation    = f"{embeddingPrefix}_embedding_evaluation_" + "{}" + f".{plotFileFormat}"
-outputFileNameClassSimilarityEvaluation   = f"{embeddingPrefix}_similarity_evaluation_" + "{}" + f".{plotFileFormat}"
+outputFileNameClassDistanceEvaluation   = f"{embeddingPrefix}_distance_evaluation_" + "{}" + f".{plotFileFormat}"
 
 
 # =============================================================================
 
 # The examples of the Few-Shot approach, with the answer of the prompts
 # (classification, confidence from 1 to 5, rationale). Their synonyms are
-# left out of the evaluation (syntypeeval.py; syntype.py writes them into the
-# prompts), also in runs without examples, so that all runs are scored on the
-# same synonyms.
+# left out of the evaluation (SynTypeEval.py; SynTypeClassification.py writes
+# them into the prompts), also in runs without examples, so that all runs are
+# scored on the same synonyms.
 fewShotExamples = [
     {
         hpoidColumn : "HP:0008365",
@@ -479,3 +495,8 @@ testIDs = [
     "HP:0200006", "HP:0410169", "HP:0410214", "HP:0410334", "HP:0430010", "HP:0500011",
     "HP:0500134", "HP:0500143", "HP:0500157", "HP:3000053"
 ]
+
+
+# The number of experiments, for the shell scripts (start.sh, finalize.sh).
+if __name__ == "__main__":
+    print(len(syntypeConfig.experiments))

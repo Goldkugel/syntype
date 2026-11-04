@@ -1,33 +1,38 @@
 # Paths are relative to the repository root, from where the scripts are run
-# (e.g. ./start.sh, python3 ./src/syntype.py "").
+# (e.g. ./start.sh, python3 ./src/SynTypeClassification.py).
 syntype:
-  # The experiment of a run without words on the command line. Words after
-  # the model ID (see start.sh) replace all of these settings: test,
-  # few-shot, chain-of-thoughts, definition, comment, parents, children.
-  test: False
-  few_shot: False
-  chain_of_thoughts: False
-  definition: False
-  comment: False
-  parents: False
-  children: False
+  # The experiments, picked by their index (counted from 0): start.sh starts
+  # one classification job per experiment, finalize.sh merges and evaluates
+  # every one of them. Settings of an experiment: test (only the test
+  # concepts), few_shot, chain_of_thoughts, definition, comment and structure
+  # (the parents and children of a concept); a setting that is not given is
+  # off.
+  experiments:
+    - {test: True, few_shot: True}
+    - {test: True, few_shot: True, definition: True}
+    - {test: True, few_shot: True, definition: True, structure: True}
+    - {test: True, few_shot: True, definition: True, comment: True, structure: True}
+    - {test: True, few_shot: True, definition: True, comment: True}
   data_folder: "./data"
-  # Mean and standard deviation of the cosine similarity (SapBERT) between
+  # Mean and standard deviation of the cosine distance (SapBERT) between
   # every synonym and the label of its concept, over all synonyms of HPO.
-  # The similarities are normalised with them, (similarity - mean) / std, so
-  # that every run uses the same scale; null computes them from the data.
-  cosine_similarity_mean: null
-  cosine_similarity_std: null
-  similarity_evaluation_lower_bound: -4
-  similarity_evaluation_upper_bound: 4
+  # The distances are normalised with them, (distance - mean) / std, so that
+  # every run uses the same scale; normalised distances can be below -1 and
+  # above 1. 0 and 1 leave them as they are; null computes them from the
+  # data. The evaluation plots show the normalised distances from
+  # distance_evaluation_lower_bound to _upper_bound.
+  cosine_distance_mean: 0
+  cosine_distance_std: 1
+  distance_evaluation_lower_bound: -4
+  distance_evaluation_upper_bound: 4
   force_draw_additional_plots: False
 adapter:
   hpo:
     input_folder: "./data/input/"
     input_files:
       - "hp.owl"
-    # syntype.py writes its own files (see config.py); these are only used
-    # by HPOAdapter.to_csv(), which syntype does not call.
+    # SynTypeClassification.py writes its own files (see config.py); these
+    # two are only used by HPOAdapter.to_csv(), which syntype does not call.
     output_folder: "./data/output/transformed/"
     output_file: "hpo.csv"
     skip_if_present: False
@@ -45,9 +50,10 @@ logger:
   format: "%Y-%m-%d %H:%M:%S"
   encoding: "utf-8"
 llm:
-  # The models of syntype.py, classifying one after the other ("all"); a
-  # model ID as its first command-line argument classifies with only that
-  # model. syntype.py loads a model by its index in this list.
+  # The models of SynTypeClassification.py, classifying one after the other; a
+  # model ID after the experiment index on the command line classifies with
+  # only that model. SynTypeClassification.py loads a model by its index in
+  # this list.
   model_id:
     - "google/medgemma-4b-it"
     - "Qwen/Qwen3-4B-Instruct-2507"
@@ -85,9 +91,9 @@ llm:
     - "multiple_prompt3.md"
   # The answer store (the checkpoint: the prompts and answers of a model in a
   # JSON file) and the prompt log. The model package adds the model name and
-  # the experiment (syntype.py sets it as postfix) to their names, e.g.
-  # syntype_medgemma-4b-it_Test_..._FewShot.json, since start.sh starts many
-  # runs at the same time.
+  # the experiment (SynTypeClassification.py sets it as postfix) to their
+  # names, e.g. syntype_medgemma-4b-it_Test_..._FewShot.json, since start.sh
+  # starts many runs at the same time.
   prompt_tmp_folder: "./data/tmp/"
   prompt_tmp_file: "syntype.json"
   prompt_log_folder: "./data/logs/"
@@ -95,9 +101,9 @@ llm:
   metadata_folder: "./data/logs/"
   metadata_file: "run_metadata.json"
 embedder:
-  # syntype.py "" embeds with one model after the other; a model is named in
-  # the similarity columns by syntype.embedding_model_names, or by its ID
-  # without the organisation.
+  # The preparation run (SynTypeClassification.py) embeds with one model after
+  # the other; a model is named in the distance columns by
+  # syntype.embedding_model_names, or by its ID without the organisation.
   model_id:
     - "cambridgeltl/SapBERT-from-PubMedBERT-fulltext"
   # The commit of every model on the Hugging Face Hub (as of 2026-11-03), so
@@ -115,8 +121,9 @@ embedder:
   device: "cpu"
   backend: "torch"
   batch_size: 128
-  # One file per model with the embedding of every term: syntype.py only
-  # encodes terms that are not in it yet (e.g. after an HPO update), and an
-  # interrupted run resumes from it. About 0.6-0.8 GB per model.
+  # One file per model with the embedding of every term:
+  # SynTypeClassification.py only encodes terms that are not in it yet (e.g.
+  # after an HPO update), and an interrupted run resumes from it. About
+  # 0.6-0.8 GB per model.
   cache_folder: "./data/cache/embeddings/"
   dimensionality_reduction: False

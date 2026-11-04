@@ -1,3 +1,10 @@
+"""
+Merges the formatted classifications of all models of an experiment into one
+file, which SynTypeEval.py evaluates.
+
+    python3 ./src/SynTypeMerge.py <index>   (index in syntype.experiments)
+"""
+
 import pandas as pd
 import sys
 import shlex
@@ -7,7 +14,7 @@ import os
 sys.dont_write_bytecode = True
 
 # Import project-specific helpers and configuration.
-from utils      import *
+from SynTypeUtils import *
 from config     import *
 
 from logger     import Logger
@@ -21,6 +28,12 @@ from logger     import Logger
 # after the start of the run only.
 l             = Logger(config = configFile)
 l.log(f"Command: python3 {shlex.join(sys.argv)}")
+
+# The experiment whose classifications are merged (see config.py).
+if experimentIndex is None:
+    l.error("Give the index of the experiment in syntype.experiments, e.g. " \
+        f"python3 {sys.argv[0]} 0.")
+    sys.exit(1)
 
 # Print a formatted header indicating the start of this processing stage.
 l.printHeader(f"Merging Generated Classifications")

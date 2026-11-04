@@ -22,7 +22,7 @@ dependencies = [
     "pandas",
     # Progress bars and the data summary.
     "rich",
-    # syntypeeval.py.
+    # SynTypeEval.py.
     "matplotlib",
     "scikit-learn",
     "seaborn"
