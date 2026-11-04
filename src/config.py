@@ -100,11 +100,8 @@ cosineDistanceStd            = syntypeConfig.cosine_distance_std
 quotationCharacter = "\""
 
 # =============================================================================
-# For Data Curation
+# Column names of the synonym tables and classification files
 # =============================================================================
-sourceLanguageShort = "en"
-sourceLanguage      = "English"
-
 hpoidColumn                 = "hpoID"
 classColumn                 = "class"
 typeColumn                  = "type"
@@ -122,13 +119,10 @@ rationaleColumn             = "rationale"
 labelClass                      = "label"
 definitionClass                 = "definition"
 commentClass                    = "comment"
-referenceClass                  = "reference"
 
 synonymClass                    = "classification"
 exactSynonymClass               = "exact"
 relatedSynonymClass             = "related"
-broadSynonymClass               = "broad"
-narrowSynonymClass              = "narrow"
 
 # The synonym classes syntype classifies; broad and narrow synonyms name
 # another phenotype than their concept.
@@ -137,10 +131,6 @@ synonymClasses = [exactSynonymClass, relatedSynonymClass]
 expertSynonymType               = "expert"
 laypersonSynonymType            = "layperson"
 abbreviationSynonymType         = "abbreviation"
-obsoleteSynonymType             = "obsolete"
-pluralFormSynonymType           = "plural"
-ukSpellingSynonymType           = "uk"
-allelicRequirementSynonymType   = "allelic"
 # In OWL Class Section, rather than in Axiom Section.
 directSynonymType               = "direct"
 
@@ -151,14 +141,10 @@ synonymTypes = [expertSynonymType, laypersonSynonymType]
 
 childrenClass                   = "child"
 
-enrichedSourceExactSynonymClass = "generatedSynonym"
-enrichedSourceDefinitionClass   = "generatedDefinition"
-
 goldStandardSystem              = "gold"
 
 precisionLabel  = "precision"
 recallLabel     = "recall"
-accuracyLabel   = "accuracy"
 f1ScoreLabel    = "f1"
 
 # =============================================================================
@@ -166,14 +152,11 @@ f1ScoreLabel    = "f1"
 # =============================================================================
 
 csvFileFormat = "csv"
-pickleFileFormat = "pkl"
-logFileFormat = "log"
 plotFileFormat = "png"
 
 dataDir = syntypeConfig.data_folder
 
 outputFolderName                    = "output"
-logFolderName                       = "logs"
 
 # The folders of the steps: transformation (and the development and
 # evaluation set), formatting, merging and evaluation; the raw classification
