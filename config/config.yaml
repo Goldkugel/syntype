@@ -29,8 +29,8 @@ syntype:
   # below -1 and above 1. 0 and 1 leave them as they are; null computes them
   # from the synonyms of each file. The evaluation plots show the normalised distances from
   # distance_evaluation_lower_bound to _upper_bound.
-  cosine_distance_mean: 0
-  cosine_distance_std: 1
+  cosine_distance_mean: 0.1604
+  cosine_distance_std: 0.1225
   distance_evaluation_lower_bound: -4
   distance_evaluation_upper_bound: 4
   force_draw_additional_plots: False
