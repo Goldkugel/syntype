@@ -1,34 +1,23 @@
 # Paths are relative to the repository root, from where the scripts are run
 # (e.g. ./start.sh, python3 ./src/SynTypeClassification.py).
 syntype:
-  # The experiments, picked by their index (counted from 0): start.sh starts
-  # one classification job per experiment, finalize.sh merges and evaluates
-  # every one of them. Settings of an experiment: test (only the synonyms of
-  # the development set; otherwise those of the evaluation set), few_shot,
-  # chain_of_thoughts, definition, comment and structure (the parents and
-  # children of a concept); a setting that is not given is off.
+  # Picked by their index (from 0). Settings: test (the development set
+  # instead of the evaluation set), few_shot, chain_of_thoughts, definition,
+  # comment and structure (parents and children); a missing setting is off.
   experiments:
     - {test: True, few_shot: True}
-  # The development set (data/output/transformed/hpo.development.csv), which runs
-  # with "test" classify: size_per_type expert and layperson synonyms each,
-  # drawn at random with the seed, with the information of their concepts.
-  # The other runs classify the evaluation set (hpo.evaluation.csv): hpo.csv
-  # without these synonyms and without synonyms of other gold types than
-  # expert and layperson.
-  # The preparation run embeds it and logs the mean and standard deviation of
-  # its cosine distances, to be set as cosine_distance_mean and _std.
+  # size_per_type expert and layperson synonyms each, drawn at random with the
+  # seed, classified by runs with "test"; the other runs classify the rest
+  # (hpo.evaluation.csv, only expert and layperson synonyms).
   development_set:
     size_per_type: 500
     seed: 2898231092
   data_folder: "./data"
-  # Mean and standard deviation of the cosine distance (SapBERT) between
-  # every synonym and the label of its concept, derived from the development
-  # set (logged by the preparation run). The distances of the development set
-  # and of the evaluation set are normalised with them, (distance - mean) /
-  # std, so that every run uses the same scale; normalised distances can be
-  # below -1 and above 1. 0 and 1 leave them as they are; null computes them
-  # from the synonyms of each file. The evaluation plots show the normalised distances from
-  # distance_evaluation_lower_bound to _upper_bound.
+  # Mean and std of the synonym-label cosine distance (SapBERT) of the
+  # development set, logged by the preparation run; all distances are
+  # normalised with them, (distance - mean) / std. 0 and 1 leave them as they
+  # are; null computes them from each file. The plots show the normalised
+  # distances from distance_evaluation_lower_bound to _upper_bound.
   cosine_distance_mean: 0.1604
   cosine_distance_std: 0.1225
   distance_evaluation_lower_bound: -4
@@ -47,10 +36,8 @@ adapter:
     prefix: ""
 logger:
   folder: "./data/logs/"
-  # One log file per run, named after its start ({start}, to the
-  # microsecond, so that runs started at the same time get their own file);
-  # the packages log into the same file. The first line is the command line
-  # of the run.
+  # One log file per run, named after its start to the microsecond, so that
+  # runs started at the same time get their own file.
   file_name: "syntype_{start:%Y%m%d_%H%M%S_%f}.log"
   header_char: "="
   header_length: 60
@@ -58,10 +45,8 @@ logger:
   format: "%Y-%m-%d %H:%M:%S"
   encoding: "utf-8"
 llm:
-  # The models of SynTypeClassification.py, classifying one after the other; a
-  # model ID after the experiment index on the command line classifies with
-  # only that model. SynTypeClassification.py loads a model by its index in
-  # this list.
+  # Classifying one after the other; a model ID after the experiment index on
+  # the command line classifies with only that model.
   model_id:
     - "google/medgemma-4b-it"
     - "Qwen/Qwen3-4B-Instruct-2507"
@@ -88,20 +73,17 @@ llm:
   reasoning_end_tag: "</think>"
   max_tokens: 2048
   chunk_size: 500
-  # Folder of the prompt templates and the templates, used by their index:
-  # 0 is the single prompt, 1 to 3 are the chain-of-thoughts prompts, one
-  # per turn.
+  # Used by their index: 0 is the single prompt, 1 to 3 are the
+  # chain-of-thoughts prompts, one per turn.
   prompt_folder: "./prompts/"
   prompt_files: 
     - "single_prompt.md"
     - "multiple_prompt1.md"
     - "multiple_prompt2.md"
     - "multiple_prompt3.md"
-  # The answer store (the checkpoint: the prompts and answers of a model in a
-  # JSON file) and the prompt log. The model package adds the model name and
-  # the experiment (SynTypeClassification.py sets it as postfix) to their
-  # names, e.g. syntype_medgemma-4b-it_Test_..._FewShot.json, since start.sh
-  # starts many runs at the same time.
+  # The answer store (checkpoint) and the prompt log; the model package adds
+  # the model name and the experiment to their names, e.g.
+  # syntype_medgemma-4b-it_Test_..._FewShot.json.
   prompt_tmp_folder: "./data/tmp/"
   prompt_tmp_file: "syntype.json"
   prompt_log_folder: "./data/logs/"
@@ -109,14 +91,12 @@ llm:
   metadata_folder: "./data/logs/"
   metadata_file: "run_metadata.json"
 embedder:
-  # The preparation run (SynTypeClassification.py) embeds with one model after
-  # the other; a model is named in the distance columns by
-  # syntype.embedding_model_names, or by its ID without the organisation.
+  # Named in the distance columns by syntype.embedding_model_names, or by the
+  # ID without the organisation.
   model_id:
     - "cambridgeltl/SapBERT-from-PubMedBERT-fulltext"
-  # The commit of every model on the Hugging Face Hub (as of 2026-11-03), so
-  # that the cache never serves vectors of another model version. Update a
-  # commit to use a newer model; its cache file then starts anew.
+  # Pinned Hugging Face commits (as of 2026-11-03), so that the cache never
+  # serves vectors of another model version; a new commit starts a new cache.
   revision:
     "cambridgeltl/SapBERT-from-PubMedBERT-fulltext": "090663c3ae57bf35ffe4d0d468a2a88d03051a4d"
   # CLS pooling, as SapBERT was trained with, over at most 64 tokens; vectors
@@ -129,9 +109,7 @@ embedder:
   device: "cpu"
   backend: "torch"
   batch_size: 128
-  # One file per model with the embedding of every term:
-  # SynTypeClassification.py only encodes terms that are not in it yet (e.g.
-  # after an HPO update), and an interrupted run resumes from it. About
-  # 0.6-0.8 GB per model.
+  # One file per model (about 0.6-0.8 GB): only new terms are encoded, and an
+  # interrupted run resumes from it.
   cache_folder: "./data/cache/embeddings/"
   dimensionality_reduction: False

@@ -10,42 +10,28 @@ import sys
 import shlex
 import os
 
-# Prevent Python from generating .pyc files (compiled bytecode files).
 sys.dont_write_bytecode = True
 
-# Import project-specific helpers and configuration.
 from SynTypeUtils import *
 from config     import *
 
 from logger     import Logger
 
-# ------------------------------------------------------------------------------
-# Initialization.
-# ------------------------------------------------------------------------------
-
-# The logger takes the "logger" section of the configuration file; the
-# command line of the run is its first line, since the log file is named
-# after the start of the run only.
+# The log file is named after the start of the run only, so the command line
+# is its first line.
 l             = Logger(config = configFile)
 l.log(f"Command: python3 {shlex.join(sys.argv)}")
 
-# The experiment whose classifications are merged (see config.py).
 if experimentIndex is None:
     l.error("Give the index of the experiment in syntype.experiments, e.g. " \
         f"python3 {sys.argv[0]} 0.")
     sys.exit(1)
 
-# Print a formatted header indicating the start of this processing stage.
 l.printHeader(f"Merging Generated Classifications")
 
-# The logger logs the start, end and duration of the step.
 with l.step("Merging the classifications"):
-    # ------------------------------------------------------------------------------
-    # The formatted classifications of the models of llm.model_id for this
-    # experiment. Other files with the prefix of the experiment (e.g. of a
-    # model no longer in the list) are left out.
-    # ------------------------------------------------------------------------------
-
+    # Only the models of llm.model_id; other files with the prefix of the
+    # experiment (e.g. of a model no longer in the list) are left out.
     files   = {
         modelID : outputFileClassFormatted(modelNameOf(modelID))
         for modelID in configurationFile["llm"]["model_id"]
@@ -75,12 +61,8 @@ with l.step("Merging the classifications"):
             f"({quote(outputFileNameClassFormattedPrefix)}).")
         sys.exit(1)
 
-    # ------------------------------------------------------------------------------
-    # Load the classifications. All models must have classified the same
-    # synonyms; differences (e.g. classifications of another HPO version) are
-    # logged.
-    # ------------------------------------------------------------------------------
-
+    # All models should have classified the same synonyms; differences (e.g.
+    # of another HPO version) are logged.
     dataframes = {modelID : readCSV(file) for modelID, file in present.items()}
 
     def synonymsOf(data : pd.DataFrame) -> set:
@@ -98,10 +80,6 @@ with l.step("Merging the classifications"):
             l.warning(f"{quote(modelID)} classified other synonyms than {quote(first)}: " \
                 f"{len(modelSynonyms - referenceSynonyms)} only by {quote(modelID)}, " \
                 f"{len(referenceSynonyms - modelSynonyms)} only by {quote(first)}.")
-
-    # ------------------------------------------------------------------------------
-    # Persist the merged classifications to disk.
-    # ------------------------------------------------------------------------------
 
     merged = pd.concat(dataframes.values(), ignore_index = True)
     writeHugeCSV(merged, outputFileClassMerged)

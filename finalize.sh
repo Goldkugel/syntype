@@ -2,13 +2,10 @@
 
 clear
 
-# The answers are formatted by the classification jobs
-# (SynTypeClassification.py). The preparation run brings the embeddings up to
-# date, if the HPO was transformed again since.
+# Brings the distances up to date in case the HPO was transformed again.
 python3 ./src/SynTypeClassification.py || exit 1
 
-# Every experiment of syntype.experiments (config.yaml): its classifications
-# of all models are merged and evaluated.
+# Merges and evaluates the classifications of every experiment.
 EXPERIMENTS=$(python3 ./src/config.py) || exit 1
 for ((INDEX = 0; INDEX < EXPERIMENTS; INDEX++)); do
     # An experiment without any classification is not evaluated.

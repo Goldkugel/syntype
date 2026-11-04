@@ -1,8 +1,14 @@
 """
-The preparation run and the classification of syntype (see the comment below
-for the command line): transforms the HPO, draws the development set,
-embeds the development set and the HPO for the evaluation, classifies the synonyms with the LLMs of llm.model_id and formats
-their answers.
+The preparation run and the classification of syntype: transforms the HPO,
+draws the development set, embeds the development and the evaluation set,
+classifies the synonyms with the LLMs of llm.model_id and formats their answers.
+Each package (adapter, embedder, model) is imported by the step that needs it,
+so the preparation run does not load vLLM and the classification runs do not
+load the embedding models.
+
+    python3 ./src/SynTypeClassification.py                  preparation
+    python3 ./src/SynTypeClassification.py <index>          experiment <index>, all models
+    python3 ./src/SynTypeClassification.py <index> <model>  only this model
 """
 
 import os
@@ -16,65 +22,29 @@ import math
 import numpy  as np
 import pandas as pd
 
-# Prevent Python from generating .pyc files (compiled bytecode files)
 sys.dont_write_bytecode = True
 
-# Import necessary modules and configuration settings
 from SynTypeUtils import *
 from config     import *
 
 from logger     import Logger, lockedFile, writeJSON
 
-# The steps of syntype. The packages of a step (adapter, embedder, model)
-# are imported by the step itself, so that a run only loads what it needs:
-# the preparation run (no model given) does not load vLLM, the
-# classification runs (start.sh) do not load the embedding models.
-#
-# Run from the repository root (see start.sh and classify.sh):
-#
-#   python3 ./src/SynTypeClassification.py
-#       Preparation: transforms the HPO, draws the development set and
-#       embeds the development set and the HPO for the evaluation, each only
-#       if needed.
-#   python3 ./src/SynTypeClassification.py <index>
-#       Classification of the experiment syntype.experiments[<index>]:
-#       transforms the HPO (if needed), then every model of llm.model_id
-#       classifies the synonyms and its answers are formatted, one model after
-#       the other.
-#   python3 ./src/SynTypeClassification.py <index> <model ID>
-#       The same with only this model.
-
-# ------------------------------------------------------------------------------
-# Initialization.
-# ------------------------------------------------------------------------------
-
-# The logger takes the "logger" section of the configuration file; the
-# command line of the run is its first line, since the log file is named
-# after the start of the run only.
+# The log file is named after the start of the run only, so the command line
+# is its first line.
 l = Logger(config = configFile)
 l.log(f"Command: python3 {shlex.join(sys.argv)}")
 
-# The adapter and the embedder take their sections from this copy of the
-# configuration file, on which the embedding model of a run is set; the model
-# package reads the llm section from the file itself.
+# Adapter and embedder read this copy (the embedding model is set on it); the
+# model package reads the llm section from the file itself.
 configuration = copy.deepcopy(configurationFile)
 
-# ------------------------------------------------------------------------------
-# The settings an output was made with are stored next to it
-# (<output>.settings.json), so that it is made again when they change, not
-# only when one of its input files is newer.
-# ------------------------------------------------------------------------------
-
-# The transformation depends on the adapter settings and the format of the
-# transformed HPO (the columns of the adapter package).
+# The settings an output depends on (see outdated() in SynTypeUtils.py).
 transformSettings = {
     "adapter"  : configurationFile["adapter"],
     "format"   : [idColumn, attributeColumn, valueColumn, additionalColumn]
 }
 
-# The embedding depends on every embedder setting except those that do not
-# change the vectors, on the names and metrics of the distance columns, and
-# on the mean and standard deviation they are normalised with.
+# Embedder settings that do not change the vectors are left out.
 embedderSettingsWithoutEffect = ["device", "backend", "num_threads",
     "batch_size", "cache_folder", "cache_decimals", "progress_interval"]
 embedSettings = {
@@ -85,21 +55,19 @@ embedSettings = {
     "embedding_model_names" : syntypeConfig.embedding_model_names,
     "distance_metrics"    : distanceMetrics,
     "cosine_distance"     : [cosineDistanceMean, cosineDistanceStd],
-    # The rows are in the format of the transformed HPO.
     "format"              : [idColumn, attributeColumn, valueColumn, additionalColumn]
 }
 
 def transformOutdated(log : bool = True) -> bool:
     """
-    Whether the transformed HPO is missing, older than hp.owl or made with
-    other settings; the reason is logged if `log`.
+    Whether hpo.csv is missing, older than hp.owl or made with other
+    settings; the reason is logged if `log`.
     """
     return outdated(outputFileTransformedFull, [inputFileTransformed], transformSettings, log)
 
 # ==============================================================================
-# Prompts: the model loads the templates of the experiment (llm.prompt_files)
-# and fills in the concept information, the synonym and the Few-Shot examples
-# (fewShotExamples in config.py); this script gives their order and values.
+# Prompts: the model loads the templates (llm.prompt_files) and fills in the
+# values given here.
 # ==============================================================================
 
 def createJSONExample(cl : str = "", co : str = "5", ra : str = "") -> str:
@@ -163,9 +131,9 @@ def promptValues(
         synonym : str = ""
 ) -> dict:
     """
-    The values of the placeholders of the prompts (see prompts/README.md),
-    without {examples}: the information the experiment does not add is left
-    empty, so that every prompt of an experiment has the same lines.
+    The values of the placeholders of the prompts (see prompts/README.md)
+    except {examples}. Information the experiment does not add is left empty,
+    so every prompt keeps the same lines.
     """
     return {
         "hpo_label"      : quote(label),
@@ -176,9 +144,7 @@ def promptValues(
         "hpo_children"   : applyFormat(children) if addStructure else ""
     }
 
-# The prompts of the experiment, one per turn, by their index in
-# llm.prompt_files, from where the model loads them: 0 is the single prompt,
-# 1 to 3 are the chain-of-thoughts prompts.
+# Indexes in llm.prompt_files, one per turn.
 singlePromptIndex            = 0
 chainOfThoughtsPromptIndexes = [1, 2, 3]
 
@@ -190,37 +156,23 @@ promptIndexes = chainOfThoughtsPromptIndexes if chainOfThoughts else [singleProm
 
 def transformHPO() -> None:
     """
-    Transforms hp.owl with the adapter into hpo.csv, in the adapter's
-    format: the conflicting synonyms and the synonyms equal to their label
-    are removed. Records the settings next to the file.
+    Transforms hp.owl with the adapter into hpo.csv (adapter format), without
+    conflicting synonyms and synonyms equal to their label, and records the
+    settings next to it.
     """
     from adapter    import HPOAdapter
 
-    # A synonym of a concept with all classes or all types of one of these sets
-    # has no unambiguous gold label and is removed.
+    # A synonym listed with both values of one of these sets (e.g. layperson
+    # and abbreviation, an expert term) has no unambiguous gold label.
     conflictingSynonymClasses = {exactSynonymClass, relatedSynonymClass}
     conflictingSynonymTypes   = {laypersonSynonymType, abbreviationSynonymType}
 
     l.printHeader("Transforming the Raw HPO Data")
 
-    # --------------------------------------------------------------------------
-    # Load the HPO with the adapter. It stops with an error if hp.owl is
-    # missing, extracts labels, definitions, comments, children, references
-    # and synonyms of the active (not obsolete) concepts, removes rows without
-    # an ID or content and merges duplicates: a synonym listed several times
-    # for a concept is one row whose classes and types are joined, e.g.
-    # "exact, related".
-    # --------------------------------------------------------------------------
-
+    # The adapter keeps the active concepts and merges a synonym listed several
+    # times into one row whose classes and types are joined ("exact, related").
     adapter = HPOAdapter(configuration)
     adapter.load()
-
-    # --------------------------------------------------------------------------
-    # Remove the synonyms listed both as exact and related synonym, or both as
-    # layperson synonym and abbreviation (an expert term), which have no
-    # unambiguous gold label. The others count with their first class and type
-    # (synonymClassOf(), synonymTypeOf()).
-    # --------------------------------------------------------------------------
 
     data       = adapter.data
     additional = data.loc[data[attributeColumn] == synonymAttribute, additionalColumn]
@@ -237,8 +189,8 @@ def transformHPO() -> None:
     data = data.drop(additional.index[(conflictingClasses | conflictingTypes).to_numpy()])
     l.log("Removing the synonyms with conflicting gold labels completed.")
 
-    # The other synonyms listed several times count with their first class
-    # and type, which becomes their gold label.
+    # The other synonyms listed several times count with their first class and
+    # type (synonymClassOf(), synonymTypeOf()).
     kept     = ~(conflictingClasses | conflictingTypes)
     severals = [
         (key, values[kept & (values.map(len) > 1)])
@@ -249,17 +201,13 @@ def transformHPO() -> None:
         combinations = joined.value_counts()
         l.log(f"{len(values)} synonyms have several values of {quote(key)}; they " \
             "count with the first one" + ("." if len(values) == 0 else ":"))
-        # One row per combination, the 10 most frequent.
+        # The 10 most frequent combinations.
         for value, count in combinations.head(10).items():
             l.log(f"- {quote(shorten(value, 60))}: {count}")
         if len(combinations) > 10:
             l.log(f"- and {len(combinations) - 10} other combinations.")
 
-    # --------------------------------------------------------------------------
-    # Remove the synonyms that match the label of their concept (ignoring
-    # case).
-    # --------------------------------------------------------------------------
-
+    # Synonyms that match the label of their concept, ignoring case.
     rowCount = len(data.index)
     l.log("Removing the synonyms that match their label...")
     terms   = data[idColumn].astype(str) + data[valueColumn].astype(str).str.lower()
@@ -277,34 +225,29 @@ def transformHPO() -> None:
     l.log("Writing the transformed HPO completed.")
 
 # ==============================================================================
-# Embedding: the cosine distance of every synonym to its label -> embed.csv
-# (the evaluation set) and embed.development.csv (the development set), for the
-# evaluation (SynTypeEval.py).
+# Embedding: the distance of every synonym to its label -> embed.csv and
+# embed.development.csv, for SynTypeEval.py.
 # ==============================================================================
 
 def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None:
     """
-    Embeds the synonyms of inputFile and the labels of their concepts with
-    every model of embedder.model_id and writes the normalised cosine distance
-    of every synonym to its label to outputFile, for the evaluation. Logs the
-    mean and standard deviation of the distances, which, for the development
-    set, are to be set as syntype.cosine_distance_mean and _std, and how well
-    the distance separates expert from layperson synonyms.
+    Embeds the synonyms of inputFile and their labels with every model of
+    embedder.model_id and writes the normalised cosine distance of every
+    synonym to its label to outputFile. Logs the mean and standard deviation
+    (of the development set: the values for syntype.cosine_distance_mean and
+    _std) and how well the distance separates expert from layperson synonyms.
     """
     from embedder import Embedder
 
-    # Printing header.
     l.printHeader("Embedding the Development Set" if developmentSet else "Embedding the Evaluation Set")
 
-    # Ensure the input file exists before proceeding.
     exitIfFileNotExist(inputFile)
 
     data = readTransformed(inputFile)
 
     l.log("Filtering the labels and synonyms...")
-    # The synonym rows in the format of the transformed HPO (id, attribute,
-    # value, additional), which embed.csv keeps; synonymTable() has the same
-    # rows in the same order.
+    # embed.csv keeps the format of the transformed HPO; synonymTable() has the
+    # same rows in the same order.
     distanceRows = data[synonymRows(data)][
         [idColumn, attributeColumn, valueColumn, additionalColumn]].reset_index(drop = True)
     table       = synonymTable(data)
@@ -312,15 +255,13 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
     table = table[[hpoidColumn, classColumn, contentColumn]].copy()
     synonyms    = table[contentColumn].astype(str).tolist()
 
-    # One label per concept with synonyms (the first, if a concept has
-    # several); the labels of the parents and children in the development set
-    # are not needed.
+    # The first label of every concept with synonyms (not those of parents and
+    # children in the development set).
     labelRows   = data[(data[attributeColumn] == labelClass)
         & data[idColumn].isin(table[hpoidColumn])].drop_duplicates(subset = idColumn)
     labels      = labelRows[valueColumn].astype(str).tolist()
 
-    # Position of the label of each synonym's concept in labels (-1 if the
-    # concept has no label).
+    # Index of each synonym's label in labels, -1 if the concept has none.
     labelIndex  = table[hpoidColumn].map(
         pd.Series(range(len(labels)), index = labelRows[idColumn])
     ).fillna(-1).astype(int).to_numpy()
@@ -331,8 +272,7 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
 
     def describe(values : pd.Series) -> str:
         """
-        Mean, standard deviation, minimum and maximum of the values that are
-        not NaN, for the log.
+        Mean, standard deviation, minimum and maximum of the non-NaN values.
         """
         values = values.dropna()
         return f"mean {values.mean():.4f}, std {values.std():.4f}, " \
@@ -346,16 +286,11 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
         return 1 - np.sum(a * b, axis = 1) / (
             np.linalg.norm(a, axis = 1) * np.linalg.norm(b, axis = 1))
 
-    # --------------------------------------------------------------------------
-    # Embed and calculate the distance of labels to their synonyms.
-    # --------------------------------------------------------------------------
-
     l.log("Embedding the synonyms and labels with all embedding models...")
     embeddingModelsList = sorted(embeddingModels.keys())
     for index, embeddingModel in enumerate(embeddingModelsList):
 
-        # Set up the embedding model. One model is loaded at a time, so only one
-        # is held in memory.
+        # One model at a time, so only one is held in memory.
         setUp = f"Setting up model {index + 1}/{len(embeddingModelsList)} {quote(embeddingModel)}"
         l.log(f"{setUp}...")
         configuration["embedder"]["model_id"] = [embeddingModels[embeddingModel]]
@@ -371,7 +306,6 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
             embedder.embed(synonyms)[embeddingModels[embeddingModel]])
         l.log("Embedding the synonyms completed.")
 
-        # The label embedding of every synonym's concept.
         a = synonymEmbeddings[hasLabel]
         b = labelEmbeddings[labelIndex[hasLabel]]
 
@@ -382,23 +316,18 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
             distanceColumn = distanceColumnPrefix.format(embeddingModel,
                 distanceMetric)
 
-            # Standard value for no distance (no label) is np.nan.
+            # NaN for synonyms without label.
             values           = np.full(len(synonyms), np.nan)
             values[hasLabel] = distance(a, b)
 
-            # Normalization: the distances are subtracted by the mean and
-            # divided by the standard deviation, those of
-            # syntype.cosine_distance_mean and _std if set, so that every run
-            # uses the same scale, otherwise those of the data. Normalised
-            # distances can be below -1 and above 1.
+            # Normalised with syntype.cosine_distance_mean and _std, so every run
+            # uses the same scale; with those of the data if they are None.
             values = pd.Series(values)
             mean   = values.mean() if cosineDistanceMean is None else cosineDistanceMean
             std    = values.std() if cosineDistanceStd is None else cosineDistanceStd
             normalised = (values - mean) / std
             distanceRows[distanceColumn] = normalised
 
-            # The distances of all synonyms with a label, before and after the
-            # normalization, and per gold type.
             l.log(f"{embeddingModel}, {distanceMetric} distance to the label: " \
                 f"{values.notna().sum()} synonyms ({values.isna().sum()} without label).")
             l.log(f"All: {describe(values)}.")
@@ -410,16 +339,13 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
                 ofType = types == synonymType
                 l.log(f"Normalised, gold type {quote(synonymType)}: {describe(normalised[ofType])}.")
 
-            # The mean and standard deviation of the development set, with
-            # which the distances of all synonyms are to be normalised.
             if developmentSet:
                 l.log(f"Set syntype.cosine_distance_mean: {values.mean():.4f} and " \
                     f"cosine_distance_std: {values.std():.4f} (now {cosineDistanceMean} " \
                     f"and {cosineDistanceStd}).")
 
-            # A first, quick evaluation of the distances: how well they
-            # separate expert from layperson synonyms, as the strictly
-            # standardized mean difference of the normalised distances.
+            # A quick check how well the distances separate expert from
+            # layperson synonyms: the strictly standardized mean difference.
             grouped = normalised[types.isin(synonymTypes)].groupby(
                 types).agg([m, s]).reindex(synonymTypes)
             means = grouped[m].tolist()
@@ -431,11 +357,6 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
             l.log(f"Difference of the means {means[0] - means[1]:.4f}, " \
                 f"of the stds {stds[0] - stds[1]:.4f}.")
 
-
-    # --------------------------------------------------------------------------
-    # Persist data to disk: the synonyms with their distances, which
-    # SynTypeEval.py joins to the classified synonyms.
-    # --------------------------------------------------------------------------
 
     l.log("Embedding the synonyms and labels with all embedding models completed.")
 
@@ -455,7 +376,6 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
 
     logging.getLogger("vllm").setLevel(logging.ERROR)
 
-    # The model is loaded by its index in llm.model_id.
     if modelID not in configurationFile["llm"]["model_id"]:
         raise ValueError(f"{quote(modelID)} is not in llm.model_id.")
     modelIndex = configurationFile["llm"]["model_id"].index(modelID)
@@ -465,24 +385,17 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
 
     l.printHeader(f"Classifying the Synonyms ({modelName})")
 
-    # Only proceed if transformed input data exists
     exitIfFileNotExist(inputFileClass)
 
     gold     = readTransformed(inputFileClass)
 
-    # The synonyms to classify, with their gold type: all of the HPO, or those
-    # of the development set ("test").
+    # The synonyms of the evaluation set, or of the development set ("test").
     synonyms = synonymTable(gold)
-
-    # --------------------------------------------------------------------------
-    # Concept information for the prompts.
-    # --------------------------------------------------------------------------
 
     def elements(attribute : str, key : str = idColumn,
             value : str = valueColumn) -> dict:
         """
-        The values of the rows of an attribute per key, in the order of the
-        data.
+        The values of an attribute's rows per key, in the order of the data.
         """
         rows = gold[gold[attributeColumn] == attribute]
         return rows.groupby(key, sort = False)[value].agg(list).to_dict()
@@ -506,11 +419,7 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
         """
         return "".join(str(v) for v in values.get(hpoID, []))
 
-    # --------------------------------------------------------------------------
-    # The values of the placeholders of the prompts, one dictionary per synonym
-    # (the model loads the prompts and fills them in).
-    # --------------------------------------------------------------------------
-
+    # The placeholder values of the prompts, one dictionary per synonym.
     examplesValue = examples()
     values = [
         promptValues(
@@ -524,9 +433,8 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
         for hpoID, synonym in zip(synonyms[hpoidColumn], synonyms[contentColumn])
     ]
 
-    # One (prompt column, answer column) pair per turn of the conversation; the
-    # answer of the last turn is the final answer. The Few-Shot approach is
-    # incorporated directly into the prompts.
+    # One (prompt column, answer column) pair per turn; the answer of the last
+    # turn is the final answer.
     turns = [("{}{}".format(userRole, 1), answerColumn)]
     if chainOfThoughts:
         turns = [
@@ -535,17 +443,12 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
             ("{}{}".format(userRole, 3), answerColumn)
         ]
 
-    # --------------------------------------------------------------------------
-    # The raw classification file: the synonyms with the prompts and answers of
-    # every turn, written after every turn.
-    # --------------------------------------------------------------------------
-
+    # The raw classification file, written after every turn.
     for promptColumn, targetColumn in turns:
         synonyms[promptColumn] = [""] * len(synonyms.index)
         synonyms[targetColumn] = [""] * len(synonyms.index)
     synonyms[systemColumn] = [modelName] * len(synonyms.index)
 
-    # The setup of this run: the experiment, its prompts and its synonyms.
     settings = [name for name, value in experiment.model_dump().items() if value]
     l.log(f"Experiment {experimentIndex}: {applyFormat(settings)}.")
     l.log(f"Files: {quote(filesPrefixApproachClass)}.")
@@ -556,29 +459,20 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
         f"{synonyms[hpoidColumn].nunique()} concepts; gold types: " + ", ".join(
             f"{goldType} {count}" for goldType, count in goldTypes.items()) + ".")
 
-    # --------------------------------------------------------------------------
-    # Classification of synonyms.
-    # --------------------------------------------------------------------------
-
-    # The model is loaded by its index in llm.model_id, with the llm section as
-    # it is. Its answer store (the checkpoint) and prompt log are named after
-    # the model and the experiment (the postfix), since start.sh starts many
-    # runs at the same time.
+    # The answer store (checkpoint) and prompt log are named after the model
+    # and the experiment (postfix), since start.sh starts many runs at once.
     l.log(f"Setting up the LLM ({modelName})...")
     with Model(configFile, modelIndex) as model:
         model.setPostfix(f"{testStr}_{configStr}_{chainOfThoughtsStr}_{fewShotStr}")
         l.log(f"Setting up the LLM ({modelName}) completed.")
 
-        # The model uses the answers in its answer store and only generates the
-        # others, so an interrupted run resumes where it stopped; without the
-        # store the classification starts anew. A changed prompt has no stored
-        # answers, and a store written with other model settings is refused.
+        # Answers in the store are reused, so an interrupted run resumes; a
+        # changed prompt has no stored answer, and a store written with other
+        # model settings is refused.
         for turn, (promptColumn, targetColumn) in enumerate(turns):
             generating = f"Turn {turn + 1}/{len(turns)}: generating the answers"
             l.log(f"{generating}...")
 
-            # The model loads the prompt of this turn (by its index in
-            # llm.prompt_files) and fills in its placeholders.
             model.addPromptsFromFile(promptIndexes[turn], values)
             # The prompt of the first synonym, to see what the model is given.
             l.log(f"Prompt of turn {turn + 1} for the first synonym " \
@@ -586,15 +480,14 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
                 cmdline = False)
             synonyms[promptColumn] = [model.getPrompt(index, turn) for index in range(len(values))]
 
-            # Generates the answers that are not in the answer store.
             model.generate()
 
             synonyms[targetColumn] = [model.getAnswer(index, turn) for index in range(len(values))]
             writeHugeCSV(synonyms, rawFile)
             l.log(f"{generating} completed.")
 
-        # The final answers are JSON objects with the classification, its
-        # confidence and a rationale, parsed by the model package.
+        # The final answers are JSON objects (classification, confidence,
+        # rationale).
         l.log("Parsing the answers...")
         parsed = [
             parseClassification(model.toJSON(index))
@@ -609,7 +502,6 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
         l.log("Parsing the answers completed.")
         writeHugeCSV(synonyms, rawFile)
 
-        # Every prompt and answer of this model and experiment.
         l.log("Writing the prompts and answers to the prompt log...")
         model.logPrompts()
         l.log("Writing the prompts and answers to the prompt log completed.")
@@ -623,31 +515,22 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
 
 def formatAnswers(synonyms : pd.DataFrame, modelName : str) -> None:
     """
-    Writes the formatted classification of a model (its parsed answers, see
+    Writes the formatted classification of a model (its answers parsed by
     classifySynonyms()), which SynTypeMerge.py merges, and logs every wrong or
     undefined classification.
     """
     l.printHeader(f"Formatting Answers of Synonym's Classification ({modelName})")
 
-    # classifySynonyms() parsed the answers with the model package
-    # (model.toJSON()) into a classification and a confidence; the formatted
-    # answer is the classification.
     classified = synonyms.copy()
     classified[answerColumn]     = classified[synonymClass].fillna(undefinedSynonymType)
     classified[confidenceColumn] = classified[confidenceColumn].fillna(-1).astype(int)
     classified                   = classified.drop(columns = synonymClass)
 
-    # --------------------------------------------------------------------------
-    # Persist the formatted classification to disk.
-    # --------------------------------------------------------------------------
-
     writeHugeCSV(classified, outputFileClassFormatted(modelName))
 
     l.log("Logging the wrong classifications...")
 
-    # For logging purposes the gold standard is read and wrong classifications
-    # are placed in the logging file. This is useful when it comes to prompt 
-    # optimization.
+    # The wrong classifications in the log help to improve the prompts.
     gold   = readTransformed(inputFileClass)
     labels = gold[gold[attributeColumn] == labelClass].copy().reset_index(drop = True)
     count  = 0
@@ -656,15 +539,11 @@ def formatAnswers(synonyms : pd.DataFrame, modelName : str) -> None:
         "classified (confidence),", cmdline = False)
     l.log("with the rationale in the next row.", cmdline = False)
     for index, row in classified.iterrows():
-        # It should log, when:
-        # - The answer could not be formatted e.g. is undefined.
-        # - The gold type is one of the types the LLM classifies into (expert,
-        #       layperson) and the answer differs from it.
+        # Undefined, or differing from a gold type the LLM classifies into.
         if (str(row[answerColumn]).lower() == undefinedSynonymType.lower() or
             (str(row[typeColumn]).lower() in synonymTypes and
             str(row[answerColumn]).lower() != str(row[typeColumn]).lower())):
-            # Two rows, with shortened texts; the full texts are in the raw and
-            # formatted files.
+            # Shortened; the full texts are in the raw and formatted files.
             label = ", ".join(getElements(labels, row[hpoidColumn], labelClass))
             l.log(f"{quote(shorten(row[contentColumn], 32))} " \
                 f"(label {quote(shorten(label, 28))}): {row[typeColumn]} -> " \
@@ -720,9 +599,8 @@ def logClassificationSummary(classified : pd.DataFrame, modelName : str) -> None
 # The steps of this run.
 # ==============================================================================
 
-# The HPO is transformed once, by the first of the runs started at the same
-# time that finds it missing, older than hp.owl or made with other settings;
-# the others wait for it. The reason is logged after the lock is taken.
+# Only the first of the runs started at the same time transforms the HPO; the
+# others wait for the lock. The reason is logged only once the lock is taken.
 if transformOutdated(log = False):
     with lockedFile(outputFileTransformedFull):
         if transformOutdated():
@@ -731,9 +609,7 @@ if transformOutdated(log = False):
 else:
     l.log("The transformed HPO is up to date.")
 
-# The development and the evaluation set are drawn from the transformed HPO,
-# once by the first of the runs started at the same time that finds them
-# missing or outdated.
+# Drawn once in the same way.
 if developmentSetOutdated(log = False):
     with lockedFile(outputFileTransformedDevelopment):
         if developmentSetOutdated():
@@ -743,8 +619,7 @@ else:
     l.log("The development and evaluation set are up to date.")
 
 if experimentIndex is None:
-    # Preparation run: the distances of the evaluation, of the development set
-    # first, whose mean and standard deviation are logged, then of the
+    # Preparation run: the distances of the development set, then of the
     # evaluation set.
     for name, inputFile, outputFile, developmentSet in [
         ("the development set", outputFileTransformedDevelopment, outputFileEmbeddedDevelopment, True),
@@ -756,9 +631,8 @@ if experimentIndex is None:
         else:
             l.log(f"The distances of {name} are up to date.")
 else:
-    # The models classify one after the other; a failing model does not stop
-    # the others. Each model is unloaded from the GPU before the next one. The
-    # logger logs the start, end and duration of every step.
+    # A failing model does not stop the others; each is unloaded from the GPU
+    # before the next one.
     failed = []
     for index, modelID in enumerate(modelIDs):
         l.log(f"Model {index + 1}/{len(modelIDs)}: {quote(modelID)}")

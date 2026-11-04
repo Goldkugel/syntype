@@ -13,10 +13,8 @@ class ExperimentConfig(BaseModel):
     """
     model_config = ConfigDict(extra = "forbid")
 
-    # Only the synonyms of the development set (hpo.development.csv, see
-    # syntype.development_set); otherwise those of the evaluation set
-    # (hpo.evaluation.csv, the expert and layperson synonyms of hpo.csv
-    # without the development synonyms).
+    # Only the synonyms of the development set (hpo.development.csv);
+    # otherwise those of the evaluation set (hpo.evaluation.csv).
     test: bool                                  = False
     # Examples in the prompts.
     few_shot: bool                              = False
@@ -32,10 +30,9 @@ class ExperimentConfig(BaseModel):
 
 class DevelopmentSetConfig(BaseModel):
     """
-    The development set (hpo.development.csv, written by SynTypeDevelopmentSet.py
-    and the preparation run): synonyms drawn at random from the transformed
-    HPO, to formulate the prompts and to find the mean and standard deviation
-    of the cosine distances; runs with "test" classify them.
+    The development set (hpo.development.csv): synonyms drawn at random, to
+    formulate the prompts and to find the mean and standard deviation of the
+    cosine distances; runs with "test" classify them.
     """
     model_config = ConfigDict(extra = "forbid")
 
@@ -47,9 +44,8 @@ class DevelopmentSetConfig(BaseModel):
 
 class SyntypeConfig(BaseModel):
     """
-    The "syntype" section of the configuration file: the settings of syntype
-    itself. The settings of the packages it uses are in their own sections
-    (adapter, embedder, llm, logger).
+    The "syntype" section of the configuration file; the packages it uses have
+    their own sections (adapter, embedder, llm, logger).
     """
     model_config = ConfigDict(extra = "forbid")
 
@@ -67,10 +63,9 @@ class SyntypeConfig(BaseModel):
     # embedder.model_id.
     embedding_model_names: dict[str, str]       = {}
 
-    # Mean and standard deviation of the cosine distance between every
-    # synonym and the label of its concept, derived from the development set,
-    # with which the distances are normalised. The defaults 0 and 1 leave them as
-    # they are; None computes them from the data.
+    # Mean and standard deviation of the synonym-label cosine distance of the
+    # development set, to normalise the distances. The defaults 0 and 1 leave
+    # them as they are; None computes them from the data.
     cosine_distance_mean: float | None          = 0.0
     cosine_distance_std: float | None           = Field(default = 1.0, gt = 0)
 

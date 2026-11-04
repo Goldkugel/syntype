@@ -1,7 +1,8 @@
 """
 Helpers shared by the scripts of syntype: the transformed HPO in the format of
-the adapter package, reading and writing CSV files, parsing the answers of the
-LLMs, progress bars and the data summary.
+the adapter package, the settings records that decide whether an output is
+outdated, reading and writing CSV files, parsing the answers of the LLMs,
+progress bars, the data summary and the development set.
 """
 
 import pandas       as pd
@@ -17,7 +18,6 @@ from rich.console   import Console
 from rich.progress  import Progress, BarColumn, TextColumn, TaskID
 from rich.progress  import TaskProgressColumn, TimeElapsedColumn
 
-# Prevent Python from generating .pyc bytecode files
 sys.dont_write_bytecode = True
 
 from config         import * 
@@ -29,11 +29,9 @@ from adapter                    import synonymClass as synonymAttribute
 from adapter.BaseAdapterUtils   import additionalSeparator, isFile
 from adapter.BaseAdapterUtils   import writeHugeCSV as writeHugeCSVAtomically
 
-# The transformed HPO is kept in the format of the adapter package: one row
-# per (id, attribute, value) with a dict of additional information, e.g. the
-# synonym class and type of a synonym ({"semantic_class": "exact",
-# "source_type": "layperson"}). The column names are those of the
-# adapter.hpo section.
+# The transformed HPO is in the adapter format: one row per (id, attribute,
+# value) with a dict of additional information, e.g. {"semantic_class":
+# "exact", "source_type": "layperson"}. Column names from adapter.hpo.
 hpoAdapterConfig = BaseAdapterConfig.model_validate(configurationFile["adapter"]["hpo"])
 idColumn         = hpoAdapterConfig.id_column
 attributeColumn  = hpoAdapterConfig.attribute_column
@@ -65,7 +63,7 @@ def synonymTypeOf(additional) -> str:
 # ------------------------------------------------------------------------------
 # The settings an output was made with are stored next to it
 # (<output>.settings.json), so that it is made again when they change, not
-# only when one of its input files is newer.
+# only when one of its inputs is newer.
 # ------------------------------------------------------------------------------
 
 def isOutdated(output : str, inputs : list) -> bool:
@@ -125,7 +123,7 @@ def readTransformed(file : str) -> pd.DataFrame:
     Read a transformed HPO file, with the additional information as dicts.
     """
     ret = readCSV(file)
-    # There are only few different dicts, so every one is parsed once.
+    # Only few distinct dicts, so each is parsed once.
     parsed = {entry : ast.literal_eval(entry) for entry in ret[additionalColumn].astype(str).unique()}
     ret[additionalColumn] = ret[additionalColumn].astype(str).map(parsed)
     return ret
@@ -153,10 +151,8 @@ def synonymTable(data : pd.DataFrame) -> pd.DataFrame:
         systemColumn  : goldStandardSystem
     })
 
-# The distance of every synonym to its label (SynTypeClassification.py,
-# SynTypeEval.py): the cosine distance of every model of embedder.model_id.
-# A model is named in the distance columns by syntype.embedding_model_names,
-# or by its ID without the organisation.
+# The distance columns: one per model of embedder.model_id and metric, the
+# model named by syntype.embedding_model_names or its ID without organisation.
 cosineDistance  = "cosine"
 distanceMetrics = [cosineDistance]
 
@@ -168,14 +164,12 @@ embeddingModels = {
 def getRows(
     data: pd.DataFrame,
     hpoID: str,
-    # Default to label attribute
     attribute=labelClass
 ) -> pd.DataFrame:
     """
     Return all rows of the transformed HPO matching a given HPO ID and
     attribute (a single attribute or several), or None.
     """
-    # Filter by HPO ID
     ret = data[data[idColumn] == hpoID]
 
     if ret is not None and len(ret.index) > 0:
@@ -189,22 +183,17 @@ def getRows(
     return ret
 
 
-# Gets all values matching the given ID and attribute.
-# Always returns a list (possibly empty).
 def getElements(
     data: pd.DataFrame,
     hpoID: str,
-    # Default to label attribute
     attribute=labelClass
 ) -> list:
     """
-    Retrieve all values for a given HPO ID and attribute.
-
-    If no matching rows exist, an empty list is returned.
+    All values for a given HPO ID and attribute; an empty list if there are
+    none.
     """
     ret = getRows(data, hpoID, attribute)
 
-    # Extract the values if rows exist
     if ret is not None and len(ret.index) > 0:
         ret = ret[valueColumn].tolist()
     else:
@@ -280,14 +269,13 @@ def printDataSummary(data: pd.DataFrame = None) -> None:
     """
     console = Console()
 
-    # Create summary table
     table = Table(title="Data Summary Report")
 
     table.add_column("Description")
     table.add_column("Abs")
     table.add_column("Rel")
 
-    # Count occurrences per attribute (synonyms per synonym class)
+    # Synonyms are counted per synonym class.
     attributes   = data[attributeColumn].where(
         data[attributeColumn] != synonymAttribute,
         synonymAttribute + " (" + data[additionalColumn].map(synonymClassOf) + ")")
@@ -301,7 +289,6 @@ def printDataSummary(data: pd.DataFrame = None) -> None:
             ("~" + str(relativeAmount) + "%").rjust(5)
         )
 
-    # Render table to console
     console.print(table)
 
 
@@ -310,10 +297,9 @@ def printDataSummary(data: pd.DataFrame = None) -> None:
 def parseClassification(answer) -> tuple[str, int, str]:
     """
     Classification, confidence and rationale of an answer parsed by
-    model.toJSON(). The classification is (undefinedSynonymType, -1) if the
-    answer is no JSON object with one of synonymTypes as classification and an
-    integer confidence; the rationale is "" if the answer has none, also for
-    an undefined classification.
+    model.toJSON(). Classification and confidence are undefinedSynonymType
+    and -1 unless the answer has one of synonymTypes and an integer
+    confidence; the rationale is "" if the answer has none.
     """
     classification, confidence = undefinedSynonymType, -1
     rationale = ""
@@ -343,7 +329,7 @@ def quote(string : str) -> str:
 def shorten(string, width : int = 60) -> str:
     """
     A text cut at a word to at most width characters, with " ..." where it
-    is cut, so that a log row stays short (the full text is in the files).
+    is cut, so that a log row stays short.
     """
     return textwrap.shorten(str(string), width = width, placeholder = " ...")
 
@@ -364,16 +350,10 @@ def applyFormat(l : list[str] = []) -> str:
 
 
 # ------------------------------------------------------------------------------
-# The development set (syntype.development_set): synonyms drawn at random from
-# the transformed HPO with the information of their concepts, classified by
-# runs with "test" (hpo.development.csv); and the evaluation set, the
-# transformed HPO without these synonyms and without the synonyms of other
-# gold types than expert and layperson, classified by the other runs
-# (hpo.evaluation.csv).
+# The development set (hpo.development.csv, classified by runs with "test")
+# and the evaluation set (hpo.evaluation.csv, classified by the other runs).
 # ------------------------------------------------------------------------------
 
-# Both sets depend on the settings of the development set, on the gold types
-# the evaluation set keeps and on the format of the transformed HPO.
 developmentSetSettings = {
     "development_set" : syntypeConfig.development_set.model_dump(),
     "gold_types"      : synonymTypes,
@@ -407,14 +387,12 @@ def logSynonymCounts(name : str, data : pd.DataFrame) -> None:
 def writeDevelopmentSet() -> pd.DataFrame:
     """
     Draws syntype.development_set.size_per_type synonyms of every gold type
-    (expert, layperson) at random from hpo.csv and writes them to
-    hpo.development.csv, in the adapter's format, with the information of their
-    concepts: label, definition, comment, the child rows of the concepts (to
-    their children and from their parents) and the labels of those parents
-    and children, but no other synonym. Writes hpo.csv without these synonyms
-    and without the synonyms of other gold types than expert and layperson to
-    hpo.evaluation.csv, so that the development synonyms are never
-    evaluated. Records the settings next to both.
+    (expert, layperson) at random from hpo.csv and writes them with the label,
+    definition, comment, parent and child relations of their concepts (and the
+    labels of those parents and children) to hpo.development.csv. Writes
+    hpo.csv without these synonyms and without other gold types to
+    hpo.evaluation.csv, so that development synonyms are never evaluated.
+    Records the settings next to both.
 
     :return: The development set.
     """
@@ -426,7 +404,6 @@ def writeDevelopmentSet() -> pd.DataFrame:
     types = data[additionalColumn].map(synonymTypeOf)
     synonyms = synonymRows(data)
 
-    # The synonyms of every gold type, drawn with the configured seed.
     selected = []
     for synonymType in synonymTypes:
         candidates = data[synonyms & (types == synonymType)]
@@ -461,11 +438,8 @@ def writeDevelopmentSet() -> pd.DataFrame:
     printDataSummary(result)
     logSynonymCounts("Development set", result)
 
-    # The evaluation set: every row of hpo.csv except the drawn synonyms and
-    # the synonyms of other gold types than expert and layperson (e.g.
-    # abbreviation, plural; a synonym listed several times counts with its
-    # first type). A drawn synonym listed several times (with other classes
-    # or types) is removed with all its rows.
+    # A drawn synonym listed several times (with other classes or types) is
+    # removed with all its rows; other gold types are e.g. abbreviation, plural.
     drawn       = set(zip(data.loc[selectedRows, idColumn], data.loc[selectedRows, valueColumn]))
     drawnRows   = synonyms & pd.Series(list(zip(data[idColumn], data[valueColumn])),
         index = data.index).isin(drawn)

@@ -15,10 +15,8 @@ import sys
 import shlex
 import math
 
-# Prevent Python from generating .pyc files (compiled bytecode files)
 sys.dont_write_bytecode = True
 
-# Import necessary modules and configuration settings
 from SynTypeUtils import *
 from config     import *
 
@@ -26,13 +24,11 @@ from logger     import Logger
 
 from collections import Counter
 
-# The logger takes the "logger" section of the configuration file; the
-# command line of the run is its first line, since the log file is named
-# after the start of the run only.
+# The log file is named after the start of the run only, so the command line
+# is its first line.
 l             = Logger(config = configFile)
 l.log(f"Command: python3 {shlex.join(sys.argv)}")
 
-# The experiment whose classifications are evaluated (see config.py).
 if experimentIndex is None:
     l.error("Give the index of the experiment in syntype.experiments, e.g. " \
         f"python3 {sys.argv[0]} 0.")
@@ -40,21 +36,17 @@ if experimentIndex is None:
 
 l.printHeader("Evaluating the Results of Synonym Classification")
 
-# The logger logs the start, end and duration of the step.
 with l.step("Evaluating the classifications"):
-    # Only proceed if formatted input data exists
     exitIfFileNotExist(inputFileClassEvaluation)
 
     classifiedComplete = readCSV(inputFileClassEvaluation)
 
-    # The distances of the synonyms to their label (the preparation run,
-    # SynTypeClassification.py without arguments): of the development set for
-    # test runs, of all synonyms otherwise. Distance columns already in the
-    # classifications are replaced.
+    # The distances of the preparation run: of the development set for test
+    # runs, of the evaluation set otherwise. They replace distance columns
+    # already in the classifications.
     if isFile(inputFileDistances):
-        # The distance files are in the format of the transformed HPO (id,
-        # attribute, value, additional); joined by concept, synonym class and
-        # synonym.
+        # In the format of the transformed HPO; joined by concept, synonym class
+        # and synonym.
         distances = readTransformed(inputFileDistances)
         distances[hpoidColumn]   = distances[idColumn]
         distances[classColumn]   = distances[additionalColumn].map(synonymClassOf)
@@ -94,16 +86,13 @@ with l.step("Evaluating the classifications"):
         f"(~{int(len(classifiedComplete.index) / len(systems))} per system)")
     classifiedComplete = classifiedComplete[classifiedComplete[systemColumn] != ""]
 
-    # Change Datatype to String and lower case everything.
     classifiedComplete[classColumn]   = classifiedComplete[classColumn ].str.lower()
     classifiedComplete[answerColumn]  = classifiedComplete[answerColumn].str.lower()
     classifiedComplete[typeColumn]    = classifiedComplete[typeColumn  ].str.lower()
 
     # ------------------------------------------------------------------------------
-    # The synonyms are classified into the source types synonymTypes (expert,
-    # layperson); only synonyms with one of these as gold type are evaluated.
-    # Other gold types (abbreviation, uk, plural, ...) describe the form of a
-    # synonym, not whether it is an expert or a layperson term.
+    # Only synonyms with a gold type of synonymTypes are evaluated; other types
+    # (abbreviation, uk, plural, ...) describe the form of a synonym.
     # ------------------------------------------------------------------------------
 
     classifiedComplete = classifiedComplete[classifiedComplete[classColumn].isin(synonymClasses)]
@@ -117,8 +106,7 @@ with l.step("Evaluating the classifications"):
         classifiedComplete[typeColumn].isin(synonymTypes)
     ].copy().reset_index(drop = True)
 
-    # The synonyms of the Few-Shot examples are given with their answer in the
-    # prompts, so they are not evaluated.
+    # The Few-Shot synonyms are given with their answer in the prompts.
     exampleSynonyms = classifiedComplete[[hpoidColumn, contentColumn]].apply(tuple, axis = 1).isin(
         [(example[hpoidColumn], example["synonym"]) for example in fewShotExamples])
     l.log(f"Leaving out the {len(fewShotExamples)} synonyms of the Few-Shot examples " \
@@ -178,7 +166,6 @@ with l.step("Evaluating the classifications"):
                             laypersonSynonymType : colors[1]
                         }
 
-                    # Draw density curves for each source type
                     sns.kdeplot(
                         data=classified,
                         x=column,
@@ -236,7 +223,6 @@ with l.step("Evaluating the classifications"):
 
                         progress.refresh()
 
-                    # Create the bar plot
                     plt.figure()
                     plt.plot(x1, y1, label = "F1 Score (Layperson Threshold)",
                         color = "red")
@@ -296,15 +282,12 @@ with l.step("Evaluating the classifications"):
     classified = classifiedComplete[classifiedComplete[systemColumn] == systems[0]].copy().drop([answerColumn, systemColumn], axis = 1).drop_duplicates().reset_index(drop = True)
     types = Counter(classified[typeColumn])
 
-    # Prepare data for plotting
     labels = list(types.keys())
     values = list(types.values())
 
-    # Create the bar plot
     plt.figure()
     bars = plt.bar(labels, values, color = colors)
 
-    # Add counts on top of each bar
     for bar in bars:
         height = bar.get_height()
         plt.text(
@@ -326,10 +309,8 @@ with l.step("Evaluating the classifications"):
     # ------------------------------------------------------------------------------
 
     counts = classifiedComplete.groupby([answerColumn, systemColumn]).size().unstack(fill_value = 0)
-    # Create plot
     ax = counts.plot(kind = "bar", figsize = (3 * len(systems), 4), width = 0.8)
 
-    # Add value labels above bars
     for container in ax.containers:
         ax.bar_label(container, padding = 3)
 
@@ -379,7 +360,6 @@ with l.step("Evaluating the classifications"):
                 for i, sourceType in enumerate(synonymTypes)
             }
 
-            # One row per source type.
             for t in synonymTypes:
                 l.log(f"{system} ({quote(startString or 'all')}), {t}: " \
                     f"P {result[system][t][precisionLabel]:.3f}, " \
@@ -451,7 +431,7 @@ with l.step("Evaluating the classifications"):
         plt.tight_layout(rect = [0, 0.05, 1, 1])
         plt.savefig(outputFile, dpi = 300, bbox_inches = "tight")
 
-    # Plot evaluation on different ontologies.
+    # All synonyms, then per ontology of the concept.
     ontologySubplot(classifiedComplete, "",        outputFileClassRecallPrecisionF1,     "Source Type Classification Performance of LLM Systems")
     ontologySubplot(classifiedComplete, "HP:",     outputFileClassEvaluationExactHPO,    "Source Type Classification Performance of LLM Systems (HPO only)")
     ontologySubplot(classifiedComplete, "UBERON:", outputFileClassEvaluationExactUBERON, "Source Type Classification Performance of LLM Systems (UBERON only)")

@@ -13,7 +13,6 @@ import yaml
 
 from SynTypeConfig import ExperimentConfig, SyntypeConfig
 
-# Prevent Python from generating .pyc files (compiled bytecode files)
 sys.dont_write_bytecode = True
 
 # =============================================================================
@@ -30,19 +29,11 @@ with open(configFile, "r", encoding = "utf-8") as f:
 syntypeConfig = SyntypeConfig.model_validate(configurationFile["syntype"])
 
 # =============================================================================
-# Experiment and models of a run, given on the command line (see start.sh,
-# classify.sh and finalize.sh):
-#   (nothing)           SynTypeClassification.py: the preparation run
-#                       (transforms the HPO, draws the development set
-#                       and embeds both);
-#   <index>             the experiment syntype.experiments[<index>], counted
-#                       from 0: SynTypeClassification.py classifies the
-#                       synonyms with every model of llm.model_id, one after
-#                       the other; SynTypeMerge.py and SynTypeEval.py merge
-#                       and evaluate the classifications of all models;
-#   <index> <model ID>  SynTypeClassification.py: the same with only this
-#                       model.
-# `python3 ./src/config.py` prints the number of experiments.
+# Experiment and models of a run, given on the command line:
+#   (nothing)           the preparation run (SynTypeClassification.py only);
+#   <index>             the experiment syntype.experiments[<index>], from 0,
+#                       with every model of llm.model_id;
+#   <index> <model ID>  SynTypeClassification.py with only this model.
 # =============================================================================
 
 experimentIndex = None
@@ -77,8 +68,7 @@ chainOfThoughtsStr      = "ChainOfThoughts" if chainOfThoughts else "NoChainOfTh
 # Model Configuration
 # =============================================================================
 
-# The LLMs of SynTypeClassification.py, classifying one after the other: none
-# in the preparation run, the one given after the experiment, or all of
+# None in the preparation run, the one given after the experiment, or all of
 # llm.model_id.
 modelIDs = []
 if experimentIndex is not None:
@@ -180,22 +170,17 @@ pickleFileFormat = "pkl"
 logFileFormat = "log"
 plotFileFormat = "png"
 
-# Basic Data Directory.
 dataDir = syntypeConfig.data_folder
 
-# Basic Data Subdirectories.
 outputFolderName                    = "output"
 logFolderName                       = "logs"
 
-# Basic Data Processing Directories.
-# First step (and the embeddings for the evaluation).
+# The folders of the steps: transformation (and the development and
+# evaluation set), formatting, merging and evaluation; the raw classification
+# is in outputFolderNameClass, the distances in outputFolderNameEmbedded.
 outputFolderNameTransformed         = "transformed"
-# The second Step is the actual job e.g. generation or classification.
-# Third step.
 outputFolderNameFormatted           = "formated"
-# Fourth step.
 outputFolderNameMerged              = "merged"
-# Fifth step.
 outputFolderNameEvaluation          = "evaluated"
 
 
@@ -205,8 +190,8 @@ inputFileTransformed        = os.path.join(
     configurationFile["adapter"]["hpo"]["input_files"][0]
 )
 
-# Contains all Information of the hp.owl needed to Generate and Classify 
-# Synonyms and perform the Evaluation.
+# hp.owl transformed by SynTypeClassification.py: everything the
+# classification and the evaluation need.
 outputFileNameTransformedFull       = f"hpo.{csvFileFormat}"
 
 outputFileTransformedFull                     = os.path.join(
@@ -240,9 +225,8 @@ outputFileTransformedEvaluation      = os.path.join(
 
 inputFileTask = outputFileTransformedDevelopment if reduceToTestIDs else outputFileTransformedEvaluation
 
-# Cosine distances of the synonyms to their label (the preparation run): of the
-# development set, for the evaluation of test runs; their mean and standard
-# deviation are logged, to be set as syntype.cosine_distance_mean and _std.
+# Distances of the synonyms to their label (the preparation run): of the
+# development set, for the evaluation of test runs.
 outputFolderNameEmbedded             = "embeded"
 outputFileEmbeddedDevelopment        = os.path.join(
     dataDir,
@@ -290,8 +274,7 @@ def outputFileClassFormatted(modelName : str) -> str:
     return os.path.join(dataDir, outputFolderName, outputFolderNameFormatted,
         f"{outputFileNameClassFormattedPrefix}_{modelName}.{csvFileFormat}")
 
-# The formatted classifications of all models of this experiment are read
-# from here by SynTypeMerge.py.
+# Read by SynTypeMerge.py.
 inputFolderClassMerged                 = os.path.join(dataDir, outputFolderName, outputFolderNameFormatted)
 
 outputFileNameClassMerged              = f"{filesPrefixApproachClass}_merged_classes.{csvFileFormat}"
@@ -366,13 +349,9 @@ outputFileNameClassEmbeddingEvaluation    = f"{embeddingPrefix}_embedding_evalua
 outputFileNameClassDistanceEvaluation   = f"{embeddingPrefix}_distance_evaluation_" + "{}" + f".{plotFileFormat}"
 
 
-# =============================================================================
-
-# The examples of the Few-Shot approach, with the answer of the prompts
-# (classification, confidence from 1 to 5, rationale). Their synonyms are
-# left out of the evaluation (SynTypeEval.py; SynTypeClassification.py writes
-# them into the prompts), also in runs without examples, so that all runs are
-# scored on the same synonyms.
+# The Few-Shot examples with their answer (classification, confidence from 1
+# to 5, rationale). Their synonyms are left out of the evaluation also in runs
+# without examples, so that all runs are scored on the same synonyms.
 fewShotExamples = [
     {
         hpoidColumn : "HP:0008365",
