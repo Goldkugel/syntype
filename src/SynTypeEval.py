@@ -79,7 +79,9 @@ with l.step("Evaluating the classifications"):
     systems = list(set(classifiedComplete[systemColumn].tolist()))
     systems = sorted(systems)
 
-    l.log(f"Found Systems: {applyFormat(systems)}")
+    l.log(f"Found {len(systems)} systems:")
+    for system in systems:
+        l.log(f"- {system}")
     l.log(f"Classified Synonyms: {len(classifiedComplete.index)} " \
         f"(~{int(len(classifiedComplete.index) / len(systems))} per system)")
     classifiedComplete = classifiedComplete[classifiedComplete[systemColumn] != ""]

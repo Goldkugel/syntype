@@ -55,8 +55,9 @@ with l.step("Merging the classifications"):
 
     if len(missing) > 0:
         l.warning(f"No classification of {len(missing)} of {len(files)} model(s) " \
-            f"for this experiment, e.g. a job that failed or is still running: " \
-            f"{applyFormat(missing)}.")
+            f"(a job that failed or is still running?):")
+        for modelID in missing:
+            l.warning(f"- {modelID}")
 
     others = sorted(
         file for file in (os.listdir(inputFolderClassMerged) if os.path.isdir(inputFolderClassMerged) else [])
@@ -64,8 +65,9 @@ with l.step("Merging the classifications"):
             and os.path.join(inputFolderClassMerged, file) not in files.values()
     )
     if len(others) > 0:
-        l.warning(f"Leaving out {len(others)} file(s) of models not in llm.model_id: " \
-            f"{applyFormat(others)}.")
+        l.warning(f"Leaving out {len(others)} file(s) of models not in llm.model_id:")
+        for file in others:
+            l.warning(f"- {file}")
 
     if len(present) == 0:
         l.error(f"No classification of any model of llm.model_id found in " \
@@ -104,5 +106,4 @@ with l.step("Merging the classifications"):
     merged = pd.concat(dataframes.values(), ignore_index = True)
     writeHugeCSV(merged, outputFileClassMerged)
 
-    l.log(f"Merged the classifications of {len(dataframes)} model(s) " \
-        f"({len(merged.index)} rows) into {quote(os.path.basename(outputFileClassMerged))}.")
+    l.log(f"Merged the classifications of {len(dataframes)} model(s) ({len(merged.index)} rows).")

@@ -245,8 +245,8 @@ def transformHPO() -> None:
         combinations = joined.value_counts()
         l.log(f"{len(values)} synonyms have several values of {quote(key)}; they " \
             "count with the first one" + ("." if len(values) == 0 else ": " + ", ".join(
-                f"{quote(value)} {count}" for value, count in combinations.head(10).items()) +
-            (", ..." if len(combinations) > 10 else "") + "."))
+                f"{quote(value)} {count}" for value, count in combinations.head(5).items()) +
+            (", ..." if len(combinations) > 5 else "") + "."))
 
     # --------------------------------------------------------------------------
     # Remove the synonyms that match the label of their concept (ignoring
@@ -322,7 +322,7 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
         not NaN, for the log.
         """
         values = values.dropna()
-        return f"mean {values.mean():.4f}, standard deviation {values.std():.4f}, " \
+        return f"mean {values.mean():.4f}, std {values.std():.4f}, " \
             f"min {values.min():.4f}, max {values.max():.4f}"
 
     def distance(a : np.ndarray, b : np.ndarray) -> np.ndarray:
@@ -385,23 +385,23 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
 
             # The distances of all synonyms with a label, before and after the
             # normalization, and per gold type.
-            l.log(f"{embeddingModel}, {distanceMetric} distance of " \
-                f"{values.notna().sum()} synonyms to their label " \
-                f"({values.isna().sum()} without label): {describe(values)}.")
-            l.log(f"Normalised with mean {mean} and standard deviation {std}: " \
-                f"{describe(normalised)}.")
+            l.log(f"{embeddingModel}, {distanceMetric} distance to the label: " \
+                f"{values.notna().sum()} synonyms ({values.isna().sum()} without label).")
+            l.log(f"All: {describe(values)}.")
             for synonymType in synonymTypes:
                 ofType = types == synonymType
-                l.log(f"Gold type {quote(synonymType)} ({ofType.sum()} synonyms): " \
-                    f"{describe(values[ofType])}; normalised {describe(normalised[ofType])}.")
+                l.log(f"Gold type {quote(synonymType)} ({ofType.sum()}): {describe(values[ofType])}.")
+            l.log(f"Normalised with mean {mean} and std {std}: {describe(normalised)}.")
+            for synonymType in synonymTypes:
+                ofType = types == synonymType
+                l.log(f"Normalised, gold type {quote(synonymType)}: {describe(normalised[ofType])}.")
 
             # The mean and standard deviation of the development set, with
             # which the distances of all synonyms are to be normalised.
             if developmentSet:
-                l.log(f"Development set: set syntype.cosine_distance_mean to " \
-                    f"{values.mean():.4f} and cosine_distance_std to {values.std():.4f} " \
-                    f"(now {cosineDistanceMean} and {cosineDistanceStd}) to normalise " \
-                    f"the distances of {os.path.basename(outputFileTransformedEvaluation)} with them.")
+                l.log(f"Set syntype.cosine_distance_mean: {values.mean():.4f} and " \
+                    f"cosine_distance_std: {values.std():.4f} (now {cosineDistanceMean} " \
+                    f"and {cosineDistanceStd}).")
 
             # A first, quick evaluation of the distances: how well they
             # separate expert from layperson synonyms, as the strictly
@@ -413,8 +413,8 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
             ssmd = (means[0] - means[1]) / math.sqrt(
                 math.pow(stds[0], 2) + math.pow(stds[1], 2))
             l.log(f"Strictly standardized mean difference [{expertSynonymType} - " \
-                f"{laypersonSynonymType}]: {ssmd} (difference of the means " \
-                f"{means[0] - means[1]}, of the standard deviations {stds[0] - stds[1]}).")
+                f"{laypersonSynonymType}]: {ssmd:.4f} (difference of the means " \
+                f"{means[0] - means[1]:.4f}, of the stds {stds[0] - stds[1]:.4f}).")
 
 
     # --------------------------------------------------------------------------
@@ -631,6 +631,8 @@ def formatAnswers(synonyms : pd.DataFrame, modelName : str) -> None:
     labels = gold[gold[attributeColumn] == labelClass].copy().reset_index(drop = True)
     count  = 0
 
+    l.log("Wrong or undefined classifications, as synonym (label): gold -> " \
+        "classified (confidence): rationale.", cmdline = False)
     for index, row in classified.iterrows():
         # It should log, when:
         # - The answer could not be formatted e.g. is undefined.
@@ -639,17 +641,17 @@ def formatAnswers(synonyms : pd.DataFrame, modelName : str) -> None:
         if (str(row[answerColumn]).lower() == undefinedSynonymType.lower() or
             (str(row[typeColumn]).lower() in synonymTypes and
             str(row[answerColumn]).lower() != str(row[typeColumn]).lower())):
-            l.log("Label: " \
-                f"{applyFormat(getElements(labels, row[hpoidColumn], labelClass))}" \
-                f", Synonym: {quote(row[contentColumn])}, " \
-                f"Correct: {quote(row[typeColumn])}, Classified: " \
-                f"{quote(row[answerColumn])}, Confidence: {row[confidenceColumn]}, " \
-                f"Rationale: {quote(str(row[rationaleColumn]))}", cmdline = False)
+            # Shortened; the full texts are in the raw and formatted files.
+            label = ", ".join(getElements(labels, row[hpoidColumn], labelClass))
+            l.log(f"{quote(shorten(row[contentColumn], 40))} " \
+                f"(label {quote(shorten(label, 30))}): {row[typeColumn]} -> " \
+                f"{row[answerColumn]} ({row[confidenceColumn]}): " \
+                f"{quote(shorten(row[rationaleColumn], 60))}", cmdline = False)
             count = count + 1
 
     l.log(f"Incorrect Classifications: {count}")
     l.log(f"Correct Classifications:   {len(classified.index) - count}")
-    l.log("Logging competed.")
+    l.log("Logging completed.")
 
     logClassificationSummary(classified, modelName)
 
@@ -669,8 +671,8 @@ def logClassificationSummary(classified : pd.DataFrame, modelName : str) -> None
     ]
     answers = synonymTypes + [undefinedSynonymType]
 
-    l.log(f"Summary of {modelName}: {len(scored.index)} synonyms with gold type " \
-        f"{applyFormat(synonymTypes)} (without the Few-Shot examples), " \
+    l.log(f"Summary of {modelName}: {len(scored.index)} synonyms (" + ", ".join(synonymTypes) +
+        f"; without the few-shot examples), " \
         f"{(scored[answerColumn] == undefinedSynonymType).sum()} answers undefined.")
     l.log(f"{'Gold / Classified':<20}" + "".join(f"{answer:>12}" for answer in answers))
     for goldType in synonymTypes:

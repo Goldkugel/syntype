@@ -10,6 +10,7 @@ import ast
 import json
 import sys
 import os
+import textwrap
 
 from rich.table     import Table
 from rich.console   import Console
@@ -339,6 +340,13 @@ def quote(string : str) -> str:
     """
     return quotationCharacter + string + quotationCharacter
 
+def shorten(string, width : int = 60) -> str:
+    """
+    A text cut at a word to at most width characters, with " ..." where it
+    is cut, so that a log row stays short (the full text is in the files).
+    """
+    return textwrap.shorten(str(string), width = width, placeholder = " ...")
+
 def applyFormat(l : list[str] = []) -> str:
     """
     A list of strings as one text, each quoted and separated by commas, e.g.
@@ -388,11 +396,11 @@ def logSynonymCounts(name : str, data : pd.DataFrame) -> None:
     types    = synonyms[typeColumn].replace("", "(none)")
     total    = types.value_counts()
     counts   = pd.crosstab(synonyms[classColumn], types)[total.index]
-    l.log(f"{name}: {len(synonyms.index)} synonyms; per gold type " + ", ".join(
-        f"{quote(t)} {n}" for t, n in total.items()) + ".")
+    l.log(f"{name}: {len(synonyms.index)} synonyms: " + ", ".join(
+        f"{t} {n}" for t, n in total.items()) + ".")
     for synonymClass, row in counts.iterrows():
-        l.log(f"{name}, synonym class {quote(synonymClass)}: {row.sum()} synonyms; " \
-            f"per gold type " + ", ".join(f"{quote(t)} {n}" for t, n in row.items() if n > 0) + ".")
+        l.log(f"{name}, {synonymClass}: {row.sum()} synonyms: " + ", ".join(
+            f"{t} {n}" for t, n in row.items() if n > 0) + ".")
 
 def writeDevelopmentSet() -> pd.DataFrame:
     """
@@ -443,9 +451,9 @@ def writeDevelopmentSet() -> pd.DataFrame:
     relatedLabelRows = data[idColumn].isin(related) & (attribute == labelClass)
 
     result = data[selectedRows | conceptRows | relationRows | relatedLabelRows].reset_index(drop = True)
-    l.log(f"Development set: {selectedRows.sum()} synonyms of {len(concepts)} " \
-        f"concepts, {relationRows.sum()} parent and child relations, the labels of " \
-        f"{len(related)} parents and children; {len(result.index)} rows.")
+    l.log(f"Development set: {selectedRows.sum()} synonyms of {len(concepts)} concepts, " \
+        f"{relationRows.sum()} relations, {len(related)} labels of parents and children; " \
+        f"{len(result.index)} rows.")
     printDataSummary(result)
     logSynonymCounts("Development set", result)
 
@@ -456,10 +464,9 @@ def writeDevelopmentSet() -> pd.DataFrame:
     drawnRows   = synonyms & pd.Series(list(zip(data[idColumn], data[valueColumn])),
         index = data.index).isin(drawn)
     evaluation  = data[~drawnRows].reset_index(drop = True)
-    l.log(f"Evaluation set: {len(data.index)} rows of " \
-        f"{os.path.basename(outputFileTransformedFull)} without the {drawnRows.sum()} rows " \
-        f"of the drawn synonyms; {synonymRows(evaluation).sum()} synonyms, " \
-        f"{len(evaluation.index)} rows.")
+    l.log(f"Evaluation set: the {len(data.index)} rows of " \
+        f"{os.path.basename(outputFileTransformedFull)} without the {drawnRows.sum()} " \
+        f"of the drawn synonyms; {len(evaluation.index)} rows.")
     logSynonymCounts("Evaluation set", evaluation)
 
     writeHugeCSV(result, outputFileTransformedDevelopment)
