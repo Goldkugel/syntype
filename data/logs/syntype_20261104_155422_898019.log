@@ -1,0 +1,228 @@
+[2026-11-04 15:54:22] [INFO   ] (0 Minutes) Command: python3 ./src/SynTypeClassification.py
+[2026-11-04 15:54:22] [INFO   ] (0 Minutes) hpo.csv is missing or older than "hp.owl".
+[2026-11-04 15:54:22] [INFO   ] (0 Minutes) Step 'Transforming the HPO'...
+[2026-11-04 15:54:22] [INFO   ] (0 Minutes) ==========================================================================================
+[2026-11-04 15:54:22] [INFO   ] (0 Minutes) =                             Transforming the Raw HPO Data                              =
+[2026-11-04 15:54:22] [INFO   ] (0 Minutes) ==========================================================================================
+[2026-11-04 15:54:22] [INFO   ] (0 Minutes) Loading the Human Phenotype Ontology (HPO) from 1 files...
+[2026-11-04 15:54:22] [INFO   ] (0 Minutes) Reading the input files...
+[2026-11-04 15:54:22] [INFO   ] (0 Minutes) Loading the Human Phenotype Ontology (HPO) from 'hp.owl'...
+[2026-11-04 15:54:29] [INFO   ] (0 Minutes) Loading the Human Phenotype Ontology (HPO) from 'hp.owl' completed.
+[2026-11-04 15:54:29] [INFO   ] (0 Minutes) Getting the labels of the Human Phenotype Ontology (HPO)...
+[2026-11-04 15:54:34] [INFO   ] (0 Minutes) 32194 entities of the Human Phenotype Ontology (HPO) extracted.
+[2026-11-04 15:54:34] [INFO   ] (0 Minutes) Getting the labels of the Human Phenotype Ontology (HPO) completed.
+[2026-11-04 15:54:34] [INFO   ] (0 Minutes) Getting the definitions of the Human Phenotype Ontology (HPO)...
+[2026-11-04 15:54:45] [INFO   ] (0 Minutes) 28257 entities of the Human Phenotype Ontology (HPO) extracted.
+[2026-11-04 15:54:45] [INFO   ] (0 Minutes) Getting the definitions of the Human Phenotype Ontology (HPO) completed.
+[2026-11-04 15:54:45] [INFO   ] (0 Minutes) Getting the comments of the Human Phenotype Ontology (HPO)...
+[2026-11-04 15:54:47] [INFO   ] (0 Minutes) 5594 entities of the Human Phenotype Ontology (HPO) extracted.
+[2026-11-04 15:54:47] [INFO   ] (0 Minutes) Getting the comments of the Human Phenotype Ontology (HPO) completed.
+[2026-11-04 15:54:47] [INFO   ] (0 Minutes) Getting the children of concepts of the Human Phenotype Ontology (HPO)...
+[2026-11-04 15:55:00] [INFO   ] (0 Minutes) 55989 entities of the Human Phenotype Ontology (HPO) extracted.
+[2026-11-04 15:55:00] [INFO   ] (0 Minutes) Getting the children of concepts of the Human Phenotype Ontology (HPO) completed.
+[2026-11-04 15:55:00] [INFO   ] (0 Minutes) Getting the references of the Human Phenotype Ontology (HPO)...
+[2026-11-04 15:55:17] [INFO   ] (0 Minutes) 45556 entities of the Human Phenotype Ontology (HPO) extracted.
+[2026-11-04 15:55:17] [INFO   ] (0 Minutes) Getting the references of the Human Phenotype Ontology (HPO) completed.
+[2026-11-04 15:55:17] [INFO   ] (0 Minutes) Getting the synonyms and types of the Human Phenotype Ontology (HPO)...
+[2026-11-04 15:55:30] [INFO   ] (1 Minute) 60674 entities of the Human Phenotype Ontology (HPO) extracted.
+[2026-11-04 15:55:30] [INFO   ] (1 Minute) Getting the synonyms and types of the Human Phenotype Ontology (HPO) completed.
+[2026-11-04 15:55:30] [INFO   ] (1 Minute) Reading the input files completed.
+[2026-11-04 15:55:30] [INFO   ] (1 Minute) Merging data...
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Merging data completed.
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Found 228264 entities/rows in total.
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Removing rows without an ID...
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Removing rows without an ID completed.
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Reduced to 213375 entities/rows in total.
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Removing rows without values...
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Removing rows without values completed.
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Reduced to 213371 entities/rows in total.
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Removing rows with a '#' in the ID...
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Removing rows with a '#' in the ID completed.
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Reduced to 213314 entities/rows in total.
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Merging duplicate rows...
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Merging duplicate rows completed.
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Reduced to 213019 entities/rows in total.
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Loading the Human Phenotype Ontology (HPO) from 1 files completed.
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Removing the synonyms with conflicting gold labels...
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) 246 synonyms listed as both "exact", "related".
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) 13 further synonyms listed as both "abbreviation", "layperson".
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Removing the synonyms with conflicting gold labels completed.
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) 9 synonyms have several values of "semantic_class"; they count with the first one:
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) - "exact, narrow": 4
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) - "exact, broad": 2
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) - "narrow, related": 2
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) - "broad, related": 1
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) 18 synonyms have several values of "source_type"; they count with the first one:
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) - "layperson, plural": 13
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) - "plural, uk": 2
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) - "layperson, uk": 1
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) - "layperson, obsolete": 1
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) - "abbreviation, uk": 1
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Removing the synonyms that match their label...
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) 2147 synonyms match their label.
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Removing the synonyms that match their label completed.
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Row count: 210613.
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Writing the transformed HPO...
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Writing to a temporary file first...
+[2026-11-04 15:55:31] [INFO   ] (1 Minute) Writing file 'hpo.csv.tmp'...
+[2026-11-04 15:55:32] [INFO   ] (1 Minute) Writing file 'hpo.csv.tmp' completed.
+[2026-11-04 15:55:32] [INFO   ] (1 Minute) Writing to a temporary file first completed.
+[2026-11-04 15:55:32] [INFO   ] (1 Minute) Replacing original data with temporary data...
+[2026-11-04 15:55:32] [INFO   ] (1 Minute) Replacing original data with temporary data completed.
+[2026-11-04 15:55:32] [INFO   ] (1 Minute) Writing the transformed HPO completed.
+[2026-11-04 15:55:32] [INFO   ] (1 Minute) Step 'Transforming the HPO' completed in 00:01:09.59.
+[2026-11-04 15:55:32] [INFO   ] (1 Minute) hpo.development.csv is missing or older than "hpo.csv".
+[2026-11-04 15:55:32] [INFO   ] (1 Minute) hpo.evaluation.csv is missing or older than "hpo.csv".
+[2026-11-04 15:55:32] [INFO   ] (1 Minute) Step 'Drawing the development and evaluation set'...
+[2026-11-04 15:55:32] [INFO   ] (1 Minute) Reading file 'hpo.csv'...
+[2026-11-04 15:55:32] [INFO   ] (1 Minute) Reading file 'hpo.csv' completed.
+[2026-11-04 15:55:32] [INFO   ] (1 Minute) Drawing 500 of 45897 synonyms of gold type "expert" (seed 2898231092).
+[2026-11-04 15:55:32] [INFO   ] (1 Minute) Drawing 500 of 6601 synonyms of gold type "layperson" (seed 2898231092).
+[2026-11-04 15:55:32] [INFO   ] (1 Minute) Development set: 1000 synonyms of 956 concepts, 9148 rows.
+[2026-11-04 15:55:32] [INFO   ] (1 Minute) Development set: 3342 relations, 2843 labels of parents and children.
+[2026-11-04 15:55:32] [INFO   ] (1 Minute) Development set: 1000 synonyms: expert 500, layperson 500.
+[2026-11-04 15:55:32] [INFO   ] (1 Minute) Development set, exact: 823 synonyms: expert 352, layperson 471.
+[2026-11-04 15:55:32] [INFO   ] (1 Minute) Development set, related: 177 synonyms: expert 148, layperson 29.
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) Evaluation set: 207768 of the 210613 rows of hpo.csv.
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) Left out: 1000 rows of the drawn synonyms, 1845 of other gold types.
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) Evaluation set: 51498 synonyms: expert 45397, layperson 6101.
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) Evaluation set, exact: 38335 synonyms: expert 32634, layperson 5701.
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) Evaluation set, related: 13163 synonyms: expert 12763, layperson 400.
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) Writing to a temporary file first...
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) Writing file 'hpo.development.csv.tmp'...
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) Writing file 'hpo.development.csv.tmp' completed.
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) Writing to a temporary file first completed.
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) Replacing original data with temporary data...
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) Replacing original data with temporary data completed.
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) Writing to a temporary file first...
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) Writing file 'hpo.evaluation.csv.tmp'...
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) Writing file 'hpo.evaluation.csv.tmp' completed.
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) Writing to a temporary file first completed.
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) Replacing original data with temporary data...
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) Replacing original data with temporary data completed.
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) Step 'Drawing the development and evaluation set' completed in 00:00:01.17.
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) embed.development.csv is missing or older than "hpo.development.csv".
+[2026-11-04 15:55:33] [INFO   ] (1 Minute) Step 'Embedding the development set'...
+[2026-11-04 15:55:45] [INFO   ] (1 Minute) ==========================================================================================
+[2026-11-04 15:55:45] [INFO   ] (1 Minute) =                             Embedding the Development Set                              =
+[2026-11-04 15:55:45] [INFO   ] (1 Minute) ==========================================================================================
+[2026-11-04 15:55:45] [INFO   ] (1 Minute) Reading file 'hpo.development.csv'...
+[2026-11-04 15:55:45] [INFO   ] (1 Minute) Reading file 'hpo.development.csv' completed.
+[2026-11-04 15:55:45] [INFO   ] (1 Minute) Filtering the labels and synonyms...
+[2026-11-04 15:55:45] [INFO   ] (1 Minute) Found 956 labels and 1000 synonyms (0 of a concept without label).
+[2026-11-04 15:55:45] [INFO   ] (1 Minute) Filtering the labels and synonyms completed.
+[2026-11-04 15:55:45] [INFO   ] (1 Minute) Embedding the synonyms and labels with all embedding models...
+[2026-11-04 15:55:45] [INFO   ] (1 Minute) Setting up model 1/1 "SapBERT-from-PubMedBERT-fulltext"...
+[2026-11-04 15:55:45] [INFO   ] (1 Minute) Loading model(s)...
+[2026-11-04 15:55:45] [INFO   ] (1 Minute) Loading embedding model 'cambridgeltl/SapBERT-from-PubMedBERT-fulltext'...
+[2026-11-04 15:55:45] [INFO   ] (1 Minute) Revision '090663c3ae57bf35ffe4d0d468a2a88d03051a4d', pooling 'cls', backend 'torch', device 'cpu'.
+[2026-11-04 15:55:46] [WARNING] (1 Minute) 'SapBERT-from-PubMedBERT-fulltext': pooling 'cls' replaces the model's own 'mean'.
+[2026-11-04 15:55:46] [INFO   ] (1 Minute) Terms are lowercased.
+[2026-11-04 15:55:46] [INFO   ] (1 Minute) Loading embedding model 'cambridgeltl/SapBERT-from-PubMedBERT-fulltext' completed.
+[2026-11-04 15:55:46] [INFO   ] (1 Minute) Loading model(s) completed.
+[2026-11-04 15:55:46] [INFO   ] (1 Minute) Setting up model 1/1 "SapBERT-from-PubMedBERT-fulltext" completed.
+[2026-11-04 15:55:46] [INFO   ] (1 Minute) Embedding the labels...
+[2026-11-04 15:55:46] [INFO   ] (1 Minute) 'SapBERT-from-PubMedBERT-fulltext': 0 distinct term(s) loaded from cache, 956 to encode.
+[2026-11-04 15:55:48] [INFO   ] (1 Minute) 'SapBERT-from-PubMedBERT-fulltext': encoded 956/956 term(s) (100.0%).
+[2026-11-04 15:55:49] [INFO   ] (1 Minute) Embedding the labels completed.
+[2026-11-04 15:55:49] [INFO   ] (1 Minute) Embedding the synonyms...
+[2026-11-04 15:55:49] [INFO   ] (1 Minute) 'SapBERT-from-PubMedBERT-fulltext': 0 distinct term(s) loaded from cache, 1000 to encode.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) 'SapBERT-from-PubMedBERT-fulltext': encoded 1000/1000 term(s) (100.0%).
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Embedding the synonyms completed.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) SapBERT-from-PubMedBERT-fulltext, cosine distance to the label: 1000 synonyms (0 without label).
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) All:
+[2026-11-04 15:55:51] [INFO   ] (1 Minute)   mean 0.1604, std 0.1225.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute)   min 0.0010, max 0.7595.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Gold type "expert" (500):
+[2026-11-04 15:55:51] [INFO   ] (1 Minute)   mean 0.1523, std 0.1359.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute)   min 0.0010, max 0.7595.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Gold type "layperson" (500):
+[2026-11-04 15:55:51] [INFO   ] (1 Minute)   mean 0.1685, std 0.1069.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute)   min 0.0060, max 0.7418.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Normalised with mean 0.1604 and std 0.1225.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Normalised, all:
+[2026-11-04 15:55:51] [INFO   ] (1 Minute)   mean 0.0001, std 0.9997.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute)   min -1.3010, max 4.8909.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Normalised, gold type "expert":
+[2026-11-04 15:55:51] [INFO   ] (1 Minute)   mean -0.0663, std 1.1091.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute)   min -1.3010, max 4.8909.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Normalised, gold type "layperson":
+[2026-11-04 15:55:51] [INFO   ] (1 Minute)   mean 0.0664, std 0.8728.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute)   min -1.2607, max 4.7462.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Set in config.yaml:
+[2026-11-04 15:55:51] [INFO   ] (1 Minute)   syntype.cosine_distance_mean: 0.1604 (now 0.1604).
+[2026-11-04 15:55:51] [INFO   ] (1 Minute)   syntype.cosine_distance_std: 0.1225 (now 0.1225).
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Strictly standardized mean difference [expert - layperson]: -0.0940.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Difference of the means -0.1327, of the stds 0.2363.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Embedding the synonyms and labels with all embedding models completed.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Writing to a temporary file first...
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Writing file 'embed.development.csv.tmp'...
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Writing file 'embed.development.csv.tmp' completed.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Writing to a temporary file first completed.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Replacing original data with temporary data...
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Replacing original data with temporary data completed.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Step 'Embedding the development set' completed in 00:00:18.16.
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) embed.csv is missing or older than "hpo.evaluation.csv".
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Step 'Embedding the evaluation set'...
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) ==========================================================================================
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) =                              Embedding the Evaluation Set                              =
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) ==========================================================================================
+[2026-11-04 15:55:51] [INFO   ] (1 Minute) Reading file 'hpo.evaluation.csv'...
+[2026-11-04 15:55:52] [INFO   ] (1 Minute) Reading file 'hpo.evaluation.csv' completed.
+[2026-11-04 15:55:52] [INFO   ] (1 Minute) Filtering the labels and synonyms...
+[2026-11-04 15:55:52] [INFO   ] (1 Minute) Found 18651 labels and 51498 synonyms (0 of a concept without label).
+[2026-11-04 15:55:52] [INFO   ] (1 Minute) Filtering the labels and synonyms completed.
+[2026-11-04 15:55:52] [INFO   ] (1 Minute) Embedding the synonyms and labels with all embedding models...
+[2026-11-04 15:55:52] [INFO   ] (1 Minute) Setting up model 1/1 "SapBERT-from-PubMedBERT-fulltext"...
+[2026-11-04 15:55:52] [INFO   ] (1 Minute) Loading model(s)...
+[2026-11-04 15:55:52] [INFO   ] (1 Minute) Loading embedding model 'cambridgeltl/SapBERT-from-PubMedBERT-fulltext'...
+[2026-11-04 15:55:52] [INFO   ] (1 Minute) Revision '090663c3ae57bf35ffe4d0d468a2a88d03051a4d', pooling 'cls', backend 'torch', device 'cpu'.
+[2026-11-04 15:55:53] [WARNING] (1 Minute) 'SapBERT-from-PubMedBERT-fulltext': pooling 'cls' replaces the model's own 'mean'.
+[2026-11-04 15:55:53] [INFO   ] (1 Minute) Terms are lowercased.
+[2026-11-04 15:55:53] [INFO   ] (1 Minute) Loading embedding model 'cambridgeltl/SapBERT-from-PubMedBERT-fulltext' completed.
+[2026-11-04 15:55:53] [INFO   ] (1 Minute) Loading model(s) completed.
+[2026-11-04 15:55:53] [INFO   ] (1 Minute) Setting up model 1/1 "SapBERT-from-PubMedBERT-fulltext" completed.
+[2026-11-04 15:55:53] [INFO   ] (1 Minute) Embedding the labels...
+[2026-11-04 15:55:53] [INFO   ] (1 Minute) 'SapBERT-from-PubMedBERT-fulltext': 744 distinct term(s) loaded from cache, 17894 to encode.
+[2026-11-04 15:56:09] [INFO   ] (1 Minute) 'SapBERT-from-PubMedBERT-fulltext': encoded 10000/17894 term(s) (55.9%).
+[2026-11-04 15:56:24] [INFO   ] (2 Minutes) 'SapBERT-from-PubMedBERT-fulltext': encoded 17894/17894 term(s) (100.0%).
+[2026-11-04 15:56:29] [INFO   ] (2 Minutes) Embedding the labels completed.
+[2026-11-04 15:56:29] [INFO   ] (2 Minutes) Embedding the synonyms...
+[2026-11-04 15:56:31] [INFO   ] (2 Minutes) 'SapBERT-from-PubMedBERT-fulltext': 200 distinct term(s) loaded from cache, 50760 to encode.
+[2026-11-04 15:56:54] [INFO   ] (2 Minutes) 'SapBERT-from-PubMedBERT-fulltext': encoded 10000/50760 term(s) (19.7%).
+[2026-11-04 15:57:13] [INFO   ] (2 Minutes) 'SapBERT-from-PubMedBERT-fulltext': encoded 20000/50760 term(s) (39.4%).
+[2026-11-04 15:57:33] [INFO   ] (3 Minutes) 'SapBERT-from-PubMedBERT-fulltext': encoded 30000/50760 term(s) (59.1%).
+[2026-11-04 15:57:57] [INFO   ] (3 Minutes) 'SapBERT-from-PubMedBERT-fulltext': encoded 40000/50760 term(s) (78.8%).
+[2026-11-04 15:58:20] [INFO   ] (3 Minutes) 'SapBERT-from-PubMedBERT-fulltext': encoded 50000/50760 term(s) (98.5%).
+[2026-11-04 15:58:26] [INFO   ] (4 Minutes) 'SapBERT-from-PubMedBERT-fulltext': encoded 50760/50760 term(s) (100.0%).
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes) Embedding the synonyms completed.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes) SapBERT-from-PubMedBERT-fulltext, cosine distance to the label: 51498 synonyms (0 without label).
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes) All:
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes)   mean 0.1624, std 0.1399.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes)   min 0.0000, max 0.8059.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes) Gold type "expert" (45397):
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes)   mean 0.1615, std 0.1439.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes)   min 0.0000, max 0.8059.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes) Gold type "layperson" (6101):
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes)   mean 0.1688, std 0.1050.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes)   min 0.0031, max 0.6769.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes) Normalised with mean 0.1604 and std 0.1225.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes) Normalised, all:
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes)   mean 0.0164, std 1.1417.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes)   min -1.3094, max 5.2691.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes) Normalised, gold type "expert":
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes)   mean 0.0094, std 1.1745.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes)   min -1.3094, max 5.2691.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes) Normalised, gold type "layperson":
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes)   mean 0.0688, std 0.8570.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes)   min -1.2844, max 4.2162.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes) Strictly standardized mean difference [expert - layperson]: -0.0408.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes) Difference of the means -0.0594, of the stds 0.3175.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes) Embedding the synonyms and labels with all embedding models completed.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes) Writing to a temporary file first...
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes) Writing file 'embed.csv.tmp'...
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes) Writing file 'embed.csv.tmp' completed.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes) Writing to a temporary file first completed.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes) Replacing original data with temporary data...
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes) Replacing original data with temporary data completed.
+[2026-11-04 15:58:27] [INFO   ] (4 Minutes) Step 'Embedding the evaluation set' completed in 00:02:36.17.
