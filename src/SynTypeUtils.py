@@ -229,7 +229,7 @@ def newProgress() -> Progress:
 def newTask(
     progress: Progress,
     iterations: int,
-    text: str = "Taks"
+    text: str = "Task"
 ) -> TaskID:
     """
     Add a new task to a Rich progress bar.

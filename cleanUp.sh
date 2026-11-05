@@ -1,8 +1,10 @@
+#!/bin/bash
+
 # Removes the outputs of the runs; the transformed HPO and the distances
 # (with the embedding cache) take long to make and are kept.
 rm -f ./data/logs/*.log
 rm -f ./data/output/formatted/*.csv
-rm -f ./data/output/evaluated/*.png
+rm -f ./data/output/evaluated/*.png ./data/output/evaluated/*.csv
 rm -f ./data/output/merged/*.csv
 # rm -f ./data/output/transformed/*.csv
 # rm -f ./data/output/embedded/*.csv
