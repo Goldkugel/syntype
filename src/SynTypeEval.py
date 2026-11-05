@@ -40,6 +40,9 @@ if experimentIndex is None:
 
 l.printHeader("Evaluating the Results of Synonym Classification")
 
+# The plots are written with matplotlib, which does not create the folder.
+os.makedirs(os.path.dirname(outputFileClassSummary), exist_ok = True)
+
 with l.step("Evaluating the classifications"):
     exitIfFileNotExist(inputFileClassEvaluation)
 
@@ -56,38 +59,43 @@ with l.step("Evaluating the classifications"):
         for data in [classifiedComplete, distances]:
             data[synonymKeys] = data[synonymKeys].astype(str)
 
+        # many_to_one: a synonym listed twice in the distances would
+        # otherwise double its classifications without notice.
         classifiedComplete = classifiedComplete.drop(columns = [
             c for c in classifiedComplete.columns
             if c.startswith(distanceColumnPrePrefix)
-        ]).merge(distances, on = synonymKeys, how = "left")
+        ]).merge(distances, on = synonymKeys, how = "left", validate = "many_to_one")
     else:
-        l.log(f"No distances found ({os.path.basename(inputFileDistances)}); " \
+        l.log(f"No distances found ({quote(os.path.basename(inputFileDistances))}); " \
             "run SynTypeClassification.py without arguments for the distance plots.")
 
-    systems = list(set(classifiedComplete[systemColumn].tolist()))
-    systems = sorted(systems)
+    # Rows without a model (empty in the CSV, read as NaN) are left out.
+    classifiedComplete = classifiedComplete[
+        classifiedComplete[systemColumn].fillna("").astype(str) != ""].copy()
+    systems = sorted(set(classifiedComplete[systemColumn].astype(str)))
+    if len(systems) == 0:
+        l.error(f"{quote(os.path.basename(inputFileClassEvaluation))} contains no " \
+            "classification of any model.")
+        sys.exit(1)
 
     # Every model classified the same synonyms, so they are counted once.
-    ontologies = [
+    ontologies = Counter(
         str(s).split(":", 1)[0] for s in
-        classifiedComplete[classifiedComplete[systemColumn] == systems[0]][idColumn].to_list()
-    ]
+        classifiedComplete[classifiedComplete[systemColumn] == systems[0]][idColumn]
+    )
+    l.log(f"Synonyms per ontology ({len(ontologies)}):")
+    for ontology, count in ontologies.most_common():
+        l.log(f"- {quote(ontology)}: {count}")
 
-    counts = Counter(ontologies)
-
-    l.log(f"{len(counts.keys())} ontologies found.")
-
-    for key in counts.keys():
-        l.log(f"Found {counts[key]} synonyms of concepts of the ontology '{key}'.")
-
-    l.log(f"Found {len(systems)} systems:")
+    l.log(f"Models ({len(systems)}):")
     for system in systems:
         l.log(f"- {system}")
-    l.log(f"Classified Synonyms: {len(classifiedComplete.index)} " \
-        f"(~{int(len(classifiedComplete.index) / len(systems))} per system)")
-    classifiedComplete = classifiedComplete[classifiedComplete[systemColumn] != ""]
+    l.log(f"Classified synonyms: {len(classifiedComplete.index)} " \
+        f"(about {round(len(classifiedComplete.index) / len(systems))} per model).")
 
-    classifiedComplete[answerColumn]  = classifiedComplete[answerColumn].str.lower()
+    # An empty answer (NaN) counts as undefined.
+    classifiedComplete[answerColumn] = classifiedComplete[answerColumn].fillna(
+        undefinedSynonymType).astype(str).str.lower()
 
     # ------------------------------------------------------------------------------
     # Only synonyms of synonymClasses with a gold type of synonymTypes are
@@ -106,10 +114,10 @@ with l.step("Evaluating the classifications"):
         typesOf(classifiedComplete).isin(synonymTypes)
     ].copy().reset_index(drop = True)
 
-    # The Few-Shot synonyms are given with their answer in the prompts.
+    # The few-shot synonyms are given with their answer in the prompts.
     exampleSynonyms = keysOf(classifiedComplete).isin(
         [(example["id"], example["synonym"]) for example in fewShotExamples])
-    l.log(f"Leaving out the {len(fewShotExamples)} synonyms of the Few-Shot examples " \
+    l.log(f"Leaving out the {len(fewShotExamples)} synonyms of the few-shot examples " \
         f"({exampleSynonyms.sum()} rows).")
     classifiedComplete = classifiedComplete[~exampleSynonyms].copy().reset_index(drop = True)
 
@@ -153,22 +161,33 @@ with l.step("Evaluating the classifications"):
     # The gold type in the plots of the distances.
     goldTypeLabel = "gold type"
 
-    def typeF1(predicted : np.ndarray, gold : np.ndarray, sourceType : str) -> float:
-        """F1 of sourceType (0 if it is neither predicted nor in the gold data)."""
-        tp = np.sum((predicted == sourceType) & (gold == sourceType))
-        fp = np.sum((predicted == sourceType) & (gold != sourceType))
-        fn = np.sum((predicted != sourceType) & (gold == sourceType))
-        return 2 * tp / (2 * tp + fp + fn) if tp + fp + fn > 0 else 0.0
-
-    def thresholdScores(distance : np.ndarray, gold : np.ndarray, threshold : float) -> tuple[float, float, float]:
+    def thresholdScores(distance : np.ndarray, gold : np.ndarray, thresholds) -> np.ndarray:
         """
-        Macro-F1 and the F1 of expert and layperson of the distance baseline:
-        layperson if the distance is at least the threshold, expert otherwise.
+        Macro-F1 and the F1 of expert and layperson of the distance baseline,
+        layperson if the distance is at least the threshold, expert otherwise:
+        one row (macro, expert, layperson) per threshold, or one triple for a
+        single threshold. With the distances of each type sorted, the
+        synonyms at or above a threshold are counted by a binary search, so
+        all thresholds take one pass instead of one pass each.
         """
-        predicted = np.where(distance >= threshold, laypersonSynonymType, expertSynonymType)
-        expert    = typeF1(predicted, gold, expertSynonymType)
-        layperson = typeF1(predicted, gold, laypersonSynonymType)
-        return (expert + layperson) / 2, expert, layperson
+        thresholds = np.atleast_1d(np.asarray(thresholds, dtype = float))
+        layperson  = np.sort(distance[gold == laypersonSynonymType])
+        expert     = np.sort(distance[gold == expertSynonymType])
+        # Per threshold: the layperson synonyms classified as layperson (true
+        # positives of layperson) and the expert ones classified as layperson
+        # (false positives of layperson); the others are classified as expert.
+        laypersonAbove = len(layperson) - np.searchsorted(layperson, thresholds, side = "left")
+        expertAbove    = len(expert) - np.searchsorted(expert, thresholds, side = "left")
+        expertBelow    = len(expert) - expertAbove
+        laypersonBelow = len(layperson) - laypersonAbove
+        # F1 = 2 TP / (2 TP + FP + FN) = 2 TP / (predicted + actual), 0 if the
+        # type is neither predicted nor in the data.
+        f1Layperson = np.divide(2 * laypersonAbove, laypersonAbove + expertAbove + len(layperson),
+            out = np.zeros(len(thresholds)), where = laypersonAbove + expertAbove + len(layperson) > 0)
+        f1Expert    = np.divide(2 * expertBelow, expertBelow + laypersonBelow + len(expert),
+            out = np.zeros(len(thresholds)), where = expertBelow + laypersonBelow + len(expert) > 0)
+        scores = np.column_stack([(f1Expert + f1Layperson) / 2, f1Expert, f1Layperson])
+        return scores[0] if scores.shape[0] == 1 else scores
 
     # ------------------------------------------------------------------------------
     # Distance baseline: one threshold for both source types, chosen on the
@@ -210,8 +229,8 @@ with l.step("Evaluating the classifications"):
                 min(distanceEvaluationLowerBound, tuning[column].min()),
                 max(distanceEvaluationUpperBound, tuning[column].max()),
                 distanceEvaluationParts)
-            scores = np.array([thresholdScores(tuning[column].to_numpy(),
-                tuning[goldTypeLabel].to_numpy(), t) for t in thresholds])
+            scores = thresholdScores(tuning[column].to_numpy(),
+                tuning[goldTypeLabel].to_numpy(), thresholds)
             best = thresholds[np.argmax(scores[:, 0])]
             # A configured threshold is evaluated as a model instead.
             if embeddingModel not in distanceSystems:
@@ -223,10 +242,11 @@ with l.step("Evaluating the classifications"):
                 evaluation[goldTypeLabel].to_numpy(), best)
             share = 100 * np.mean(evaluation[column].to_numpy() >= best)
             l.log(f"Distance baseline ({embeddingModel}):")
-            l.log(f"  layperson if the normalised {distanceMetric} distance >= {best:.3f}.")
-            l.log(f"Threshold chosen on the development set; macro-F1 {macro:.3f} on the " \
+            l.log(f"  layperson if the normalised {distanceMetric} distance >= {best:.3f} " \
+                "(chosen on the development set).")
+            l.log(f"  macro-F1 {macro:.3f} on the " \
                 f"{'development' if reduceToTestIDs else 'evaluation'} set.")
-            l.log(f"F1 expert {expert:.3f}, layperson {layperson:.3f}; " \
+            l.log(f"  F1 expert {expert:.3f}, layperson {layperson:.3f}; " \
                 f"{share:.1f}% classified as layperson.")
 
             if not drawPlots:
@@ -286,14 +306,17 @@ with l.step("Evaluating the classifications"):
         The confusion counts gold (expert, layperson) x answer (expert,
         layperson, other), of the data and of `samples` bootstrap samples of it
         (shape (1 + samples, 2, 3)); seeded, so the intervals are reproducible.
+        Drawing n synonyms with replacement only changes how often each of
+        the 6 cells is drawn, so a bootstrap sample is drawn directly as
+        multinomial counts of the cells (the same distribution, without
+        resampling every synonym).
         """
-        codes = 3 * (goldTypes == laypersonSynonymType) + np.select(
+        codes  = 3 * (goldTypes == laypersonSynonymType) + np.select(
             [predicted == expertSynonymType, predicted == laypersonSynonymType], [0, 1], 2)
-        rng = np.random.default_rng(0)
-        counts = [np.bincount(codes, minlength = 6)]
-        for _ in range(samples):
-            counts.append(np.bincount(codes[rng.integers(0, len(codes), len(codes))], minlength = 6))
-        return np.array(counts).reshape(-1, 2, 3)
+        counts = np.bincount(codes, minlength = 6)
+        rng    = np.random.default_rng(0)
+        drawn  = rng.multinomial(counts.sum(), counts / counts.sum(), size = samples)
+        return np.vstack([counts, drawn]).reshape(-1, 2, 3)
 
     def summaryMetrics(counts : np.ndarray) -> dict:
         """The metrics of confusion counts (see confusionCounts()), per sample."""
@@ -326,10 +349,10 @@ with l.step("Evaluating the classifications"):
 
     summarising = f"Summarising {len(systems)} models and {len(predictions) - len(systems)} baselines"
     l.log(f"{summarising}...")
-    l.log(f"{len(goldTypes)} synonyms; intervals from 1000 bootstrap samples.")
+    l.log(f"{len(goldTypes)} synonyms; intervals from {bootstrapSamples} bootstrap samples.")
     rows = []
     for system, predicted in predictions.items():
-        metrics = summaryMetrics(confusionCounts(goldTypes, predicted, 1000))
+        metrics = summaryMetrics(confusionCounts(goldTypes, predicted, bootstrapSamples))
         row = {systemColumn : system, "synonyms" : len(goldTypes)}
         for name, values in metrics.items():
             row[name] = values[0]
@@ -400,7 +423,7 @@ with l.step("Evaluating the classifications"):
     # Confidence calibration: the accuracy and the share of the answers per
     # confidence level (1 to 5) of every LLM; the distance models have no
     # confidence.
-    levels = np.arange(1, 6)
+    levels = np.array(confidenceLevels)
     fig, (top, bottom) = plt.subplots(nrows = 2, figsize = (7, 7), sharex = True)
     for index, system in enumerate(llmSystems):
         data = classifiedComplete[classifiedComplete[systemColumn] == system]
@@ -412,7 +435,7 @@ with l.step("Evaluating the classifications"):
         top.plot(levels, accuracy, marker = "o", color = color_map[system], label = system)
         bottom.bar(levels + (index - (len(systems) - 1) / 2) * 0.8 / len(systems), share,
             width = 0.8 / len(systems), color = color_map[system])
-        l.log(f"{system}: accuracy per confidence 1-5: " + ", ".join(
+        l.log(f"{system}: accuracy per confidence {levels[0]}-{levels[-1]}: " + ", ".join(
             "-" if np.isnan(a) else f"{a:.2f}" for a in accuracy) + ".")
     top.set_ylabel("Accuracy")
     top.set_ylim(0, 1)
@@ -510,9 +533,9 @@ with l.step("Evaluating the classifications"):
             undefined = (systemData[answerColumn] == undefinedSynonymType.lower()).mean()
             l.log(f"{system}: {100 * undefined:.1f}% of {len(systemData.index)} answers undefined.")
             for t in synonymTypes:
-                l.log(f"{system}, {t}: " \
-                    f"P {result[system][t][precisionLabel]:.3f}, " \
-                    f"R {result[system][t][recallLabel]:.3f}, " \
+                l.log(f"{system}, {quote(t)}: " \
+                    f"precision {result[system][t][precisionLabel]:.3f}, " \
+                    f"recall {result[system][t][recallLabel]:.3f}, " \
                     f"F1 {result[system][t][f1ScoreLabel]:.3f}.")
 
         metrics = [f1ScoreLabel, recallLabel, precisionLabel]
@@ -582,4 +605,4 @@ with l.step("Evaluating the classifications"):
         plt.close()
 
     performancePlot(classifiedComplete, outputFileClassRecallPrecisionF1,
-        "Source Type Classification Performance of LLM Systems")
+        "Source Type Classification Performance of the Models")

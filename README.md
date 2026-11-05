@@ -8,7 +8,7 @@ Classifies the source type of the synonyms of [Human Phenotype Ontology](https:/
 - **Several models per experiment** — all models of `llm.model_id` classify the synonyms one after the other, in one Slurm job per experiment.
 - **Resumable classification** — the [`model`](https://github.com/Goldkugel/model) package stores every prompt and answer, so an interrupted job resumes where it stopped and answers are never generated twice.
 - **Distance baseline** — the cosine distance of every synonym to the label of its concept (SapBERT, via the [`embedder`](https://github.com/Goldkugel/embedder) package) shows how well wording alone separates expert from layperson synonyms.
-- **Evaluation** — precision, recall and F1 per model and source type, counts of gold and classified source types, and distance plots.
+- **Evaluation** — precision, recall and F1 per model and source type, a summary with bootstrap intervals against a majority and a distance baseline, confusion matrices, ROC curves, confidence calibration, counts of gold and classified source types, and distance plots.
 - **Outputs made only when needed** — the transformed HPO and the distances are made again only when their input is newer or their settings changed (recorded in `<output>.settings.json`).
 
 ## Repository Structure
@@ -27,7 +27,7 @@ syntype/
 │   │   ├── type/            # Raw classifications (prompts and answers)
 │   │   ├── formatted/       # Formatted classifications, one file per model
 │   │   ├── merged/          # Classifications of all models of an experiment
-│   │   └── evaluated/       # Evaluation plots
+│   │   └── evaluated/       # Evaluation plots and summary
 │   ├── slurmlogs/           # Output of the Slurm jobs
 │   └── tmp/                 # Answer stores of the model package (not tracked)
 ├── prompts/                 # Prompt templates of the classification
@@ -38,13 +38,12 @@ syntype/
 │   ├── SynTypeEval.py       # Evaluates the classifications
 │   ├── SynTypeUtils.py      # Helpers shared by the scripts
 │   ├── SynTypeConfig.py     # Schema of the syntype section
-│   ├── config.py            # Configuration, experiment, file names, few-shot examples, test set
+│   ├── config.py            # Configuration, experiment, file names, few-shot examples
 │   └── README.md
 ├── start.sh                 # Preparation run, then one classification job per experiment
 ├── classify.sh              # Slurm job: classifies one experiment
 ├── finalize.sh              # Merges and evaluates every experiment
 ├── cleanUp.sh               # Deletes logs, classifications and evaluations
-├── monitor.sh               # Counts the running and pending Slurm jobs
 ├── pyproject.toml
 └── LICENSE
 ```
@@ -94,7 +93,7 @@ The Python scripts can also be run by hand:
 | Classification | `SynTypeClassification.py <index>` | [`data/output/type/`](data/output/type/README.md): prompts and answers per model |
 | Formatting | `SynTypeClassification.py <index>` | [`data/output/formatted/`](data/output/formatted/README.md): the classification per model |
 | Merging | `SynTypeMerge.py <index>` | [`data/output/merged/`](data/output/merged/README.md): all models of an experiment |
-| Evaluation | `SynTypeEval.py <index>` | [`data/output/evaluated/`](data/output/evaluated/README.md): plots |
+| Evaluation | `SynTypeEval.py <index>` | [`data/output/evaluated/`](data/output/evaluated/README.md): plots and summary |
 
 The prompts are described in [`prompts/README.md`](prompts/README.md), the logs in [`data/logs/README.md`](data/logs/README.md).
 

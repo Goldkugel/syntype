@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "syntype"
 description = "Classifies the source type of Human Phenotype Ontology concepts' synonyms."
 readme = "README.md"
-version = "1.1.0"
+version = "1.2.0"
 # model and embedder require Python 3.10.
 requires-python = ">=3.10"
 authors = [{ name = "Peter Pallaoro", email = "peter.pallaoro@tum.de" }]

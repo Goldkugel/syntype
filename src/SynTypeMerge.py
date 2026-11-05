@@ -27,7 +27,7 @@ if experimentIndex is None:
         f"python3 {sys.argv[0]} 0.")
     sys.exit(1)
 
-l.printHeader(f"Merging Generated Classifications")
+l.printHeader("Merging Generated Classifications")
 
 with l.step("Merging the classifications"):
     # Only the models of llm.model_id; other files with the prefix of the
