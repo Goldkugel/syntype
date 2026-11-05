@@ -1,3 +1,5 @@
+# Removes the outputs of the runs; the transformed HPO and the distances
+# (with the embedding cache) take long to make and are kept.
 rm -f ./data/logs/*.log
 rm -f ./data/output/formatted/*.csv
 rm -f ./data/output/evaluated/*.png

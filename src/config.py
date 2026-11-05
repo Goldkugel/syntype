@@ -88,18 +88,20 @@ def modelNameOf(modelID : str) -> str:
     """
     return modelID[modelID.index("/") + 1:] if "/" in modelID else modelID
 
+# The distance columns, distance_<embedding model>_<metric>.
 distanceColumnPrePrefix   = "distance_"
 distanceColumnPrefix      = f"{distanceColumnPrePrefix}" + "{}_{}"
 
 distanceEvaluationLowerBound = syntypeConfig.distance_evaluation_lower_bound
 distanceEvaluationUpperBound  = syntypeConfig.distance_evaluation_upper_bound
+# The number of thresholds tried, one every 0.001 of the configured range.
 distanceEvaluationParts      = int((distanceEvaluationUpperBound - distanceEvaluationLowerBound) * 1000 + 1)
+
+# The thresholds of the distance models of the evaluation.
+distanceThresholds           = syntypeConfig.distance_thresholds
 
 # Mean and standard deviation of the cosine distance with which the distances
 # are normalised (None: computed from the data).
-# The thresholds of the distance classifiers of the evaluation.
-distanceThresholds           = syntypeConfig.distance_thresholds
-
 cosineDistanceMean           = syntypeConfig.cosine_distance_mean
 cosineDistanceStd            = syntypeConfig.cosine_distance_std
 
@@ -135,7 +137,7 @@ undefinedSynonymType            = "undefined"
 # The types the LLM classifies synonyms into (see prompts/).
 synonymTypes = [expertSynonymType, laypersonSynonymType]
 
-
+# The metrics of the precision, recall and F1 plot.
 precisionLabel  = "precision"
 recallLabel     = "recall"
 f1ScoreLabel    = "f1"
@@ -151,9 +153,9 @@ dataDir = syntypeConfig.data_folder
 
 outputFolderName                    = "output"
 
-# The folders of the steps: transformation (and the development and
-# evaluation set), formatting, merging and evaluation; the raw classification
-# is in outputFolderNameClass, the distances in outputFolderNameEmbedded.
+# The folders of the formatting, merging and evaluation under data/output/;
+# the raw classifications are in outputFolderNameClass, the distances in
+# outputFolderNameEmbedded, the transformed HPO in adapter.hpo.output_folder.
 outputFolderNameFormatted           = "formatted"
 outputFolderNameMerged              = "merged"
 outputFolderNameEvaluation          = "evaluated"
@@ -179,14 +181,16 @@ transformedStem, transformedExtension = os.path.splitext(outputFileTransformedFu
 # and the information of their concepts, classified by runs with "test".
 outputFileTransformedDevelopment = f"{transformedStem}.development{transformedExtension}"
 
-# The evaluation set: hpo.csv without the synonyms of the development set,
-# classified by runs without "test".
+# The evaluation set: hpo.csv without the synonyms of the development set and
+# without other gold types than expert and layperson, classified by runs
+# without "test".
 outputFileTransformedEvaluation  = f"{transformedStem}.evaluation{transformedExtension}"
 
 inputFileTask = outputFileTransformedDevelopment if reduceToTestIDs else outputFileTransformedEvaluation
 
-# Distances of the synonyms to their label (the preparation run): of the
-# development set, for the evaluation of test runs.
+# Distances of the synonyms to their label (the preparation run), in the
+# columns of hpo.csv: of the development set, for the evaluation of test runs
+# and to choose the distance threshold.
 outputFolderNameEmbedded             = "embedded"
 outputFileEmbeddedDevelopment        = os.path.join(
     dataDir,
@@ -209,6 +213,8 @@ inputFileDistances = outputFileEmbeddedDevelopment if reduceToTestIDs else outpu
 # Files for Synonym Classification
 # =============================================================================
 
+# The short experiment name in every file name of a run, e.g.
+# type_Test_NoDef_NoCom_NoStr_NoCOT_FS.
 outputFolderNameClass    = "type"
 filesPrefixClass         = f"{outputFolderNameClass}_{testStr}_{configStr}"
 filesPrefixApproachClass = f"{filesPrefixClass}_{chainOfThoughtsStr}_{fewShotStr}"
@@ -271,6 +277,8 @@ outputFileClassAnswerCounts = os.path.join(
     outputFileNameClassAnswerCounts
 )
 
+# The distance plots, one per distance column; named without the prompt
+# settings, which do not change the distances.
 outputFolderNameClassEmbedding = outputFolderNameEvaluation
 
 embeddingPrefix = f"{outputFolderNameClass}_{testStr}"
@@ -291,8 +299,8 @@ outputFileClassROC         = outputFileClassEvaluationOf("roc")
 outputFileClassCalibration = outputFileClassEvaluationOf("calibration")
 
 
-# The Few-Shot examples with their answer (classification, confidence from 1
-# to 5, rationale). Their synonyms are left out of the evaluation also in runs
+# The Few-Shot examples, alternately layperson and expert, with their answer
+# (classification, confidence from 1 to 5, rationale). Their synonyms are left out of the evaluation also in runs
 # without examples, so that all runs are scored on the same synonyms.
 fewShotExamples = [
     {

@@ -24,7 +24,7 @@ l.log(f"Command: python3 {shlex.join(sys.argv)}")
 
 l.printHeader("Drawing the Development and Evaluation Set")
 
-# Under the lock of the preparation runs, which draw the set as well.
+# Under the lock of the preparation runs, which draw the sets as well.
 with lockedFile(outputFileTransformedDevelopment):
     with l.step("Drawing the development and evaluation set"):
         writeDevelopmentSet()

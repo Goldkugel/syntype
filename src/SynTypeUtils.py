@@ -2,7 +2,7 @@
 Helpers shared by the scripts of syntype: the transformed HPO in the format of
 the adapter package, the settings records that decide whether an output is
 outdated, reading and writing CSV files, parsing the answers of the LLMs,
-progress bars, the data summary and the development set.
+progress bars, the data summary and the development and evaluation set.
 """
 
 import pandas       as pd
@@ -273,9 +273,8 @@ def writeHugeCSV(data: pd.DataFrame, file: str = "") -> None:
 
 def printDataSummary(data: pd.DataFrame = None) -> None:
     """
-    Display a summary table showing absolute and relative
-    frequencies of the attributes of the transformed HPO, the synonyms per
-    synonym class.
+    Prints the absolute and relative frequencies of the attributes of a
+    transformed HPO file, the synonyms per synonym class.
     """
     console = Console()
 
@@ -364,6 +363,7 @@ def applyFormat(l : list[str] = []) -> str:
 # and the evaluation set (hpo.evaluation.csv, classified by the other runs).
 # ------------------------------------------------------------------------------
 
+# The settings both sets depend on (see outdated()).
 developmentSetSettings = {
     "development_set" : syntypeConfig.development_set.model_dump(),
     "gold_types"      : synonymTypes,

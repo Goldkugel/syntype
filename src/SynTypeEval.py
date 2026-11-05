@@ -1,7 +1,11 @@
 """
-Evaluates the merged classifications of an experiment: counts of the gold and
-classified source types, precision, recall and F1 per model and source type,
-and the cosine distance of the synonyms to their label per source type.
+Evaluates the merged classifications of an experiment, with the distance
+models of syntype.distance_thresholds as models of their own: a summary CSV
+(macro-F1, balanced accuracy, kappa, undefined answers, with bootstrap
+intervals) against the majority and distance baselines, confusion matrices,
+ROC curves, the confidence calibration of the LLMs, counts of the gold and
+classified types, and precision, recall and F1 per model and type. The
+distance threshold is chosen on the development set by macro-F1.
 
     python3 ./src/SynTypeEval.py <index>   (index in syntype.experiments)
 """
@@ -86,8 +90,9 @@ with l.step("Evaluating the classifications"):
     classifiedComplete[answerColumn]  = classifiedComplete[answerColumn].str.lower()
 
     # ------------------------------------------------------------------------------
-    # Only synonyms with a gold type of synonymTypes are evaluated; other types
-    # (abbreviation, uk, plural, ...) describe the form of a synonym.
+    # Only synonyms of synonymClasses with a gold type of synonymTypes are
+    # evaluated; other types (abbreviation, uk, plural, ...) describe the form
+    # of a synonym.
     # ------------------------------------------------------------------------------
 
     classifiedComplete = classifiedComplete[classesOf(classifiedComplete).isin(synonymClasses)]
@@ -168,9 +173,10 @@ with l.step("Evaluating the classifications"):
     # ------------------------------------------------------------------------------
     # Distance baseline: one threshold for both source types, chosen on the
     # development set by macro-F1 (each type counts the same, whatever its
-    # share), and the density of the distances per gold type. Test runs
-    # evaluate on the development set itself, the others apply its threshold
-    # to the evaluation set.
+    # share), and the plots of the distances (test runs or
+    # force_draw_additional_plots). Test runs evaluate on the development set
+    # itself, the others apply its threshold to the evaluation set (tuned on
+    # it if embed.development.csv is missing).
     # ------------------------------------------------------------------------------
 
     gold = classifiedComplete[classifiedComplete[systemColumn] == llmSystems[0]].copy().reset_index(drop = True)
@@ -179,8 +185,9 @@ with l.step("Evaluating the classifications"):
         development = readTransformed(outputFileEmbeddedDevelopment)
         development = development[typesOf(development).isin(synonymTypes)]
     drawPlots = reduceToTestIDs or forceDrawAdditionalPlots
-    # The predictions of the distance baselines and the distances, per gold
-    # synonym, for the summary and the ROC curves.
+    # The predictions of the distance baselines (embedding models without a
+    # configured threshold) and the distances, per gold synonym, for the
+    # summary and the ROC curves.
     baselines      = {}
     distanceScores = {}
 
@@ -268,8 +275,9 @@ with l.step("Evaluating the classifications"):
 
     # ------------------------------------------------------------------------------
     # Summary of every model and of the baselines (the most frequent gold type,
-    # and the distance threshold): macro-F1, balanced accuracy, Cohen's kappa
-    # and the share of undefined answers, with 95% bootstrap intervals.
+    # and the distance threshold): macro-F1, balanced accuracy, Cohen's kappa,
+    # accuracy and the share of undefined answers, with 95% bootstrap intervals.
+    # Undefined answers count as wrong.
     # ------------------------------------------------------------------------------
 
 
@@ -277,7 +285,7 @@ with l.step("Evaluating the classifications"):
         """
         The confusion counts gold (expert, layperson) x answer (expert,
         layperson, other), of the data and of `samples` bootstrap samples of it
-        (shape (1 + samples, 2, 3)).
+        (shape (1 + samples, 2, 3)); seeded, so the intervals are reproducible.
         """
         codes = 3 * (goldTypes == laypersonSynonymType) + np.select(
             [predicted == expertSynonymType, predicted == laypersonSynonymType], [0, 1], 2)
@@ -359,7 +367,8 @@ with l.step("Evaluating the classifications"):
 
     # ROC curves with layperson as the positive type: a model ranks a synonym
     # by its confidence, positive for layperson answers, negative for expert
-    # ones (0 if undefined); the baseline by the distance.
+    # ones (0 if undefined); the distances by their value (the median if
+    # missing).
     isLayperson = goldTypes == laypersonSynonymType
     if 0 < isLayperson.sum() < len(isLayperson):
         rankings = {}
@@ -389,7 +398,8 @@ with l.step("Evaluating the classifications"):
         plt.close()
 
     # Confidence calibration: the accuracy and the share of the answers per
-    # confidence level (1 to 5) of every model.
+    # confidence level (1 to 5) of every LLM; the distance models have no
+    # confidence.
     levels = np.arange(1, 6)
     fig, (top, bottom) = plt.subplots(nrows = 2, figsize = (7, 7), sharex = True)
     for index, system in enumerate(llmSystems):
@@ -447,7 +457,7 @@ with l.step("Evaluating the classifications"):
     plt.close()
 
     # ------------------------------------------------------------------------------
-    # Classification counts per system.
+    # Classification counts per system, including undefined answers.
     # ------------------------------------------------------------------------------
 
     counts = classifiedComplete.groupby([answerColumn, systemColumn]).size().unstack(fill_value = 0)

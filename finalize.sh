@@ -2,7 +2,7 @@
 
 clear
 
-# Brings the distances up to date in case the HPO was transformed again.
+# Brings the transformed HPO, the sets and the distances up to date.
 python3 ./src/SynTypeClassification.py || exit 1
 
 # Merges and evaluates the classifications of every experiment.

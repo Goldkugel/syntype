@@ -2,8 +2,8 @@
 
 clear
 
-# Preparation: transforms the HPO, draws the development set and embeds the
-# development and the evaluation set, each only if outdated.
+# Preparation: transforms the HPO, draws the development and evaluation set
+# and embeds both, each only if outdated.
 python3 ./src/SynTypeClassification.py || exit 1
 
 # One classification job per experiment of syntype.experiments.

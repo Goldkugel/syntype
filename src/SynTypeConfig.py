@@ -32,7 +32,8 @@ class DevelopmentSetConfig(BaseModel):
     """
     The development set (hpo.development.csv): synonyms drawn at random, to
     formulate the prompts and to find the mean and standard deviation of the
-    cosine distances; runs with "test" classify them.
+    cosine distances and the distance threshold; runs with "test" classify
+    them. Drawn together with the evaluation set (hpo.evaluation.csv).
     """
     model_config = ConfigDict(extra = "forbid")
 
@@ -60,7 +61,7 @@ class SyntypeConfig(BaseModel):
     data_folder: str                            = "./data"
 
     # Name used in the distance column names for every model in
-    # embedder.model_id.
+    # embedder.model_id; by default its ID without the organisation.
     embedding_model_names: dict[str, str]       = {}
 
     # Mean and standard deviation of the synonym-label cosine distance of the
@@ -75,12 +76,10 @@ class SyntypeConfig(BaseModel):
     distance_evaluation_upper_bound: float      = 4
 
     # The threshold of the normalised cosine distance per embedding model
-    # (named as in the distance columns): the evaluation classifies a synonym
-    # with a distance at or above it as layperson, below it as expert, as a
-    # model of its own; the evaluation logs the best threshold on the
-    # development set. A model without a threshold gets no such model.
+    # (named as in the distance columns), evaluated as the model "<model>
+    # (distance)": layperson at or above it, expert below. SynTypeEval.py logs
+    # the best threshold on the development set.
     distance_thresholds: dict[str, float]       = {}
 
-    # Draw the distance plots of the evaluation also without "test", and
-    # again if they exist already.
+    # Draw the distance plots of the evaluation also without "test".
     force_draw_additional_plots: bool           = False

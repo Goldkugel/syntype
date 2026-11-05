@@ -1,7 +1,7 @@
 """
 The preparation run and the classification of syntype: transforms the HPO,
-draws the development set, embeds the development and the evaluation set,
-classifies the synonyms with the LLMs of llm.model_id and formats their answers.
+draws the development and evaluation set, embeds both, classifies the
+synonyms with the LLMs of llm.model_id and formats their answers (main()).
 Each package (adapter, embedder, model) is imported by the step that needs it,
 so the preparation run does not load vLLM and the classification runs do not
 load the embedding models.
@@ -245,7 +245,7 @@ def embedTerms(inputFile : str, outputFile : str, developmentSet : bool) -> None
     data = readTransformed(inputFile)
 
     l.log("Filtering the labels and synonyms...")
-    # embed.csv keeps the format of the transformed HPO.
+    # The distance files keep the columns of the transformed HPO.
     distanceRows = synonymTable(data)
     types       = typesOf(distanceRows)
     synonyms    = distanceRows[valueColumn].astype(str).tolist()
@@ -441,7 +441,7 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
             ("{}{}".format(userRole, 3), answerColumn)
         ]
 
-    # The raw classification file, written after every turn.
+    # The columns of the raw classification file, written after every turn.
     synonyms[systemColumn] = [modelName] * len(synonyms.index)
     for promptColumn, targetColumn in turns:
         synonyms[promptColumn] = [""] * len(synonyms.index)
@@ -459,7 +459,7 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
             f"{goldType} {count}" for goldType, count in goldTypes.items()) + ".")
 
     # The answer store (checkpoint) and prompt log are named after the model
-    # and the experiment (postfix), since start.sh starts many runs at once.
+    # and the short experiment name, since start.sh starts many runs at once.
     l.log(f"Setting up the LLM ({modelName})...")
     with Model(configFile, modelIndex) as model:
         model.setPostfix(f"{testStr}_{configStr}_{chainOfThoughtsStr}_{fewShotStr}")
@@ -617,7 +617,7 @@ def main() -> None:
     else:
         l.log("The transformed HPO is up to date.")
 
-    # Drawn once in the same way.
+    # The development and evaluation set are drawn once in the same way.
     if developmentSetOutdated(log = False):
         with lockedFile(outputFileTransformedDevelopment):
             if developmentSetOutdated():

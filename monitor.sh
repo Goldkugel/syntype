@@ -1,3 +1,4 @@
+# The running and pending Slurm jobs of all users (of USER in brackets).
 RUNNING=$(squeue | grep "1 gpu" | wc -l)
 PENDING=$(squeue | grep "PD" | wc -l)
 

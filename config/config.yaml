@@ -16,18 +16,20 @@ syntype:
   # Mean and std of the synonym-label cosine distance (SapBERT) of the
   # development set, logged by the preparation run; all distances are
   # normalised with them, (distance - mean) / std. 0 and 1 leave them as they
-  # are; null computes them from each file. The plots show the normalised
-  # distances from distance_evaluation_lower_bound to _upper_bound.
+  # are; null computes them from each file. The plots and the thresholds tried
+  # span the normalised distances from distance_evaluation_lower_bound to
+  # _upper_bound.
   cosine_distance_mean: 0.1604
   cosine_distance_std: 0.1225
   distance_evaluation_lower_bound: -4
   distance_evaluation_upper_bound: 4
-  # Per embedding model: a normalised distance at or above the threshold is
-  # classified as layperson, below as expert, and evaluated as a model of its
-  # own. The value maximising the macro-F1 on the development set is logged
-  # by SynTypeEval.py ("Distance baseline").
+  # Per embedding model, evaluated as the model "<model> (distance)": a
+  # normalised distance at or above the threshold is layperson, below expert.
+  # SynTypeEval.py logs the value maximising the macro-F1 on the development
+  # set ("Distance baseline").
   distance_thresholds:
     "SapBERT-from-PubMedBERT-fulltext": -0.216
+  # The distance plots also without "test", which draws them always.
   force_draw_additional_plots: False
 adapter:
   hpo:
