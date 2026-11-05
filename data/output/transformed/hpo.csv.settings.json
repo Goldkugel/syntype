@@ -1,0 +1,20 @@
+{
+  "adapter": {
+    "hpo": {
+      "input_folder": "./data/input/hpo/",
+      "input_files": [
+        "hp.owl"
+      ],
+      "output_folder": "./data/output/transformed/",
+      "output_file": "hpo.csv",
+      "skip_if_present": false,
+      "prefix": ""
+    }
+  },
+  "format": [
+    "id",
+    "attribute",
+    "value",
+    "additional"
+  ]
+}
