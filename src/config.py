@@ -268,36 +268,6 @@ outputFileClassAnswerCounts = os.path.join(
     outputFileNameClassAnswerCounts
 )
 
-outputFileNameClassEvaluationExactHPO     = f"{filesPrefixApproachClass}_exact_HPO_evaluation.{plotFileFormat}"
-outputFileClassEvaluationExactHPO         = os.path.join(
-    dataDir,
-    outputFolderName,
-    outputFolderNameEvaluation,
-    outputFileNameClassEvaluationExactHPO
-)
-
-outputFileNameClassEvaluationExactUBERON     = f"{filesPrefixApproachClass}_exact_UBERON_evaluation.{plotFileFormat}"
-outputFileClassEvaluationExactUBERON         = os.path.join(
-    dataDir,
-    outputFolderName,
-    outputFolderNameEvaluation,
-    outputFileNameClassEvaluationExactUBERON
-)
-outputFileNameClassEvaluationExactGO     = f"{filesPrefixApproachClass}_exact_GO_evaluation.{plotFileFormat}"
-outputFileClassEvaluationExactGO         = os.path.join(
-    dataDir,
-    outputFolderName,
-    outputFolderNameEvaluation,
-    outputFileNameClassEvaluationExactGO
-)
-outputFileNameClassEvaluationExactCHEBI     = f"{filesPrefixApproachClass}_exact_CHEBI_evaluation.{plotFileFormat}"
-outputFileClassEvaluationExactCHEBI         = os.path.join(
-    dataDir,
-    outputFolderName,
-    outputFolderNameEvaluation,
-    outputFileNameClassEvaluationExactCHEBI
-)
-
 outputFolderNameClassEmbedding = outputFolderNameEvaluation
 
 embeddingPrefix = f"{outputFolderNameClass}_{testStr}"

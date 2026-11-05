@@ -6,12 +6,11 @@ Written by `python3 ./src/SynTypeEval.py <index>` from the merged classification
 |---|---|
 | `..._gold_counts.png` | Number of synonyms per gold source type |
 | `..._answer_counts.png` | Number of classifications per source type and model |
-| `..._base_evaluation.png` | Precision, recall and F1 per model and source type, over all concepts |
+| `..._base_evaluation.png` | Precision, recall and F1 per model and source type |
 | `..._summary.csv` | One row per model and baseline (`majority (<type>)`: always the most frequent gold type; `distance (<model>)`: the distance threshold of the development set): macro-F1, balanced accuracy, Cohen's kappa, accuracy and the share of undefined answers, each with the bounds of its 95% interval from 1000 bootstrap samples (`_low`, `_high`); also logged |
-| `..._confusion_matrices.png` | Gold type × answer (including undefined) per model, as counts and as shares of the gold type |
+| `..._confusion_matrices.png` | Gold type × answer (expert, layperson) per model, as counts and as shares of all synonyms of the gold type; undefined answers are left out (their share is in `..._summary.csv`) |
 | `..._roc.png` | ROC curves and AUC with layperson as the positive type: a model ranks the synonyms by its confidence (positive for layperson answers, negative for expert ones), the baseline by the distance; the AUCs are logged |
 | `..._calibration.png` | Accuracy and share of the answers per confidence level (1 to 5) of every model; the accuracies are logged |
-| `..._exact_HPO_evaluation.png` | The same for HPO concepts only (IDs `HP:`); `UBERON`, `GO` and `CHEBI` the same for concepts of those ontologies, if the data has any |
 | `type_<Test>_distance_evaluation_distance_<model>_cosine.png` | Density of the normalised distances (see [`../embedded/README.md`](../embedded/README.md)) per gold source type |
 | `type_<Test>_embedding_evaluation_distance_<model>_cosine.png` | The distance baseline on the development set: macro-F1 and the F1 per type of classifying by one threshold (layperson if the distance is at least the threshold, i.e. further from the label; expert otherwise), per threshold within `syntype.distance_evaluation_lower_bound` and `_upper_bound` (widened to the data), with the best threshold marked |
 

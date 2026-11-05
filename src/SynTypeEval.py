@@ -241,7 +241,6 @@ with l.step("Evaluating the classifications"):
     # and the share of undefined answers, with 95% bootstrap intervals.
     # ------------------------------------------------------------------------------
 
-    answers = synonymTypes + [undefinedSynonymType.lower()]
 
     def confusionCounts(goldTypes : np.ndarray, predicted : np.ndarray, samples : int = 0) -> np.ndarray:
         """
@@ -304,22 +303,25 @@ with l.step("Evaluating the classifications"):
     writeHugeCSV(pd.DataFrame(rows), outputFileClassSummary)
     l.log(f"{summarising} completed.")
 
-    # Confusion matrices of the models, as counts and as shares of the gold type.
+    # Confusion matrices of the models: gold type x answer (expert, layperson),
+    # as counts and as shares of all synonyms of the gold type; undefined
+    # answers are left out (their share is in the summary).
     columnsCount = min(3, len(systems))
     fig, axes = plt.subplots(nrows = math.ceil(len(systems) / columnsCount), ncols = columnsCount,
         figsize = (4.5 * columnsCount, 3.5 * math.ceil(len(systems) / columnsCount)), squeeze = False)
     for ax, system in zip(axes.flat, systems):
         counts = confusionCounts(goldTypes, predictions[system])[0]
         shares = counts / np.maximum(counts.sum(axis = 1, keepdims = True), 1)
+        counts, shares = counts[:, :2], shares[:, :2]
         sns.heatmap(shares, ax = ax, vmin = 0, vmax = 1, cmap = "Blues", cbar = False,
             annot = np.array([[f"{c}\n({100 * r:.0f}%)" for c, r in zip(cr, rr)] for cr, rr in zip(counts, shares)]),
-            fmt = "", xticklabels = answers, yticklabels = synonymTypes)
+            fmt = "", xticklabels = synonymTypes, yticklabels = synonymTypes)
         ax.set_title(system, fontsize = 9)
         ax.set_xlabel("Answer")
         ax.set_ylabel("Gold type")
     for ax in list(axes.flat)[len(systems):]:
         ax.axis("off")
-    fig.suptitle("Confusion Matrices (share of the gold type)")
+    fig.suptitle("Confusion Matrices (share of all synonyms of the gold type)")
     plt.tight_layout()
     plt.savefig(outputFileClassConfusion, dpi = 300, bbox_inches = "tight")
     plt.close()
@@ -435,19 +437,12 @@ with l.step("Evaluating the classifications"):
     # Precision, recall and F1 per system and source type.
     # ------------------------------------------------------------------------------
 
-    def ontologySubplot(data : pd.DataFrame = None, startString : str = "", outputFile : str = "", title : str = "") -> None:
+    def performancePlot(data : pd.DataFrame, outputFile : str, title : str) -> None:
         """
-        Plots precision, recall and F1 per model and source type for the
-        synonyms of the concepts whose ID starts with `startString` ("" for
-        all), and logs them; does nothing if there are none.
+        Plots precision, recall and F1 per model and source type, and logs
+        them.
         """
-        classified = data[data[idColumn].astype(str).str.startswith(startString, na=False)].reset_index(drop = True).copy()
-
-        # E.g. the development set may have only HPO concepts.
-        if len(classified.index) == 0:
-            l.log(f"No synonyms of concepts starting with {quote(startString)}; skipping the plot {quote(title)}.")
-            return
-
+        classified = data.reset_index(drop = True)
         result = {}
 
         systems = sorted(set(data[systemColumn].tolist()))
@@ -472,10 +467,9 @@ with l.step("Evaluating the classifications"):
             }
 
             undefined = (systemData[answerColumn] == undefinedSynonymType.lower()).mean()
-            l.log(f"{system} ({quote(startString or 'all')}): {100 * undefined:.1f}% " \
-                f"of {len(systemData.index)} answers undefined.")
+            l.log(f"{system}: {100 * undefined:.1f}% of {len(systemData.index)} answers undefined.")
             for t in synonymTypes:
-                l.log(f"{system} ({quote(startString or 'all')}), {t}: " \
+                l.log(f"{system}, {t}: " \
                     f"P {result[system][t][precisionLabel]:.3f}, " \
                     f"R {result[system][t][recallLabel]:.3f}, " \
                     f"F1 {result[system][t][f1ScoreLabel]:.3f}.")
@@ -546,9 +540,5 @@ with l.step("Evaluating the classifications"):
         plt.savefig(outputFile, dpi = 300, bbox_inches = "tight")
         plt.close()
 
-    # All synonyms, then per ontology of the concept.
-    ontologySubplot(classifiedComplete, "",        outputFileClassRecallPrecisionF1,     "Source Type Classification Performance of LLM Systems")
-    ontologySubplot(classifiedComplete, "HP:",     outputFileClassEvaluationExactHPO,    "Source Type Classification Performance of LLM Systems (HPO only)")
-    ontologySubplot(classifiedComplete, "UBERON:", outputFileClassEvaluationExactUBERON, "Source Type Classification Performance of LLM Systems (UBERON only)")
-    ontologySubplot(classifiedComplete, "GO:",     outputFileClassEvaluationExactGO,     "Source Type Classification Performance of LLM Systems (GO only)")
-    ontologySubplot(classifiedComplete, "CHEBI:",  outputFileClassEvaluationExactCHEBI,  "Source Type Classification Performance of LLM Systems (CHEBI only)")
+    performancePlot(classifiedComplete, outputFileClassRecallPrecisionF1,
+        "Source Type Classification Performance of LLM Systems")
