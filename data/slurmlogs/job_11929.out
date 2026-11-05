@@ -1,0 +1,832 @@
+[2026-11-05 09:12:05] [INFO   ] (0 Minutes) Command: python3 ./src/SynTypeClassification.py 0
+[2026-11-05 09:12:05] [INFO   ] (0 Minutes) The transformed HPO is up to date.
+[2026-11-05 09:12:05] [INFO   ] (0 Minutes) The development and evaluation set are up to date.
+[2026-11-05 09:12:05] [INFO   ] (0 Minutes) Model 1/6: "google/medgemma-4b-it".
+[2026-11-05 09:12:05] [INFO   ] (0 Minutes) Classifying the synonyms (medgemma-4b-it)...
+[2026-11-05 09:12:48] [INFO   ] (0 Minutes) ==========================================================================================
+[2026-11-05 09:12:48] [INFO   ] (0 Minutes) =                       Classifying the Synonyms (medgemma-4b-it)                        =
+[2026-11-05 09:12:48] [INFO   ] (0 Minutes) ==========================================================================================
+[2026-11-05 09:12:48] [INFO   ] (0 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-05 09:12:48] [INFO   ] (0 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-05 09:12:48] [INFO   ] (0 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-05 09:12:48] [INFO   ] (0 Minutes) File(s): "type_Test_NoDef_NoCom_NoStr_NoCOT_FS_*.csv".
+[2026-11-05 09:12:48] [INFO   ] (0 Minutes) Prompt file(s): "single_prompt.md".
+[2026-11-05 09:12:48] [INFO   ] (0 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-05 09:12:48] [INFO   ] (0 Minutes) Setting up the LLM (medgemma-4b-it)...
+[2026-11-05 09:12:48] [INFO   ] (0 Minutes) Loading model at index 0: 'google/medgemma-4b-it'...
+[2026-11-05 09:12:48] [INFO   ] (0 Minutes) Scanning device 'cuda'...
+[2026-11-05 09:12:48] [INFO   ] (0 Minutes) Cuda available: True.
+[2026-11-05 09:12:48] [INFO   ] (0 Minutes) GPU Amount: 2.
+[2026-11-05 09:12:48] [INFO   ] (0 Minutes) Scanning device 'cuda' completed.
+[2026-11-05 09:12:48] [INFO   ] (0 Minutes) Loading model into cuda...
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857] WorkerProc failed to start.
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857] Traceback (most recent call last):
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 826, in worker_main
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     worker = WorkerProc(*args, **kwargs)
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 605, in __init__
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     self.worker.init_device()
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/worker_base.py", line 312, in init_device
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     self.worker.init_device()  # type: ignore
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 263, in init_device
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     init_worker_distributed_environment(
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 1043, in init_worker_distributed_environment
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     ensure_model_parallel_initialized(
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1748, in ensure_model_parallel_initialized
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     initialize_model_parallel(
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1575, in initialize_model_parallel
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     _TP = init_model_parallel_group(
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1157, in init_model_parallel_group
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     return GroupCoordinator(
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 376, in __init__
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     self.device_communicator = device_comm_cls(
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]                                ^^^^^^^^^^^^^^^^
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/cuda_communicator.py", line 64, in __init__
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     from vllm.distributed.device_communicators.flashinfer_all_reduce import (
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/flashinfer_all_reduce.py", line 25, in <module>
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     import flashinfer.comm as flashinfer_comm  # type: ignore[no-redef]
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/__init__.py", line 78, in <module>
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     from .fused_moe import (
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/__init__.py", line 46, in <module>
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     from .cute_dsl import (
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/cute_dsl/__init__.py", line 18, in <module>
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     from ...cute_dsl.utils import is_cute_dsl_available
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/__init__.py", line 28, in <module>
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     from .utils import (
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/utils.py", line 22, in <module>
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     import cutlass
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/__init__.py", line 12, in <module>
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     from ._mlir._mlir_libs import _cutlass_ir
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 324, in <module>
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     _site_initialize()
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 318, in _site_initialize
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     Sequence.register(ir.OpOperands)
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857]                       ^^^^^^^^^^^^^
+(Worker pid=3189970) ERROR 11-05 09:13:46 [multiproc_executor.py:857] AttributeError: module 'cutlass._mlir._mlir_libs._cutlass_ir._mlir.ir' has no attribute 'OpOperands'. Did you mean: 'OpOperand'?
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857] WorkerProc failed to start.
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857] Traceback (most recent call last):
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 826, in worker_main
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     worker = WorkerProc(*args, **kwargs)
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 605, in __init__
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     self.worker.init_device()
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/worker_base.py", line 312, in init_device
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     self.worker.init_device()  # type: ignore
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 263, in init_device
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     init_worker_distributed_environment(
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 1043, in init_worker_distributed_environment
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     ensure_model_parallel_initialized(
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1748, in ensure_model_parallel_initialized
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     initialize_model_parallel(
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1575, in initialize_model_parallel
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     _TP = init_model_parallel_group(
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1157, in init_model_parallel_group
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     return GroupCoordinator(
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 376, in __init__
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     self.device_communicator = device_comm_cls(
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]                                ^^^^^^^^^^^^^^^^
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/cuda_communicator.py", line 64, in __init__
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     from vllm.distributed.device_communicators.flashinfer_all_reduce import (
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/flashinfer_all_reduce.py", line 25, in <module>
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     import flashinfer.comm as flashinfer_comm  # type: ignore[no-redef]
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/__init__.py", line 78, in <module>
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     from .fused_moe import (
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/__init__.py", line 46, in <module>
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     from .cute_dsl import (
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/cute_dsl/__init__.py", line 18, in <module>
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     from ...cute_dsl.utils import is_cute_dsl_available
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/__init__.py", line 28, in <module>
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     from .utils import (
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/utils.py", line 22, in <module>
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     import cutlass
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/__init__.py", line 12, in <module>
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     from ._mlir._mlir_libs import _cutlass_ir
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 324, in <module>
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     _site_initialize()
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 318, in _site_initialize
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]     Sequence.register(ir.OpOperands)
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857]                       ^^^^^^^^^^^^^
+(Worker pid=3189971) ERROR 11-05 09:13:46 [multiproc_executor.py:857] AttributeError: module 'cutlass._mlir._mlir_libs._cutlass_ir._mlir.ir' has no attribute 'OpOperands'. Did you mean: 'OpOperand'?
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108] EngineCore failed to start.
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108] Traceback (most recent call last):
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 1082, in run_engine_core
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]     return func(*args, **kwargs)
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]            ^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 848, in __init__
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]     super().__init__(
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 114, in __init__
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]     self.model_executor = executor_class(vllm_config)
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 101, in __init__
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]     super().__init__(vllm_config)
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]     return func(*args, **kwargs)
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]            ^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/abstract.py", line 103, in __init__
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]     self._init_executor()
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 190, in _init_executor
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]     self.workers = WorkerProc.wait_for_ready(unready_workers)
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 736, in wait_for_ready
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108]     raise e from None
+(EngineCore pid=3189962) ERROR 11-05 09:13:46 [core.py:1108] Exception: WorkerProc initialization failed due to an exception in a background process. See stack trace for root cause.
+[2026-11-05 09:13:46] [INFO   ] (1 Minute) Model 2/6: "Qwen/Qwen3-4B-Instruct-2507".
+[2026-11-05 09:13:46] [INFO   ] (1 Minute) Classifying the synonyms (Qwen3-4B-Instruct-2507)...
+[2026-11-05 09:13:46] [INFO   ] (1 Minute) ==========================================================================================
+[2026-11-05 09:13:46] [INFO   ] (1 Minute) =                   Classifying the Synonyms (Qwen3-4B-Instruct-2507)                    =
+[2026-11-05 09:13:46] [INFO   ] (1 Minute) ==========================================================================================
+[2026-11-05 09:13:46] [INFO   ] (1 Minute) Reading file 'hpo.development.csv'...
+[2026-11-05 09:13:46] [INFO   ] (1 Minute) Reading file 'hpo.development.csv' completed.
+[2026-11-05 09:13:46] [INFO   ] (1 Minute) Experiment 0: "test", "few_shot".
+[2026-11-05 09:13:46] [INFO   ] (1 Minute) File(s): "type_Test_NoDef_NoCom_NoStr_NoCOT_FS_*.csv".
+[2026-11-05 09:13:46] [INFO   ] (1 Minute) Prompt file(s): "single_prompt.md".
+[2026-11-05 09:13:46] [INFO   ] (1 Minute) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-05 09:13:46] [INFO   ] (1 Minute) Setting up the LLM (Qwen3-4B-Instruct-2507)...
+[2026-11-05 09:13:46] [INFO   ] (1 Minute) Loading model at index 1: 'Qwen/Qwen3-4B-Instruct-2507'...
+[2026-11-05 09:13:46] [INFO   ] (1 Minute) Scanning device 'cuda'...
+[2026-11-05 09:13:46] [INFO   ] (1 Minute) Cuda available: True.
+[2026-11-05 09:13:46] [INFO   ] (1 Minute) GPU Amount: 2.
+[2026-11-05 09:13:46] [INFO   ] (1 Minute) Scanning device 'cuda' completed.
+[2026-11-05 09:13:46] [INFO   ] (1 Minute) Loading model into cuda...
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857] WorkerProc failed to start.
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857] Traceback (most recent call last):
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 826, in worker_main
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     worker = WorkerProc(*args, **kwargs)
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 605, in __init__
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     self.worker.init_device()
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/worker_base.py", line 312, in init_device
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     self.worker.init_device()  # type: ignore
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 263, in init_device
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     init_worker_distributed_environment(
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 1043, in init_worker_distributed_environment
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     ensure_model_parallel_initialized(
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1748, in ensure_model_parallel_initialized
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     initialize_model_parallel(
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1575, in initialize_model_parallel
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     _TP = init_model_parallel_group(
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1157, in init_model_parallel_group
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     return GroupCoordinator(
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 376, in __init__
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     self.device_communicator = device_comm_cls(
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]                                ^^^^^^^^^^^^^^^^
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/cuda_communicator.py", line 64, in __init__
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     from vllm.distributed.device_communicators.flashinfer_all_reduce import (
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/flashinfer_all_reduce.py", line 25, in <module>
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     import flashinfer.comm as flashinfer_comm  # type: ignore[no-redef]
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/__init__.py", line 78, in <module>
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     from .fused_moe import (
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/__init__.py", line 46, in <module>
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     from .cute_dsl import (
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/cute_dsl/__init__.py", line 18, in <module>
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     from ...cute_dsl.utils import is_cute_dsl_available
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/__init__.py", line 28, in <module>
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     from .utils import (
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/utils.py", line 22, in <module>
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     import cutlass
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/__init__.py", line 12, in <module>
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     from ._mlir._mlir_libs import _cutlass_ir
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 324, in <module>
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     _site_initialize()
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 318, in _site_initialize
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     Sequence.register(ir.OpOperands)
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857]                       ^^^^^^^^^^^^^
+(Worker pid=3190032) ERROR 11-05 09:14:16 [multiproc_executor.py:857] AttributeError: module 'cutlass._mlir._mlir_libs._cutlass_ir._mlir.ir' has no attribute 'OpOperands'. Did you mean: 'OpOperand'?
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857] WorkerProc failed to start.
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857] Traceback (most recent call last):
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 826, in worker_main
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     worker = WorkerProc(*args, **kwargs)
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 605, in __init__
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     self.worker.init_device()
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/worker_base.py", line 312, in init_device
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     self.worker.init_device()  # type: ignore
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 263, in init_device
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     init_worker_distributed_environment(
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 1043, in init_worker_distributed_environment
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     ensure_model_parallel_initialized(
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1748, in ensure_model_parallel_initialized
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     initialize_model_parallel(
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1575, in initialize_model_parallel
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     _TP = init_model_parallel_group(
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1157, in init_model_parallel_group
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     return GroupCoordinator(
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 376, in __init__
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     self.device_communicator = device_comm_cls(
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]                                ^^^^^^^^^^^^^^^^
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/cuda_communicator.py", line 64, in __init__
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     from vllm.distributed.device_communicators.flashinfer_all_reduce import (
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/flashinfer_all_reduce.py", line 25, in <module>
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     import flashinfer.comm as flashinfer_comm  # type: ignore[no-redef]
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/__init__.py", line 78, in <module>
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     from .fused_moe import (
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/__init__.py", line 46, in <module>
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     from .cute_dsl import (
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/cute_dsl/__init__.py", line 18, in <module>
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     from ...cute_dsl.utils import is_cute_dsl_available
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/__init__.py", line 28, in <module>
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     from .utils import (
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/utils.py", line 22, in <module>
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     import cutlass
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/__init__.py", line 12, in <module>
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     from ._mlir._mlir_libs import _cutlass_ir
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 324, in <module>
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     _site_initialize()
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 318, in _site_initialize
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]     Sequence.register(ir.OpOperands)
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857]                       ^^^^^^^^^^^^^
+(Worker pid=3190031) ERROR 11-05 09:14:16 [multiproc_executor.py:857] AttributeError: module 'cutlass._mlir._mlir_libs._cutlass_ir._mlir.ir' has no attribute 'OpOperands'. Did you mean: 'OpOperand'?
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108] EngineCore failed to start.
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108] Traceback (most recent call last):
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 1082, in run_engine_core
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]     return func(*args, **kwargs)
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]            ^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 848, in __init__
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]     super().__init__(
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 114, in __init__
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]     self.model_executor = executor_class(vllm_config)
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 101, in __init__
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]     super().__init__(vllm_config)
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]     return func(*args, **kwargs)
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]            ^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/abstract.py", line 103, in __init__
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]     self._init_executor()
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 190, in _init_executor
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]     self.workers = WorkerProc.wait_for_ready(unready_workers)
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 736, in wait_for_ready
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108]     raise e from None
+(EngineCore pid=3190025) ERROR 11-05 09:14:17 [core.py:1108] Exception: WorkerProc initialization failed due to an exception in a background process. See stack trace for root cause.
+[2026-11-05 09:14:17] [INFO   ] (2 Minutes) Model 3/6: "mistralai/Mistral-7B-Instruct-v0.2".
+[2026-11-05 09:14:17] [INFO   ] (2 Minutes) Classifying the synonyms (Mistral-7B-Instruct-v0.2)...
+[2026-11-05 09:14:17] [INFO   ] (2 Minutes) ==========================================================================================
+[2026-11-05 09:14:17] [INFO   ] (2 Minutes) =                  Classifying the Synonyms (Mistral-7B-Instruct-v0.2)                   =
+[2026-11-05 09:14:17] [INFO   ] (2 Minutes) ==========================================================================================
+[2026-11-05 09:14:17] [INFO   ] (2 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-05 09:14:17] [INFO   ] (2 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-05 09:14:17] [INFO   ] (2 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-05 09:14:17] [INFO   ] (2 Minutes) File(s): "type_Test_NoDef_NoCom_NoStr_NoCOT_FS_*.csv".
+[2026-11-05 09:14:17] [INFO   ] (2 Minutes) Prompt file(s): "single_prompt.md".
+[2026-11-05 09:14:17] [INFO   ] (2 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-05 09:14:17] [INFO   ] (2 Minutes) Setting up the LLM (Mistral-7B-Instruct-v0.2)...
+[2026-11-05 09:14:17] [INFO   ] (2 Minutes) Loading model at index 2: 'mistralai/Mistral-7B-Instruct-v0.2'...
+[2026-11-05 09:14:17] [INFO   ] (2 Minutes) Scanning device 'cuda'...
+[2026-11-05 09:14:17] [INFO   ] (2 Minutes) Cuda available: True.
+[2026-11-05 09:14:17] [INFO   ] (2 Minutes) GPU Amount: 2.
+[2026-11-05 09:14:17] [INFO   ] (2 Minutes) Scanning device 'cuda' completed.
+[2026-11-05 09:14:17] [INFO   ] (2 Minutes) Loading model into cuda...
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857] WorkerProc failed to start.
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857] Traceback (most recent call last):
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 826, in worker_main
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     worker = WorkerProc(*args, **kwargs)
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 605, in __init__
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     self.worker.init_device()
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/worker_base.py", line 312, in init_device
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     self.worker.init_device()  # type: ignore
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 263, in init_device
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     init_worker_distributed_environment(
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 1043, in init_worker_distributed_environment
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     ensure_model_parallel_initialized(
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1748, in ensure_model_parallel_initialized
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     initialize_model_parallel(
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1575, in initialize_model_parallel
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     _TP = init_model_parallel_group(
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1157, in init_model_parallel_group
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     return GroupCoordinator(
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 376, in __init__
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     self.device_communicator = device_comm_cls(
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]                                ^^^^^^^^^^^^^^^^
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/cuda_communicator.py", line 64, in __init__
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     from vllm.distributed.device_communicators.flashinfer_all_reduce import (
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/flashinfer_all_reduce.py", line 25, in <module>
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     import flashinfer.comm as flashinfer_comm  # type: ignore[no-redef]
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/__init__.py", line 78, in <module>
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     from .fused_moe import (
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/__init__.py", line 46, in <module>
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     from .cute_dsl import (
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/cute_dsl/__init__.py", line 18, in <module>
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     from ...cute_dsl.utils import is_cute_dsl_available
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/__init__.py", line 28, in <module>
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     from .utils import (
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/utils.py", line 22, in <module>
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     import cutlass
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/__init__.py", line 12, in <module>
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     from ._mlir._mlir_libs import _cutlass_ir
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 324, in <module>
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     _site_initialize()
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 318, in _site_initialize
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     Sequence.register(ir.OpOperands)
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857]                       ^^^^^^^^^^^^^
+(Worker pid=3190113) ERROR 11-05 09:14:43 [multiproc_executor.py:857] AttributeError: module 'cutlass._mlir._mlir_libs._cutlass_ir._mlir.ir' has no attribute 'OpOperands'. Did you mean: 'OpOperand'?
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857] WorkerProc failed to start.
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857] Traceback (most recent call last):
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 826, in worker_main
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     worker = WorkerProc(*args, **kwargs)
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 605, in __init__
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     self.worker.init_device()
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/worker_base.py", line 312, in init_device
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     self.worker.init_device()  # type: ignore
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 263, in init_device
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     init_worker_distributed_environment(
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 1043, in init_worker_distributed_environment
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     ensure_model_parallel_initialized(
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1748, in ensure_model_parallel_initialized
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     initialize_model_parallel(
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1575, in initialize_model_parallel
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     _TP = init_model_parallel_group(
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1157, in init_model_parallel_group
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     return GroupCoordinator(
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 376, in __init__
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     self.device_communicator = device_comm_cls(
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]                                ^^^^^^^^^^^^^^^^
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/cuda_communicator.py", line 64, in __init__
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     from vllm.distributed.device_communicators.flashinfer_all_reduce import (
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/flashinfer_all_reduce.py", line 25, in <module>
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     import flashinfer.comm as flashinfer_comm  # type: ignore[no-redef]
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/__init__.py", line 78, in <module>
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     from .fused_moe import (
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/__init__.py", line 46, in <module>
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     from .cute_dsl import (
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/cute_dsl/__init__.py", line 18, in <module>
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     from ...cute_dsl.utils import is_cute_dsl_available
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/__init__.py", line 28, in <module>
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     from .utils import (
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/utils.py", line 22, in <module>
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     import cutlass
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/__init__.py", line 12, in <module>
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     from ._mlir._mlir_libs import _cutlass_ir
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 324, in <module>
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     _site_initialize()
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 318, in _site_initialize
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]     Sequence.register(ir.OpOperands)
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857]                       ^^^^^^^^^^^^^
+(Worker pid=3190114) ERROR 11-05 09:14:43 [multiproc_executor.py:857] AttributeError: module 'cutlass._mlir._mlir_libs._cutlass_ir._mlir.ir' has no attribute 'OpOperands'. Did you mean: 'OpOperand'?
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108] EngineCore failed to start.
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108] Traceback (most recent call last):
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 1082, in run_engine_core
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]     return func(*args, **kwargs)
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]            ^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 848, in __init__
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]     super().__init__(
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 114, in __init__
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]     self.model_executor = executor_class(vllm_config)
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 101, in __init__
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]     super().__init__(vllm_config)
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]     return func(*args, **kwargs)
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]            ^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/abstract.py", line 103, in __init__
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]     self._init_executor()
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 190, in _init_executor
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]     self.workers = WorkerProc.wait_for_ready(unready_workers)
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 736, in wait_for_ready
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108]     raise e from None
+(EngineCore pid=3190107) ERROR 11-05 09:14:44 [core.py:1108] Exception: WorkerProc initialization failed due to an exception in a background process. See stack trace for root cause.
+[2026-11-05 09:14:44] [INFO   ] (2 Minutes) Model 4/6: "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8".
+[2026-11-05 09:14:44] [INFO   ] (2 Minutes) Classifying the synonyms (Qwen3-30B-A3B-Instruct-2507-FP8)...
+[2026-11-05 09:14:44] [INFO   ] (2 Minutes) ==========================================================================================
+[2026-11-05 09:14:44] [INFO   ] (2 Minutes) =               Classifying the Synonyms (Qwen3-30B-A3B-Instruct-2507-FP8)               =
+[2026-11-05 09:14:44] [INFO   ] (2 Minutes) ==========================================================================================
+[2026-11-05 09:14:44] [INFO   ] (2 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-05 09:14:44] [INFO   ] (2 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-05 09:14:44] [INFO   ] (2 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-05 09:14:44] [INFO   ] (2 Minutes) File(s): "type_Test_NoDef_NoCom_NoStr_NoCOT_FS_*.csv".
+[2026-11-05 09:14:44] [INFO   ] (2 Minutes) Prompt file(s): "single_prompt.md".
+[2026-11-05 09:14:44] [INFO   ] (2 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-05 09:14:44] [INFO   ] (2 Minutes) Setting up the LLM (Qwen3-30B-A3B-Instruct-2507-FP8)...
+[2026-11-05 09:14:44] [INFO   ] (2 Minutes) Loading model at index 3: 'Qwen/Qwen3-30B-A3B-Instruct-2507-FP8'...
+[2026-11-05 09:14:44] [INFO   ] (2 Minutes) Scanning device 'cuda'...
+[2026-11-05 09:14:44] [INFO   ] (2 Minutes) Cuda available: True.
+[2026-11-05 09:14:44] [INFO   ] (2 Minutes) GPU Amount: 2.
+[2026-11-05 09:14:44] [INFO   ] (2 Minutes) Scanning device 'cuda' completed.
+[2026-11-05 09:14:44] [INFO   ] (2 Minutes) Loading model into cuda...
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857] WorkerProc failed to start.
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857] Traceback (most recent call last):
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 826, in worker_main
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     worker = WorkerProc(*args, **kwargs)
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 605, in __init__
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     self.worker.init_device()
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/worker_base.py", line 312, in init_device
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     self.worker.init_device()  # type: ignore
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 263, in init_device
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     init_worker_distributed_environment(
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 1043, in init_worker_distributed_environment
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     ensure_model_parallel_initialized(
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1748, in ensure_model_parallel_initialized
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     initialize_model_parallel(
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1575, in initialize_model_parallel
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     _TP = init_model_parallel_group(
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1157, in init_model_parallel_group
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     return GroupCoordinator(
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 376, in __init__
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     self.device_communicator = device_comm_cls(
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]                                ^^^^^^^^^^^^^^^^
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/cuda_communicator.py", line 64, in __init__
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     from vllm.distributed.device_communicators.flashinfer_all_reduce import (
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/flashinfer_all_reduce.py", line 25, in <module>
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     import flashinfer.comm as flashinfer_comm  # type: ignore[no-redef]
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/__init__.py", line 78, in <module>
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     from .fused_moe import (
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/__init__.py", line 46, in <module>
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     from .cute_dsl import (
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/cute_dsl/__init__.py", line 18, in <module>
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     from ...cute_dsl.utils import is_cute_dsl_available
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/__init__.py", line 28, in <module>
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     from .utils import (
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/utils.py", line 22, in <module>
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     import cutlass
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/__init__.py", line 12, in <module>
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     from ._mlir._mlir_libs import _cutlass_ir
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 324, in <module>
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     _site_initialize()
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 318, in _site_initialize
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     Sequence.register(ir.OpOperands)
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857]                       ^^^^^^^^^^^^^
+(Worker pid=3190197) ERROR 11-05 09:15:11 [multiproc_executor.py:857] AttributeError: module 'cutlass._mlir._mlir_libs._cutlass_ir._mlir.ir' has no attribute 'OpOperands'. Did you mean: 'OpOperand'?
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857] WorkerProc failed to start.
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857] Traceback (most recent call last):
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 826, in worker_main
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     worker = WorkerProc(*args, **kwargs)
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 605, in __init__
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     self.worker.init_device()
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/worker_base.py", line 312, in init_device
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     self.worker.init_device()  # type: ignore
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 263, in init_device
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     init_worker_distributed_environment(
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 1043, in init_worker_distributed_environment
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     ensure_model_parallel_initialized(
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1748, in ensure_model_parallel_initialized
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     initialize_model_parallel(
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1575, in initialize_model_parallel
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     _TP = init_model_parallel_group(
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1157, in init_model_parallel_group
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     return GroupCoordinator(
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 376, in __init__
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     self.device_communicator = device_comm_cls(
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]                                ^^^^^^^^^^^^^^^^
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/cuda_communicator.py", line 64, in __init__
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     from vllm.distributed.device_communicators.flashinfer_all_reduce import (
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/flashinfer_all_reduce.py", line 25, in <module>
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     import flashinfer.comm as flashinfer_comm  # type: ignore[no-redef]
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/__init__.py", line 78, in <module>
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     from .fused_moe import (
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/__init__.py", line 46, in <module>
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     from .cute_dsl import (
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/cute_dsl/__init__.py", line 18, in <module>
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     from ...cute_dsl.utils import is_cute_dsl_available
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/__init__.py", line 28, in <module>
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     from .utils import (
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/utils.py", line 22, in <module>
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     import cutlass
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/__init__.py", line 12, in <module>
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     from ._mlir._mlir_libs import _cutlass_ir
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 324, in <module>
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     _site_initialize()
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 318, in _site_initialize
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]     Sequence.register(ir.OpOperands)
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857]                       ^^^^^^^^^^^^^
+(Worker pid=3190196) ERROR 11-05 09:15:11 [multiproc_executor.py:857] AttributeError: module 'cutlass._mlir._mlir_libs._cutlass_ir._mlir.ir' has no attribute 'OpOperands'. Did you mean: 'OpOperand'?
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108] EngineCore failed to start.
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108] Traceback (most recent call last):
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 1082, in run_engine_core
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]     return func(*args, **kwargs)
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]            ^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 848, in __init__
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]     super().__init__(
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 114, in __init__
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]     self.model_executor = executor_class(vllm_config)
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 101, in __init__
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]     super().__init__(vllm_config)
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]     return func(*args, **kwargs)
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]            ^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/abstract.py", line 103, in __init__
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]     self._init_executor()
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 190, in _init_executor
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]     self.workers = WorkerProc.wait_for_ready(unready_workers)
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 736, in wait_for_ready
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108]     raise e from None
+(EngineCore pid=3190190) ERROR 11-05 09:15:11 [core.py:1108] Exception: WorkerProc initialization failed due to an exception in a background process. See stack trace for root cause.
+[2026-11-05 09:15:11] [INFO   ] (3 Minutes) Model 5/6: "google/medgemma-27b-text-it".
+[2026-11-05 09:15:11] [INFO   ] (3 Minutes) Classifying the synonyms (medgemma-27b-text-it)...
+[2026-11-05 09:15:11] [INFO   ] (3 Minutes) ==========================================================================================
+[2026-11-05 09:15:11] [INFO   ] (3 Minutes) =                    Classifying the Synonyms (medgemma-27b-text-it)                     =
+[2026-11-05 09:15:11] [INFO   ] (3 Minutes) ==========================================================================================
+[2026-11-05 09:15:11] [INFO   ] (3 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-05 09:15:11] [INFO   ] (3 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-05 09:15:11] [INFO   ] (3 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-05 09:15:11] [INFO   ] (3 Minutes) File(s): "type_Test_NoDef_NoCom_NoStr_NoCOT_FS_*.csv".
+[2026-11-05 09:15:11] [INFO   ] (3 Minutes) Prompt file(s): "single_prompt.md".
+[2026-11-05 09:15:11] [INFO   ] (3 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-05 09:15:12] [INFO   ] (3 Minutes) Setting up the LLM (medgemma-27b-text-it)...
+[2026-11-05 09:15:12] [INFO   ] (3 Minutes) Loading model at index 4: 'google/medgemma-27b-text-it'...
+[2026-11-05 09:15:12] [INFO   ] (3 Minutes) Scanning device 'cuda'...
+[2026-11-05 09:15:12] [INFO   ] (3 Minutes) Cuda available: True.
+[2026-11-05 09:15:12] [INFO   ] (3 Minutes) GPU Amount: 2.
+[2026-11-05 09:15:12] [INFO   ] (3 Minutes) Scanning device 'cuda' completed.
+[2026-11-05 09:15:12] [INFO   ] (3 Minutes) Loading model into cuda...
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857] WorkerProc failed to start.
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857] Traceback (most recent call last):
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 826, in worker_main
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     worker = WorkerProc(*args, **kwargs)
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 605, in __init__
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     self.worker.init_device()
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/worker_base.py", line 312, in init_device
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     self.worker.init_device()  # type: ignore
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 263, in init_device
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     init_worker_distributed_environment(
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 1043, in init_worker_distributed_environment
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     ensure_model_parallel_initialized(
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1748, in ensure_model_parallel_initialized
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     initialize_model_parallel(
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1575, in initialize_model_parallel
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     _TP = init_model_parallel_group(
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1157, in init_model_parallel_group
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     return GroupCoordinator(
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 376, in __init__
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     self.device_communicator = device_comm_cls(
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]                                ^^^^^^^^^^^^^^^^
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/cuda_communicator.py", line 64, in __init__
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     from vllm.distributed.device_communicators.flashinfer_all_reduce import (
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/flashinfer_all_reduce.py", line 25, in <module>
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     import flashinfer.comm as flashinfer_comm  # type: ignore[no-redef]
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/__init__.py", line 78, in <module>
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     from .fused_moe import (
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/__init__.py", line 46, in <module>
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     from .cute_dsl import (
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/cute_dsl/__init__.py", line 18, in <module>
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     from ...cute_dsl.utils import is_cute_dsl_available
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/__init__.py", line 28, in <module>
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     from .utils import (
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/utils.py", line 22, in <module>
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     import cutlass
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/__init__.py", line 12, in <module>
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     from ._mlir._mlir_libs import _cutlass_ir
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 324, in <module>
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     _site_initialize()
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 318, in _site_initialize
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     Sequence.register(ir.OpOperands)
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857]                       ^^^^^^^^^^^^^
+(Worker pid=3190269) ERROR 11-05 09:15:34 [multiproc_executor.py:857] AttributeError: module 'cutlass._mlir._mlir_libs._cutlass_ir._mlir.ir' has no attribute 'OpOperands'. Did you mean: 'OpOperand'?
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857] WorkerProc failed to start.
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857] Traceback (most recent call last):
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 826, in worker_main
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     worker = WorkerProc(*args, **kwargs)
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 605, in __init__
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     self.worker.init_device()
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/worker_base.py", line 312, in init_device
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     self.worker.init_device()  # type: ignore
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     return func(*args, **kwargs)
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 263, in init_device
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     init_worker_distributed_environment(
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 1043, in init_worker_distributed_environment
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     ensure_model_parallel_initialized(
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1748, in ensure_model_parallel_initialized
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     initialize_model_parallel(
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1575, in initialize_model_parallel
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     _TP = init_model_parallel_group(
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 1157, in init_model_parallel_group
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     return GroupCoordinator(
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]            ^^^^^^^^^^^^^^^^^
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/parallel_state.py", line 376, in __init__
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     self.device_communicator = device_comm_cls(
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]                                ^^^^^^^^^^^^^^^^
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/cuda_communicator.py", line 64, in __init__
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     from vllm.distributed.device_communicators.flashinfer_all_reduce import (
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/distributed/device_communicators/flashinfer_all_reduce.py", line 25, in <module>
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     import flashinfer.comm as flashinfer_comm  # type: ignore[no-redef]
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/__init__.py", line 78, in <module>
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     from .fused_moe import (
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/__init__.py", line 46, in <module>
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     from .cute_dsl import (
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/fused_moe/cute_dsl/__init__.py", line 18, in <module>
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     from ...cute_dsl.utils import is_cute_dsl_available
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/__init__.py", line 28, in <module>
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     from .utils import (
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/flashinfer/cute_dsl/utils.py", line 22, in <module>
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     import cutlass
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/__init__.py", line 12, in <module>
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     from ._mlir._mlir_libs import _cutlass_ir
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 324, in <module>
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     _site_initialize()
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/nvidia_cutlass_dsl/dsl_packages/cutlass/_mlir/_mlir_libs/__init__.py", line 318, in _site_initialize
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]     Sequence.register(ir.OpOperands)
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857]                       ^^^^^^^^^^^^^
+(Worker pid=3190270) ERROR 11-05 09:15:34 [multiproc_executor.py:857] AttributeError: module 'cutlass._mlir._mlir_libs._cutlass_ir._mlir.ir' has no attribute 'OpOperands'. Did you mean: 'OpOperand'?
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108] EngineCore failed to start.
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108] Traceback (most recent call last):
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 1082, in run_engine_core
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]     return func(*args, **kwargs)
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]            ^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 848, in __init__
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]     super().__init__(
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 114, in __init__
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]     self.model_executor = executor_class(vllm_config)
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 101, in __init__
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]     super().__init__(vllm_config)
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]     return func(*args, **kwargs)
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]            ^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/abstract.py", line 103, in __init__
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]     self._init_executor()
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 190, in _init_executor
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]     self.workers = WorkerProc.wait_for_ready(unready_workers)
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/executor/multiproc_executor.py", line 736, in wait_for_ready
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108]     raise e from None
+(EngineCore pid=3190263) ERROR 11-05 09:15:35 [core.py:1108] Exception: WorkerProc initialization failed due to an exception in a background process. See stack trace for root cause.
+[2026-11-05 09:15:35] [INFO   ] (3 Minutes) Model 6/6: "mistralai/Mistral-Small-3.1-24B-Instruct-2503".
+[2026-11-05 09:15:35] [INFO   ] (3 Minutes) Classifying the synonyms (Mistral-Small-3.1-24B-Instruct-2503)...
+[2026-11-05 09:15:35] [INFO   ] (3 Minutes) ==========================================================================================
+[2026-11-05 09:15:35] [INFO   ] (3 Minutes) =             Classifying the Synonyms (Mistral-Small-3.1-24B-Instruct-2503)             =
+[2026-11-05 09:15:35] [INFO   ] (3 Minutes) ==========================================================================================
+[2026-11-05 09:15:35] [INFO   ] (3 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-05 09:15:35] [INFO   ] (3 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-05 09:15:35] [INFO   ] (3 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-05 09:15:35] [INFO   ] (3 Minutes) File(s): "type_Test_NoDef_NoCom_NoStr_NoCOT_FS_*.csv".
+[2026-11-05 09:15:35] [INFO   ] (3 Minutes) Prompt file(s): "single_prompt.md".
+[2026-11-05 09:15:35] [INFO   ] (3 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-05 09:15:35] [INFO   ] (3 Minutes) Setting up the LLM (Mistral-Small-3.1-24B-Instruct-2503)...
+[2026-11-05 09:15:35] [INFO   ] (3 Minutes) Loading model at index 5: 'mistralai/Mistral-Small-3.1-24B-Instruct-2503'...
+[2026-11-05 09:15:35] [INFO   ] (3 Minutes) Scanning device 'cuda'...
+[2026-11-05 09:15:35] [INFO   ] (3 Minutes) Cuda available: True.
+[2026-11-05 09:15:35] [INFO   ] (3 Minutes) GPU Amount: 2.
+[2026-11-05 09:15:35] [INFO   ] (3 Minutes) Scanning device 'cuda' completed.
+[2026-11-05 09:15:35] [INFO   ] (3 Minutes) Loading model into cuda...
+ERROR 11-05 09:15:52 [registry.py:882] Error in inspecting model architecture 'PixtralForConditionalGeneration'
+ERROR 11-05 09:15:52 [registry.py:882] Traceback (most recent call last):
+ERROR 11-05 09:15:52 [registry.py:882]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/model_executor/models/registry.py", line 1306, in _run_in_subprocess
+ERROR 11-05 09:15:52 [registry.py:882]     returned.check_returncode()
+ERROR 11-05 09:15:52 [registry.py:882]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/subprocess.py", line 502, in check_returncode
+ERROR 11-05 09:15:52 [registry.py:882]     raise CalledProcessError(self.returncode, self.args, self.stdout,
+ERROR 11-05 09:15:52 [registry.py:882] subprocess.CalledProcessError: Command '['/home/pallaoro/user/install/envs/vllm/bin/python3', '-m', 'vllm.model_executor.models.registry']' returned non-zero exit status 1.
+ERROR 11-05 09:15:52 [registry.py:882] 
+ERROR 11-05 09:15:52 [registry.py:882] The above exception was the direct cause of the following exception:
+ERROR 11-05 09:15:52 [registry.py:882] 
+ERROR 11-05 09:15:52 [registry.py:882] Traceback (most recent call last):
+ERROR 11-05 09:15:52 [registry.py:882]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/model_executor/models/registry.py", line 880, in _try_inspect_model_cls
+ERROR 11-05 09:15:52 [registry.py:882]     return model.inspect_model_cls()
+ERROR 11-05 09:15:52 [registry.py:882]            ^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 11-05 09:15:52 [registry.py:882]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/logging_utils/log_time.py", line 21, in _wrapper
+ERROR 11-05 09:15:52 [registry.py:882]     result = func(*args, **kwargs)
+ERROR 11-05 09:15:52 [registry.py:882]              ^^^^^^^^^^^^^^^^^^^^^
+ERROR 11-05 09:15:52 [registry.py:882]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/model_executor/models/registry.py", line 841, in inspect_model_cls
+ERROR 11-05 09:15:52 [registry.py:882]     mi = _run_in_subprocess(
+ERROR 11-05 09:15:52 [registry.py:882]          ^^^^^^^^^^^^^^^^^^^
+ERROR 11-05 09:15:52 [registry.py:882]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/model_executor/models/registry.py", line 1309, in _run_in_subprocess
+ERROR 11-05 09:15:52 [registry.py:882]     raise RuntimeError(
+ERROR 11-05 09:15:52 [registry.py:882] RuntimeError: Error raised in subprocess:
+ERROR 11-05 09:15:52 [registry.py:882] <frozen runpy>:128: RuntimeWarning: 'vllm.model_executor.models.registry' found in sys.modules after import of package 'vllm.model_executor.models', but prior to execution of 'vllm.model_executor.models.registry'; this may result in unpredictable behaviour
+ERROR 11-05 09:15:52 [registry.py:882] Traceback (most recent call last):
+ERROR 11-05 09:15:52 [registry.py:882]   File "<frozen runpy>", line 198, in _run_module_as_main
+ERROR 11-05 09:15:52 [registry.py:882]   File "<frozen runpy>", line 88, in _run_code
+ERROR 11-05 09:15:52 [registry.py:882]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/model_executor/models/registry.py", line 1332, in <module>
+ERROR 11-05 09:15:52 [registry.py:882]     _run()
+ERROR 11-05 09:15:52 [registry.py:882]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/model_executor/models/registry.py", line 1325, in _run
+ERROR 11-05 09:15:52 [registry.py:882]     result = fn()
+ERROR 11-05 09:15:52 [registry.py:882]              ^^^^
+ERROR 11-05 09:15:52 [registry.py:882]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/model_executor/models/registry.py", line 842, in <lambda>
+ERROR 11-05 09:15:52 [registry.py:882]     lambda: _ModelInfo.from_model_cls(self.load_model_cls())
+ERROR 11-05 09:15:52 [registry.py:882]                                       ^^^^^^^^^^^^^^^^^^^^^
+ERROR 11-05 09:15:52 [registry.py:882]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/model_executor/models/registry.py", line 855, in load_model_cls
+ERROR 11-05 09:15:52 [registry.py:882]     mod = importlib.import_module(self.module_name)
+ERROR 11-05 09:15:52 [registry.py:882]           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 11-05 09:15:52 [registry.py:882]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/importlib/__init__.py", line 90, in import_module
+ERROR 11-05 09:15:52 [registry.py:882]     return _bootstrap._gcd_import(name[level:], package, level)
+ERROR 11-05 09:15:52 [registry.py:882]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 11-05 09:15:52 [registry.py:882]   File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+ERROR 11-05 09:15:52 [registry.py:882]   File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+ERROR 11-05 09:15:52 [registry.py:882]   File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+ERROR 11-05 09:15:52 [registry.py:882]   File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+ERROR 11-05 09:15:52 [registry.py:882]   File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+ERROR 11-05 09:15:52 [registry.py:882]   File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+ERROR 11-05 09:15:52 [registry.py:882]   File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/model_executor/models/pixtral.py", line 19, in <module>
+ERROR 11-05 09:15:52 [registry.py:882]     from transformers.models.pixtral.modeling_pixtral import (
+ERROR 11-05 09:15:52 [registry.py:882] ImportError: cannot import name 'PixtralRotaryEmbedding' from 'transformers.models.pixtral.modeling_pixtral' (/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/transformers/models/pixtral/modeling_pixtral.py). Did you mean: 'PixtralVisionRotaryEmbedding'?
+ERROR 11-05 09:15:52 [registry.py:882] 
