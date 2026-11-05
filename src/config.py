@@ -97,6 +97,9 @@ distanceEvaluationParts      = int((distanceEvaluationUpperBound - distanceEvalu
 
 # Mean and standard deviation of the cosine distance with which the distances
 # are normalised (None: computed from the data).
+# The thresholds of the distance classifiers of the evaluation.
+distanceThresholds           = syntypeConfig.distance_thresholds
+
 cosineDistanceMean           = syntypeConfig.cosine_distance_mean
 cosineDistanceStd            = syntypeConfig.cosine_distance_std
 

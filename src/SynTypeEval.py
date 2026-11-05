@@ -108,6 +108,35 @@ with l.step("Evaluating the classifications"):
         f"({exampleSynonyms.sum()} rows).")
     classifiedComplete = classifiedComplete[~exampleSynonyms].copy().reset_index(drop = True)
 
+    # ------------------------------------------------------------------------------
+    # The distance classifiers (syntype.distance_thresholds): layperson if the
+    # normalised distance is at or above the threshold, expert below; without
+    # a distance, undefined. Evaluated as models of their own, without a
+    # confidence.
+    # ------------------------------------------------------------------------------
+
+    llmSystems = list(systems)
+    reference  = classifiedComplete[classifiedComplete[systemColumn] == systems[0]]
+    distanceSystems = {}
+    for embeddingModel, threshold in distanceThresholds.items():
+        column = distanceColumnPrefix.format(embeddingModel, cosineDistance)
+        if column not in reference.columns:
+            l.log(f"No {cosineDistance} distances of {quote(embeddingModel)}; " \
+                "its threshold is not used.")
+            continue
+        rows = reference.copy()
+        rows[systemColumn] = f"{embeddingModel} (distance)"
+        rows[answerColumn] = np.select([rows[column].isna(), rows[column] >= threshold],
+            [undefinedSynonymType.lower(), laypersonSynonymType], expertSynonymType)
+        rows[confidenceColumn] = np.nan
+        rows[rationaleColumn]  = ""
+        classifiedComplete = pd.concat([classifiedComplete, rows], ignore_index = True)
+        distanceSystems[embeddingModel] = rows[systemColumn].iloc[0]
+        l.log(f"Model {quote(distanceSystems[embeddingModel])}:")
+        l.log(f"  layperson if the normalised {cosineDistance} distance >= {threshold}, " \
+            "expert below.")
+    systems = sorted(llmSystems + list(distanceSystems.values()))
+
     colors = plt.cm.tab10(range(len(systems) + 1))
     color_map = {
         system: plt.cm.tab10(i % 10)
@@ -144,7 +173,7 @@ with l.step("Evaluating the classifications"):
     # to the evaluation set.
     # ------------------------------------------------------------------------------
 
-    gold = classifiedComplete[classifiedComplete[systemColumn] == systems[0]].copy().reset_index(drop = True)
+    gold = classifiedComplete[classifiedComplete[systemColumn] == llmSystems[0]].copy().reset_index(drop = True)
     development = gold
     if not reduceToTestIDs and isFile(outputFileEmbeddedDevelopment):
         development = readTransformed(outputFileEmbeddedDevelopment)
@@ -177,8 +206,10 @@ with l.step("Evaluating the classifications"):
             scores = np.array([thresholdScores(tuning[column].to_numpy(),
                 tuning[goldTypeLabel].to_numpy(), t) for t in thresholds])
             best = thresholds[np.argmax(scores[:, 0])]
-            baselines[f"distance ({embeddingModel})"] = np.where(
-                gold[column].to_numpy() >= best, laypersonSynonymType, expertSynonymType)
+            # A configured threshold is evaluated as a model instead.
+            if embeddingModel not in distanceSystems:
+                baselines[f"distance ({embeddingModel})"] = np.where(
+                    gold[column].to_numpy() >= best, laypersonSynonymType, expertSynonymType)
             distanceScores[f"distance ({embeddingModel})"] = gold[column].to_numpy()
 
             macro, expert, layperson = thresholdScores(evaluation[column].to_numpy(),
@@ -332,7 +363,7 @@ with l.step("Evaluating the classifications"):
     isLayperson = goldTypes == laypersonSynonymType
     if 0 < isLayperson.sum() < len(isLayperson):
         rankings = {}
-        for system in systems:
+        for system in llmSystems:
             data = classifiedComplete[classifiedComplete[systemColumn] == system].set_index(
                 synonymKeys).reindex(goldIndex)
             confidence = pd.to_numeric(data[confidenceColumn], errors = "coerce").fillna(0).clip(lower = 0)
@@ -361,7 +392,7 @@ with l.step("Evaluating the classifications"):
     # confidence level (1 to 5) of every model.
     levels = np.arange(1, 6)
     fig, (top, bottom) = plt.subplots(nrows = 2, figsize = (7, 7), sharex = True)
-    for index, system in enumerate(systems):
+    for index, system in enumerate(llmSystems):
         data = classifiedComplete[classifiedComplete[systemColumn] == system]
         confidence = pd.to_numeric(data[confidenceColumn], errors = "coerce")
         correct    = data[answerColumn] == typesOf(data)

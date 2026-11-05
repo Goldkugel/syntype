@@ -74,6 +74,13 @@ class SyntypeConfig(BaseModel):
     distance_evaluation_lower_bound: float      = -4
     distance_evaluation_upper_bound: float      = 4
 
+    # The threshold of the normalised cosine distance per embedding model
+    # (named as in the distance columns): the evaluation classifies a synonym
+    # with a distance at or above it as layperson, below it as expert, as a
+    # model of its own; the evaluation logs the best threshold on the
+    # development set. A model without a threshold gets no such model.
+    distance_thresholds: dict[str, float]       = {}
+
     # Draw the distance plots of the evaluation also without "test", and
     # again if they exist already.
     force_draw_additional_plots: bool           = False
