@@ -55,6 +55,11 @@ llm:
     - "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8"
     - "google/medgemma-27b-text-it"
     - "mistralai/Mistral-Small-3.1-24B-Instruct-2503"
+  # The Hugging Face commit per model ID, so that every run loads the same
+  # model version (e.g. "google/medgemma-4b-it": "<commit>"); a model without
+  # one loads the cached version. The commits of a run are recorded in
+  # data/logs/run_metadata.json ("model" -> "revision").
+  revision: {}
   device: "cuda"
   expert_parallel_models:
     - "Qwen3-30B"

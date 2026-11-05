@@ -20,10 +20,12 @@ Output Format (STRICT JSON)
 	"rationale": "<one to three sentences summarising the decisive similarities and differences.>"
 }}
 
-Confidence guidelines:
+Confidence guidelines, for the 100 imagined occurrences of the synonym:
 
-    5   = almost certainly correct
-    4   = likely correct
-    3   = substantial overlap or ambiguity
-    2   = slight overlap or high ambiguity
-    1   = highly uncertain{examples}
+    5   = more than 90 come from the chosen group; the other group would hardly use this wording
+    4   = about 75 to 90 come from the chosen group
+    3   = about 60 to 75 come from the chosen group; both groups use the wording
+    2   = about 50 to 60 come from the chosen group; both groups use it about equally
+    1   = the usage cannot be judged, e.g. an unfamiliar or ambiguous wording
+
+Use the whole scale: many synonyms are used by both groups. Even then, choose exactly one of "expert" and "layperson" and express the doubt in the confidence.{examples}

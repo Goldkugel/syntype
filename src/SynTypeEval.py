@@ -184,8 +184,8 @@ with l.step("Evaluating the classifications"):
             macro, expert, layperson = thresholdScores(evaluation[column].to_numpy(),
                 evaluation[goldTypeLabel].to_numpy(), best)
             share = 100 * np.mean(evaluation[column].to_numpy() >= best)
-            l.log(f"Distance baseline ({embeddingModel}): layperson if the normalised " \
-                f"{distanceMetric} distance >= {best:.3f}.")
+            l.log(f"Distance baseline ({embeddingModel}):")
+            l.log(f"  layperson if the normalised {distanceMetric} distance >= {best:.3f}.")
             l.log(f"Threshold chosen on the development set; macro-F1 {macro:.3f} on the " \
                 f"{'development' if reduceToTestIDs else 'evaluation'} set.")
             l.log(f"F1 expert {expert:.3f}, layperson {layperson:.3f}; " \
@@ -298,8 +298,9 @@ with l.step("Evaluating the classifications"):
             row[f"{name}_low"], row[f"{name}_high"] = np.percentile(values[1:], [2.5, 97.5])
         rows.append(row)
         interval = lambda name: f"{row[name]:.3f} [{row[name + '_low']:.3f}, {row[name + '_high']:.3f}]"
-        l.log(f"{system}: macro-F1 {interval('macro_f1')}, undefined {100 * row['undefined']:.1f}%.")
-        l.log(f"{system}: balanced accuracy {interval('balanced_accuracy')}, kappa {interval('kappa')}.")
+        l.log(f"{system}:")
+        l.log(f"  macro-F1 {interval('macro_f1')}, undefined {100 * row['undefined']:.1f}%.")
+        l.log(f"  balanced accuracy {interval('balanced_accuracy')}, kappa {interval('kappa')}.")
     writeHugeCSV(pd.DataFrame(rows), outputFileClassSummary)
     l.log(f"{summarising} completed.")
 

@@ -447,9 +447,10 @@ def classifySynonyms(modelID : str) -> pd.DataFrame:
 
     settings = [name for name, value in experiment.model_dump().items() if value]
     l.log(f"Experiment {experimentIndex}: {applyFormat(settings)}.")
-    l.log(f"Files: {quote(filesPrefixApproachClass)}.")
-    l.log("Prompt files: " + applyFormat(
-        [configurationFile["llm"]["prompt_files"][index] for index in promptIndexes]))
+    # The raw and formatted files of the experiment, one per model.
+    l.log(f"File(s): {quote(f'{filesPrefixApproachClass}_*.{csvFileFormat}')}.")
+    l.log("Prompt file(s): " + applyFormat(
+        [configurationFile["llm"]["prompt_files"][index] for index in promptIndexes]) + ".")
     goldTypes = typesOf(synonyms).value_counts()
     l.log(f"Classifying {len(synonyms.index)} synonyms of " \
         f"{synonyms[idColumn].nunique()} concepts; gold types: " + ", ".join(
@@ -515,7 +516,7 @@ def formatAnswers(synonyms : pd.DataFrame, modelName : str) -> None:
     classifySynonyms()), which SynTypeMerge.py merges, and logs every wrong or
     undefined classification.
     """
-    l.printHeader(f"Formatting Answers of Synonym's Classification ({modelName})")
+    l.printHeader(f"Formatting the Answers ({modelName})")
 
     classified = synonyms.copy()
     classified[answerColumn]     = classified[classificationKey].fillna(undefinedSynonymType)
@@ -640,7 +641,7 @@ def main() -> None:
         # before the next one.
         failed = []
         for index, modelID in enumerate(modelIDs):
-            l.log(f"Model {index + 1}/{len(modelIDs)}: {quote(modelID)}")
+            l.log(f"Model {index + 1}/{len(modelIDs)}: {quote(modelID)}.")
             modelName = modelNameOf(modelID)
             try:
                 with l.step(f"Classifying the synonyms ({modelName})"):
@@ -648,8 +649,9 @@ def main() -> None:
                 with l.step(f"Formatting the answers ({modelName})"):
                     formatAnswers(synonyms, modelName)
             except (Exception, SystemExit) as e:
-                # The step's error row gives the reason.
-                l.error(f"Classifying with {quote(modelID)} failed.")
+                # The step's rows give the reason; the traceback goes to the
+                # log file only.
+                l.exception(f"Classifying with {quote(modelID)} failed.", cmdline = False)
                 failed.append(modelID)
 
         if len(failed) > 0:

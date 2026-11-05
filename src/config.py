@@ -343,8 +343,8 @@ fewShotExamples = [
         "children"  : ["Bilateral cryptorchidism", "Unilateral cryptorchidism"],
         "synonym"   : "Undescended testis",
         "type"      : laypersonSynonymType,
-        "confidence": "4",
-        "rationale" : "The synonym describes the finding in plain words instead of the Greek-derived term 'cryptorchidism', as patients and parents say. Clinicians use it as well, so the category is likely rather than certain."
+        "confidence": "3",
+        "rationale" : "The synonym describes the finding in plain words instead of the Greek-derived term 'cryptorchidism', as patients and parents say. Clinicians use it as well, so both groups share the wording."
     },
     {
         "id"        : "CHEBI:133608",
