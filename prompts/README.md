@@ -33,7 +33,7 @@ The `model` package records the hashes of all of them in the run metadata. A tem
 |---|---|---|
 | `{hpo_label}` | `single_prompt.md`, `multiple_prompt1.md` | The label of the concept |
 | `{hpo_synonyms}` | `single_prompt.md`, `multiple_prompt2.md` | The synonym to classify |
-| `{hpo_definition}`, `{hpo_comment}`, `{hpo_parents}`, `{hpo_children}` | `single_prompt.md`, `multiple_prompt1.md` | The definition, comment, parents and children of the concept; empty if the experiment does not add it (`definition`, `comment`, and `structure` for both parents and children) |
+| `{hpo_details}` | `single_prompt.md`, `multiple_prompt1.md` | One line per information about the concept the experiment adds, each starting with a line break: `* Definition: ...` (`definition`), `* Comment: ...` (`comment`), `* Parents: ...` and `* Children: ...` (`structure`); empty for an experiment without them, so the prompt has no empty lines |
 | `{examples}` | `single_prompt.md`, `multiple_prompt3.md` | Two line breaks followed by `getExamples()` for Few-Shot runs, otherwise empty; the examples are written in the same input format |
 
 The `model` package loads a template and fills it in for every synonym (`Model.addPromptsFromFile()`) with the values of `promptValues()` in `src/SynTypeClassification.py`, which also gives the order of the templates: index 0, or 1 to 3 for chain-of-thoughts.

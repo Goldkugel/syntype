@@ -38,8 +38,4 @@ Use the whole scale: many synonyms are used by both groups. Even then, choose ex
 Now classify the following input:
 
 * Label: {hpo_label}
-* Synonym: {hpo_synonyms}
-* Definition: {hpo_definition}
-* Comment: {hpo_comment}
-* Parents: {hpo_parents}
-* Children: {hpo_children}
+* Synonym: {hpo_synonyms}{hpo_details}

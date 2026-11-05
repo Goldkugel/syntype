@@ -82,16 +82,12 @@ def createJSONExample(cl : str = "", co : str = "5", ra : str = "") -> str:
 def formatInput(label : str = "", definition : str = "", comment : str = "", parents : list = [], children : list = [], synonym : str = "") -> str:
     """
     The input of a Few-Shot example, in the format of the input of the
-    prompts: the information the experiment does not add is left empty.
+    prompts: only the information the experiment adds.
     """
     values = promptValues(label, definition, comment, parents, children, synonym)
 
     return f"* Label: {values['hpo_label']}\n" \
-        f"* Synonym: {values['hpo_synonyms']}\n" \
-        f"* Definition: {values['hpo_definition']}\n" \
-        f"* Comment: {values['hpo_comment']}\n" \
-        f"* Parents: {values['hpo_parents']}\n" \
-        f"* Children: {values['hpo_children']}"
+        f"* Synonym: {values['hpo_synonyms']}{values['hpo_details']}"
 
 def getExamples() -> str:
     """
@@ -129,16 +125,22 @@ def promptValues(
 ) -> dict:
     """
     The values of the placeholders of the prompts (see prompts/README.md)
-    except {examples}. Information the experiment does not add is left empty,
-    so every prompt keeps the same lines.
+    except {examples}. {hpo_details} holds one line per information the
+    experiment adds (definition, comment, and parents and children for
+    structure), each starting with a line break; it is empty without them.
     """
+    details = []
+    if addDefinition:
+        details.append(f"* Definition: {quote(definition)}")
+    if addComment:
+        details.append(f"* Comment: {quote(comment)}")
+    if addStructure:
+        details.append(f"* Parents: {applyFormat(parents)}")
+        details.append(f"* Children: {applyFormat(children)}")
     return {
-        "hpo_label"      : quote(label),
-        "hpo_synonyms"   : quote(synonym),
-        "hpo_definition" : quote(definition) if addDefinition else "",
-        "hpo_comment"    : quote(comment) if addComment else "",
-        "hpo_parents"    : applyFormat(parents) if addStructure else "",
-        "hpo_children"   : applyFormat(children) if addStructure else ""
+        "hpo_label"    : quote(label),
+        "hpo_synonyms" : quote(synonym),
+        "hpo_details"  : "".join(f"\n{line}" for line in details)
     }
 
 # Indexes in llm.prompt_files, one per turn.
