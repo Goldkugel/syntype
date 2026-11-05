@@ -1,0 +1,352 @@
+[2026-11-05 09:53:53] [INFO   ] (0 Minutes) Command: python3 ./src/SynTypeClassification.py 0
+[2026-11-05 09:53:53] [INFO   ] (0 Minutes) The transformed HPO is up to date.
+[2026-11-05 09:53:53] [INFO   ] (0 Minutes) The development and evaluation set are up to date.
+[2026-11-05 09:53:53] [INFO   ] (0 Minutes) Model 1/6: "google/medgemma-4b-it".
+[2026-11-05 09:53:53] [INFO   ] (0 Minutes) Classifying the synonyms (medgemma-4b-it)...
+[2026-11-05 09:54:31] [INFO   ] (0 Minutes) ==========================================================================================
+[2026-11-05 09:54:31] [INFO   ] (0 Minutes) =                       Classifying the Synonyms (medgemma-4b-it)                        =
+[2026-11-05 09:54:31] [INFO   ] (0 Minutes) ==========================================================================================
+[2026-11-05 09:54:31] [INFO   ] (0 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-05 09:54:31] [INFO   ] (0 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-05 09:54:31] [INFO   ] (0 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-05 09:54:31] [INFO   ] (0 Minutes) File(s): "type_Test_NoDef_NoCom_NoStr_NoCOT_FS_*.csv".
+[2026-11-05 09:54:31] [INFO   ] (0 Minutes) Prompt file(s): "single_prompt.md".
+[2026-11-05 09:54:31] [INFO   ] (0 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-05 09:54:31] [INFO   ] (0 Minutes) Setting up the LLM (medgemma-4b-it)...
+[2026-11-05 09:54:31] [INFO   ] (0 Minutes) Loading model at index 0: 'google/medgemma-4b-it'...
+[2026-11-05 09:54:31] [INFO   ] (0 Minutes) Scanning device 'cuda'...
+[2026-11-05 09:54:31] [INFO   ] (0 Minutes) Cuda available: True.
+[2026-11-05 09:54:31] [INFO   ] (0 Minutes) GPU Amount: 2.
+[2026-11-05 09:54:31] [INFO   ] (0 Minutes) Scanning device 'cuda' completed.
+[2026-11-05 09:54:31] [INFO   ] (0 Minutes) Loading model into cuda...
+[2026-11-05 09:55:28] [ERROR  ] (1 Minute) Classifying the synonyms (medgemma-4b-it) failed after 00:01:34.77.
+[2026-11-05 09:55:28] [ERROR  ] (1 Minute) Reason: RuntimeError: Engine core initialization failed. See root cause above. Failed core (...).
+[2026-11-05 09:55:28] [ERROR  ] (1 Minute) Classifying with "google/medgemma-4b-it" failed.
+Traceback (most recent call last):
+  File "/home/pallaoro/syntype/./src/SynTypeClassification.py", line 650, in main
+    synonyms = classifySynonyms(modelID)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/syntype/./src/SynTypeClassification.py", line 464, in classifySynonyms
+    with Model(configFile, modelIndex) as model:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/model/Model.py", line 190, in __init__
+    self.llm = LLM(
+               ^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/entrypoints/llm.py", line 343, in __init__
+    self.llm_engine = LLMEngine.from_engine_args(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 179, in from_engine_args
+    return cls(
+           ^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 105, in __init__
+    self.engine_core = EngineCoreClient.make_client(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 110, in make_client
+    return SyncMPClient(vllm_config, executor_class, log_stats)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 813, in __init__
+    super().__init__(
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 609, in __init__
+    with launch_core_engines(
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 1240, in launch_core_engines
+    wait_for_engine_startup(
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 1320, in wait_for_engine_startup
+    raise RuntimeError(
+RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+[2026-11-05 09:55:28] [INFO   ] (1 Minute) Model 2/6: "Qwen/Qwen3-4B-Instruct-2507".
+[2026-11-05 09:55:28] [INFO   ] (1 Minute) Classifying the synonyms (Qwen3-4B-Instruct-2507)...
+[2026-11-05 09:55:28] [INFO   ] (1 Minute) ==========================================================================================
+[2026-11-05 09:55:28] [INFO   ] (1 Minute) =                   Classifying the Synonyms (Qwen3-4B-Instruct-2507)                    =
+[2026-11-05 09:55:28] [INFO   ] (1 Minute) ==========================================================================================
+[2026-11-05 09:55:28] [INFO   ] (1 Minute) Reading file 'hpo.development.csv'...
+[2026-11-05 09:55:28] [INFO   ] (1 Minute) Reading file 'hpo.development.csv' completed.
+[2026-11-05 09:55:28] [INFO   ] (1 Minute) Experiment 0: "test", "few_shot".
+[2026-11-05 09:55:28] [INFO   ] (1 Minute) File(s): "type_Test_NoDef_NoCom_NoStr_NoCOT_FS_*.csv".
+[2026-11-05 09:55:28] [INFO   ] (1 Minute) Prompt file(s): "single_prompt.md".
+[2026-11-05 09:55:28] [INFO   ] (1 Minute) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-05 09:55:28] [INFO   ] (1 Minute) Setting up the LLM (Qwen3-4B-Instruct-2507)...
+[2026-11-05 09:55:28] [INFO   ] (1 Minute) Loading model at index 1: 'Qwen/Qwen3-4B-Instruct-2507'...
+[2026-11-05 09:55:28] [INFO   ] (1 Minute) Scanning device 'cuda'...
+[2026-11-05 09:55:28] [INFO   ] (1 Minute) Cuda available: True.
+[2026-11-05 09:55:28] [INFO   ] (1 Minute) GPU Amount: 2.
+[2026-11-05 09:55:28] [INFO   ] (1 Minute) Scanning device 'cuda' completed.
+[2026-11-05 09:55:28] [INFO   ] (1 Minute) Loading model into cuda...
+[2026-11-05 09:56:06] [ERROR  ] (2 Minutes) Classifying the synonyms (Qwen3-4B-Instruct-2507) failed after 00:00:37.92.
+[2026-11-05 09:56:06] [ERROR  ] (2 Minutes) Reason: RuntimeError: Engine core initialization failed. See root cause above. Failed core (...).
+[2026-11-05 09:56:06] [ERROR  ] (2 Minutes) Classifying with "Qwen/Qwen3-4B-Instruct-2507" failed.
+Traceback (most recent call last):
+  File "/home/pallaoro/syntype/./src/SynTypeClassification.py", line 650, in main
+    synonyms = classifySynonyms(modelID)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/syntype/./src/SynTypeClassification.py", line 464, in classifySynonyms
+    with Model(configFile, modelIndex) as model:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/model/Model.py", line 190, in __init__
+    self.llm = LLM(
+               ^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/entrypoints/llm.py", line 343, in __init__
+    self.llm_engine = LLMEngine.from_engine_args(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 179, in from_engine_args
+    return cls(
+           ^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 105, in __init__
+    self.engine_core = EngineCoreClient.make_client(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 110, in make_client
+    return SyncMPClient(vllm_config, executor_class, log_stats)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 813, in __init__
+    super().__init__(
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 609, in __init__
+    with launch_core_engines(
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 1240, in launch_core_engines
+    wait_for_engine_startup(
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 1320, in wait_for_engine_startup
+    raise RuntimeError(
+RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {'EngineCore': 1}
+[2026-11-05 09:56:06] [INFO   ] (2 Minutes) Model 3/6: "mistralai/Mistral-7B-Instruct-v0.2".
+[2026-11-05 09:56:06] [INFO   ] (2 Minutes) Classifying the synonyms (Mistral-7B-Instruct-v0.2)...
+[2026-11-05 09:56:06] [INFO   ] (2 Minutes) ==========================================================================================
+[2026-11-05 09:56:06] [INFO   ] (2 Minutes) =                  Classifying the Synonyms (Mistral-7B-Instruct-v0.2)                   =
+[2026-11-05 09:56:06] [INFO   ] (2 Minutes) ==========================================================================================
+[2026-11-05 09:56:06] [INFO   ] (2 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-05 09:56:06] [INFO   ] (2 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-05 09:56:06] [INFO   ] (2 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-05 09:56:06] [INFO   ] (2 Minutes) File(s): "type_Test_NoDef_NoCom_NoStr_NoCOT_FS_*.csv".
+[2026-11-05 09:56:06] [INFO   ] (2 Minutes) Prompt file(s): "single_prompt.md".
+[2026-11-05 09:56:06] [INFO   ] (2 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-05 09:56:06] [INFO   ] (2 Minutes) Setting up the LLM (Mistral-7B-Instruct-v0.2)...
+[2026-11-05 09:56:06] [INFO   ] (2 Minutes) Loading model at index 2: 'mistralai/Mistral-7B-Instruct-v0.2'...
+[2026-11-05 09:56:06] [INFO   ] (2 Minutes) Scanning device 'cuda'...
+[2026-11-05 09:56:06] [INFO   ] (2 Minutes) Cuda available: True.
+[2026-11-05 09:56:06] [INFO   ] (2 Minutes) GPU Amount: 2.
+[2026-11-05 09:56:06] [INFO   ] (2 Minutes) Scanning device 'cuda' completed.
+[2026-11-05 09:56:06] [INFO   ] (2 Minutes) Loading model into cuda...
+[2026-11-05 09:56:37] [ERROR  ] (2 Minutes) Classifying the synonyms (Mistral-7B-Instruct-v0.2) failed after 00:00:31.39.
+[2026-11-05 09:56:37] [ERROR  ] (2 Minutes) Reason: RuntimeError: Engine core initialization failed. See root cause above. Failed core (...).
+[2026-11-05 09:56:37] [ERROR  ] (2 Minutes) Classifying with "mistralai/Mistral-7B-Instruct-v0.2" failed.
+Traceback (most recent call last):
+  File "/home/pallaoro/syntype/./src/SynTypeClassification.py", line 650, in main
+    synonyms = classifySynonyms(modelID)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/syntype/./src/SynTypeClassification.py", line 464, in classifySynonyms
+    with Model(configFile, modelIndex) as model:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/model/Model.py", line 190, in __init__
+    self.llm = LLM(
+               ^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/entrypoints/llm.py", line 343, in __init__
+    self.llm_engine = LLMEngine.from_engine_args(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 179, in from_engine_args
+    return cls(
+           ^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 105, in __init__
+    self.engine_core = EngineCoreClient.make_client(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 110, in make_client
+    return SyncMPClient(vllm_config, executor_class, log_stats)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 813, in __init__
+    super().__init__(
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 609, in __init__
+    with launch_core_engines(
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 1240, in launch_core_engines
+    wait_for_engine_startup(
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 1320, in wait_for_engine_startup
+    raise RuntimeError(
+RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {'EngineCore': 1}
+[2026-11-05 09:56:37] [INFO   ] (2 Minutes) Model 4/6: "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8".
+[2026-11-05 09:56:37] [INFO   ] (2 Minutes) Classifying the synonyms (Qwen3-30B-A3B-Instruct-2507-FP8)...
+[2026-11-05 09:56:37] [INFO   ] (2 Minutes) ==========================================================================================
+[2026-11-05 09:56:37] [INFO   ] (2 Minutes) =               Classifying the Synonyms (Qwen3-30B-A3B-Instruct-2507-FP8)               =
+[2026-11-05 09:56:37] [INFO   ] (2 Minutes) ==========================================================================================
+[2026-11-05 09:56:37] [INFO   ] (2 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-05 09:56:37] [INFO   ] (2 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-05 09:56:38] [INFO   ] (2 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-05 09:56:38] [INFO   ] (2 Minutes) File(s): "type_Test_NoDef_NoCom_NoStr_NoCOT_FS_*.csv".
+[2026-11-05 09:56:38] [INFO   ] (2 Minutes) Prompt file(s): "single_prompt.md".
+[2026-11-05 09:56:38] [INFO   ] (2 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-05 09:56:38] [INFO   ] (2 Minutes) Setting up the LLM (Qwen3-30B-A3B-Instruct-2507-FP8)...
+[2026-11-05 09:56:38] [INFO   ] (2 Minutes) Loading model at index 3: 'Qwen/Qwen3-30B-A3B-Instruct-2507-FP8'...
+[2026-11-05 09:56:38] [INFO   ] (2 Minutes) Scanning device 'cuda'...
+[2026-11-05 09:56:38] [INFO   ] (2 Minutes) Cuda available: True.
+[2026-11-05 09:56:38] [INFO   ] (2 Minutes) GPU Amount: 2.
+[2026-11-05 09:56:38] [INFO   ] (2 Minutes) Scanning device 'cuda' completed.
+[2026-11-05 09:56:38] [INFO   ] (2 Minutes) Loading model into cuda...
+[2026-11-05 09:57:15] [ERROR  ] (3 Minutes) Classifying the synonyms (Qwen3-30B-A3B-Instruct-2507-FP8) failed after 00:00:38.15.
+[2026-11-05 09:57:15] [ERROR  ] (3 Minutes) Reason: RuntimeError: Engine core initialization failed. See root cause above. Failed core (...).
+[2026-11-05 09:57:15] [ERROR  ] (3 Minutes) Classifying with "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8" failed.
+Traceback (most recent call last):
+  File "/home/pallaoro/syntype/./src/SynTypeClassification.py", line 650, in main
+    synonyms = classifySynonyms(modelID)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/syntype/./src/SynTypeClassification.py", line 464, in classifySynonyms
+    with Model(configFile, modelIndex) as model:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/model/Model.py", line 190, in __init__
+    self.llm = LLM(
+               ^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/entrypoints/llm.py", line 343, in __init__
+    self.llm_engine = LLMEngine.from_engine_args(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 179, in from_engine_args
+    return cls(
+           ^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 105, in __init__
+    self.engine_core = EngineCoreClient.make_client(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 110, in make_client
+    return SyncMPClient(vllm_config, executor_class, log_stats)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 813, in __init__
+    super().__init__(
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 609, in __init__
+    with launch_core_engines(
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 1240, in launch_core_engines
+    wait_for_engine_startup(
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 1320, in wait_for_engine_startup
+    raise RuntimeError(
+RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {'EngineCore': 1}
+[2026-11-05 09:57:15] [INFO   ] (3 Minutes) Model 5/6: "google/medgemma-27b-text-it".
+[2026-11-05 09:57:15] [INFO   ] (3 Minutes) Classifying the synonyms (medgemma-27b-text-it)...
+[2026-11-05 09:57:15] [INFO   ] (3 Minutes) ==========================================================================================
+[2026-11-05 09:57:15] [INFO   ] (3 Minutes) =                    Classifying the Synonyms (medgemma-27b-text-it)                     =
+[2026-11-05 09:57:15] [INFO   ] (3 Minutes) ==========================================================================================
+[2026-11-05 09:57:15] [INFO   ] (3 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-05 09:57:15] [INFO   ] (3 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-05 09:57:16] [INFO   ] (3 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-05 09:57:16] [INFO   ] (3 Minutes) File(s): "type_Test_NoDef_NoCom_NoStr_NoCOT_FS_*.csv".
+[2026-11-05 09:57:16] [INFO   ] (3 Minutes) Prompt file(s): "single_prompt.md".
+[2026-11-05 09:57:16] [INFO   ] (3 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-05 09:57:16] [INFO   ] (3 Minutes) Setting up the LLM (medgemma-27b-text-it)...
+[2026-11-05 09:57:16] [INFO   ] (3 Minutes) Loading model at index 4: 'google/medgemma-27b-text-it'...
+[2026-11-05 09:57:16] [INFO   ] (3 Minutes) Scanning device 'cuda'...
+[2026-11-05 09:57:16] [INFO   ] (3 Minutes) Cuda available: True.
+[2026-11-05 09:57:16] [INFO   ] (3 Minutes) GPU Amount: 2.
+[2026-11-05 09:57:16] [INFO   ] (3 Minutes) Scanning device 'cuda' completed.
+[2026-11-05 09:57:16] [INFO   ] (3 Minutes) Loading model into cuda...
+[2026-11-05 09:57:45] [ERROR  ] (3 Minutes) Classifying the synonyms (medgemma-27b-text-it) failed after 00:00:29.98.
+[2026-11-05 09:57:45] [ERROR  ] (3 Minutes) Reason: RuntimeError: Engine core initialization failed. See root cause above. Failed core (...).
+[2026-11-05 09:57:45] [ERROR  ] (3 Minutes) Classifying with "google/medgemma-27b-text-it" failed.
+Traceback (most recent call last):
+  File "/home/pallaoro/syntype/./src/SynTypeClassification.py", line 650, in main
+    synonyms = classifySynonyms(modelID)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/syntype/./src/SynTypeClassification.py", line 464, in classifySynonyms
+    with Model(configFile, modelIndex) as model:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/model/Model.py", line 190, in __init__
+    self.llm = LLM(
+               ^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/entrypoints/llm.py", line 343, in __init__
+    self.llm_engine = LLMEngine.from_engine_args(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 179, in from_engine_args
+    return cls(
+           ^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 105, in __init__
+    self.engine_core = EngineCoreClient.make_client(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 110, in make_client
+    return SyncMPClient(vllm_config, executor_class, log_stats)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 813, in __init__
+    super().__init__(
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 609, in __init__
+    with launch_core_engines(
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 1240, in launch_core_engines
+    wait_for_engine_startup(
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 1320, in wait_for_engine_startup
+    raise RuntimeError(
+RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+[2026-11-05 09:57:45] [INFO   ] (3 Minutes) Model 6/6: "mistralai/Mistral-Small-3.1-24B-Instruct-2503".
+[2026-11-05 09:57:45] [INFO   ] (3 Minutes) Classifying the synonyms (Mistral-Small-3.1-24B-Instruct-2503)...
+[2026-11-05 09:57:45] [INFO   ] (3 Minutes) ==========================================================================================
+[2026-11-05 09:57:45] [INFO   ] (3 Minutes) =             Classifying the Synonyms (Mistral-Small-3.1-24B-Instruct-2503)             =
+[2026-11-05 09:57:45] [INFO   ] (3 Minutes) ==========================================================================================
+[2026-11-05 09:57:45] [INFO   ] (3 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-05 09:57:45] [INFO   ] (3 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-05 09:57:46] [INFO   ] (3 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-05 09:57:46] [INFO   ] (3 Minutes) File(s): "type_Test_NoDef_NoCom_NoStr_NoCOT_FS_*.csv".
+[2026-11-05 09:57:46] [INFO   ] (3 Minutes) Prompt file(s): "single_prompt.md".
+[2026-11-05 09:57:46] [INFO   ] (3 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-05 09:57:46] [INFO   ] (3 Minutes) Setting up the LLM (Mistral-Small-3.1-24B-Instruct-2503)...
+[2026-11-05 09:57:46] [INFO   ] (3 Minutes) Loading model at index 5: 'mistralai/Mistral-Small-3.1-24B-Instruct-2503'...
+[2026-11-05 09:57:46] [INFO   ] (3 Minutes) Scanning device 'cuda'...
+[2026-11-05 09:57:46] [INFO   ] (3 Minutes) Cuda available: True.
+[2026-11-05 09:57:46] [INFO   ] (3 Minutes) GPU Amount: 2.
+[2026-11-05 09:57:46] [INFO   ] (3 Minutes) Scanning device 'cuda' completed.
+[2026-11-05 09:57:46] [INFO   ] (3 Minutes) Loading model into cuda...
+[2026-11-05 09:57:51] [ERROR  ] (3 Minutes) Classifying the synonyms (Mistral-Small-3.1-24B-Instruct-2503) failed after 00:00:05.13.
+[2026-11-05 09:57:51] [ERROR  ] (3 Minutes) Reason: RuntimeError: Engine core initialization failed. See root cause above. Failed core (...).
+[2026-11-05 09:57:51] [ERROR  ] (3 Minutes) Classifying with "mistralai/Mistral-Small-3.1-24B-Instruct-2503" failed.
+Traceback (most recent call last):
+  File "/home/pallaoro/syntype/./src/SynTypeClassification.py", line 650, in main
+    synonyms = classifySynonyms(modelID)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/syntype/./src/SynTypeClassification.py", line 464, in classifySynonyms
+    with Model(configFile, modelIndex) as model:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/model/Model.py", line 190, in __init__
+    self.llm = LLM(
+               ^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/entrypoints/llm.py", line 343, in __init__
+    self.llm_engine = LLMEngine.from_engine_args(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 179, in from_engine_args
+    return cls(
+           ^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 105, in __init__
+    self.engine_core = EngineCoreClient.make_client(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 110, in make_client
+    return SyncMPClient(vllm_config, executor_class, log_stats)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 813, in __init__
+    super().__init__(
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 609, in __init__
+    with launch_core_engines(
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 1240, in launch_core_engines
+    wait_for_engine_startup(
+  File "/home/pallaoro/user/install/envs/vllm/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 1320, in wait_for_engine_startup
+    raise RuntimeError(
+RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {'EngineCore': 1}
+[2026-11-05 09:57:51] [ERROR  ] (3 Minutes) 6 of 6 model(s) failed: "google/medgemma-4b-it", "Qwen/Qwen3-4B-Instruct-2507", "mistralai/Mistral-7B-Instruct-v0.2", "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8", "google/medgemma-27b-text-it", "mistralai/Mistral-Small-3.1-24B-Instruct-2503".
