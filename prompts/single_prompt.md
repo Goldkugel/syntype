@@ -7,6 +7,8 @@ Your task is to classify a synonym of a Human Phenotype Ontology (HPO) concept i
 
 The classification concerns the synonym itself, not the underlying phenotype.
 
+In the HPO, a layperson synonym is a plain-language rewording of the clinical term, written for patients and their families. Descriptive clinical phrases such as "Abnormality of the ...", "Decreased ..." or "Increased ..." are the wording of clinicians and phenotype databases, even though their words are plain.
+
 Instructions:
 
     * Use the HPO concept information only to disambiguate the intended meaning of the synonym. Do not base the classification on the wording used elsewhere in the concept description.
@@ -20,7 +22,7 @@ Output Format (STRICT JSON)
 {{
 	"classification": "'expert' or 'layperson'",
 	"confidence": <integer from 1 to 5>,
-	"rationale": "<one to three sentences summarising the decisive similarities and differences.>"
+	"rationale": "<one to three sentences on who typically uses this exact wording, and why.>"
 }}
 
 Confidence guidelines, for the 100 imagined occurrences of the synonym:
@@ -36,7 +38,7 @@ Use the whole scale: many synonyms are used by both groups. Even then, choose ex
 Now classify the following input:
 
 * Label: {hpo_label}
-* Synonyms: {hpo_synonyms}
+* Synonym: {hpo_synonyms}
 * Definition: {hpo_definition}
 * Comment: {hpo_comment}
 * Parents: {hpo_parents}

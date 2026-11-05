@@ -12,4 +12,6 @@ Discuss:
 * Base your assessment on contemporary English usage rather than on how technical or plain the wording appears.
 * If both healthcare professionals and patients commonly use the synonym, determine which group would account for the majority of its real-world use.
 
-* Synonyms: {hpo_synonyms}
+In the HPO, a layperson synonym is a plain-language rewording of the clinical term, written for patients and their families. Descriptive clinical phrases such as "Abnormality of the ...", "Decreased ..." or "Increased ..." are the wording of clinicians and phenotype databases, even though their words are plain.
+
+* Synonym: {hpo_synonyms}

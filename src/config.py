@@ -335,6 +335,18 @@ fewShotExamples = [
         "rationale" : "The synonym explains the clinical term 'neurogenic bladder' in everyday words ('lack of bladder control', 'nervous system injury'), as patient information does. Clinicians use the term itself."
     },
     {
+        "id"        : "HP:0000056",
+        "label"     : "Abnormal clitoris morphology",
+        "definition": "Any structural abnormality of the clitoris.",
+        "comment"   : "",
+        "parents"   : ["Abnormal female external genitalia morphology"],
+        "children"  : ["Bifid clitoris", "Duplicated clitoris", "Abnormal size of the clitoris", "Aplasia/Hypoplasia of the clitoris"],
+        "synonym"   : "Abnormality of the clitoris",
+        "type"      : expertSynonymType,
+        "confidence": "4",
+        "rationale" : "'Abnormality of the ...' is the descriptive phrasing of clinical documentation and phenotype databases, even though its words are plain. A patient would describe what is different, e.g. the size or shape."
+    },
+    {
         "id"        : "HP:0000028",
         "label"     : "Cryptorchidism",
         "definition": "Testis in inguinal canal. That is, absence of one or both testes from the scrotum owing to failure of the testis or testes to descend through the inguinal canal to the scrotum.",

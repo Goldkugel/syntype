@@ -17,7 +17,7 @@ Output Format (STRICT JSON)
 {{
 	"classification": "'expert' or 'layperson'",
 	"confidence": <integer from 1 to 5>,
-	"rationale": "<one to three sentences summarising the decisive similarities and differences.>"
+	"rationale": "<one to three sentences on who typically uses this exact wording, and why.>"
 }}
 
 Confidence guidelines, for the 100 imagined occurrences of the synonym:

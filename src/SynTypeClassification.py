@@ -87,7 +87,7 @@ def formatInput(label : str = "", definition : str = "", comment : str = "", par
     values = promptValues(label, definition, comment, parents, children, synonym)
 
     return f"* Label: {values['hpo_label']}\n" \
-        f"* Synonyms: {values['hpo_synonyms']}\n" \
+        f"* Synonym: {values['hpo_synonyms']}\n" \
         f"* Definition: {values['hpo_definition']}\n" \
         f"* Comment: {values['hpo_comment']}\n" \
         f"* Parents: {values['hpo_parents']}\n" \
