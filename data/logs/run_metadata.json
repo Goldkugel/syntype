@@ -1,0 +1,584 @@
+[
+  {
+    "run_id": "1f741847e4664ff4883fd087490c226c",
+    "started": "2026-11-06T09:45:11+00:00",
+    "updated": "2026-11-06T09:47:25+00:00",
+    "host": "gpu",
+    "slurm_job_id": "11973",
+    "python": "3.12.13",
+    "packages": {
+      "model": "3.1.0",
+      "logger": "1.7.0",
+      "vllm": "0.29.0",
+      "torch": "2.13.0",
+      "transformers": "5.16.1"
+    },
+    "model": {
+      "id": "google/medgemma-4b-it",
+      "index": 0,
+      "revision": "290cda5eeccbee130f987c4ad74a59ae6f196408"
+    },
+    "gpus": {
+      "count": 2,
+      "names": [
+        "NVIDIA A40",
+        "NVIDIA A40"
+      ],
+      "cuda": "13.0"
+    },
+    "prompt_files": {
+      "single_prompt.md": "098d2feeddc5905866da3a7e69805e4989110bc039b9c414a63fb277a92700e8",
+      "multiple_prompt1.md": "336e8bab5e7650f96c105ebab7d19998d2938c4e29b8df7273091555e11e6898",
+      "multiple_prompt2.md": "999693b4c0715509ff5f73cfa7876f20668da0f96ed8a92c8790af67cd791580",
+      "multiple_prompt3.md": "156065102a9113bb3a198f2981bae4de3b80e9627edc18b1d8ca7365b333cf4c"
+    },
+    "files": {
+      "checkpoint": "./data/tmp/syntype_medgemma-4b-it_Test_NoDef_NoCom_NoStr_NoCOT_FS.json",
+      "prompt_log": "./data/logs/prompts_medgemma-4b-it_Test_NoDef_NoCom_NoStr_NoCOT_FS.log"
+    },
+    "config": {
+      "model_id": [
+        "google/medgemma-4b-it",
+        "Qwen/Qwen3-4B-Instruct-2507",
+        "mistralai/Mistral-7B-Instruct-v0.2",
+        "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8",
+        "google/medgemma-27b-text-it",
+        "mistralai/Mistral-Small-3.1-24B-Instruct-2503"
+      ],
+      "revision": {},
+      "seed": 2898231092,
+      "temperature": 0.01,
+      "top_p": 0.95,
+      "max_model_len": 8192,
+      "max_num_batched_tokens": 16384,
+      "enforce_eager": false,
+      "gpu_memory_utilization": 0.9,
+      "dtype": "auto",
+      "quantization": null,
+      "enable_prefix_caching": true,
+      "enable_thinking": null,
+      "reasoning_start_tag": "<think>",
+      "reasoning_end_tag": "</think>",
+      "max_tokens": 2048,
+      "prompt_log_folder": "./data/logs/",
+      "prompt_log_file": "prompts.log",
+      "device": "cuda",
+      "metadata_folder": "./data/logs/",
+      "metadata_file": "run_metadata.json",
+      "prompt_folder": "./prompts/",
+      "prompt_files": [
+        "single_prompt.md",
+        "multiple_prompt1.md",
+        "multiple_prompt2.md",
+        "multiple_prompt3.md"
+      ],
+      "prompt_tmp_file": "syntype.json",
+      "prompt_tmp_folder": "./data/tmp/",
+      "chunk_size": 500,
+      "expert_parallel_models": [
+        "Qwen3-30B"
+      ]
+    },
+    "generations": [
+      {
+        "started": "2026-11-06T09:47:04+00:00",
+        "finished": "2026-11-06T09:47:25+00:00",
+        "seconds": 21.4,
+        "histories": 1000,
+        "answers": 1000,
+        "stored": 0,
+        "shared": 0,
+        "skipped": [],
+        "truncated": [],
+        "prompt_tokens": 992066,
+        "generated_tokens": 79185,
+        "reasoning_tokens": 0
+      }
+    ]
+  },
+  {
+    "run_id": "729ef99406034d6dabde8848d6c40012",
+    "started": "2026-11-06T09:47:30+00:00",
+    "updated": "2026-11-06T09:49:40+00:00",
+    "host": "gpu",
+    "slurm_job_id": "11973",
+    "python": "3.12.13",
+    "packages": {
+      "model": "3.1.0",
+      "logger": "1.7.0",
+      "vllm": "0.29.0",
+      "torch": "2.13.0",
+      "transformers": "5.16.1"
+    },
+    "model": {
+      "id": "Qwen/Qwen3-4B-Instruct-2507",
+      "index": 1,
+      "revision": "cdbee75f17c01a7cc42f958dc650907174af0554"
+    },
+    "gpus": {
+      "count": 2,
+      "names": [
+        "NVIDIA A40",
+        "NVIDIA A40"
+      ],
+      "cuda": "13.0"
+    },
+    "prompt_files": {
+      "single_prompt.md": "098d2feeddc5905866da3a7e69805e4989110bc039b9c414a63fb277a92700e8",
+      "multiple_prompt1.md": "336e8bab5e7650f96c105ebab7d19998d2938c4e29b8df7273091555e11e6898",
+      "multiple_prompt2.md": "999693b4c0715509ff5f73cfa7876f20668da0f96ed8a92c8790af67cd791580",
+      "multiple_prompt3.md": "156065102a9113bb3a198f2981bae4de3b80e9627edc18b1d8ca7365b333cf4c"
+    },
+    "files": {
+      "checkpoint": "./data/tmp/syntype_Qwen3-4B-Instruct-2507_Test_NoDef_NoCom_NoStr_NoCOT_FS.json",
+      "prompt_log": "./data/logs/prompts_Qwen3-4B-Instruct-2507_Test_NoDef_NoCom_NoStr_NoCOT_FS.log"
+    },
+    "config": {
+      "model_id": [
+        "google/medgemma-4b-it",
+        "Qwen/Qwen3-4B-Instruct-2507",
+        "mistralai/Mistral-7B-Instruct-v0.2",
+        "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8",
+        "google/medgemma-27b-text-it",
+        "mistralai/Mistral-Small-3.1-24B-Instruct-2503"
+      ],
+      "revision": {},
+      "seed": 2898231092,
+      "temperature": 0.01,
+      "top_p": 0.95,
+      "max_model_len": 8192,
+      "max_num_batched_tokens": 16384,
+      "enforce_eager": false,
+      "gpu_memory_utilization": 0.9,
+      "dtype": "auto",
+      "quantization": null,
+      "enable_prefix_caching": true,
+      "enable_thinking": null,
+      "reasoning_start_tag": "<think>",
+      "reasoning_end_tag": "</think>",
+      "max_tokens": 2048,
+      "prompt_log_folder": "./data/logs/",
+      "prompt_log_file": "prompts.log",
+      "device": "cuda",
+      "metadata_folder": "./data/logs/",
+      "metadata_file": "run_metadata.json",
+      "prompt_folder": "./prompts/",
+      "prompt_files": [
+        "single_prompt.md",
+        "multiple_prompt1.md",
+        "multiple_prompt2.md",
+        "multiple_prompt3.md"
+      ],
+      "prompt_tmp_file": "syntype.json",
+      "prompt_tmp_folder": "./data/tmp/",
+      "chunk_size": 500,
+      "expert_parallel_models": [
+        "Qwen3-30B"
+      ]
+    },
+    "generations": [
+      {
+        "started": "2026-11-06T09:49:11+00:00",
+        "finished": "2026-11-06T09:49:40+00:00",
+        "seconds": 28.7,
+        "histories": 1000,
+        "answers": 1000,
+        "stored": 0,
+        "shared": 0,
+        "skipped": [],
+        "truncated": [],
+        "prompt_tokens": 954774,
+        "generated_tokens": 102559,
+        "reasoning_tokens": 0
+      }
+    ]
+  },
+  {
+    "run_id": "2e2475b43a30432da097ec7ce2b0b896",
+    "started": "2026-11-06T09:49:47+00:00",
+    "updated": "2026-11-06T09:52:07+00:00",
+    "host": "gpu",
+    "slurm_job_id": "11973",
+    "python": "3.12.13",
+    "packages": {
+      "model": "3.1.0",
+      "logger": "1.7.0",
+      "vllm": "0.29.0",
+      "torch": "2.13.0",
+      "transformers": "5.16.1"
+    },
+    "model": {
+      "id": "mistralai/Mistral-7B-Instruct-v0.2",
+      "index": 2,
+      "revision": "63a8b081895390a26e140280378bc85ec8bce07a"
+    },
+    "gpus": {
+      "count": 2,
+      "names": [
+        "NVIDIA A40",
+        "NVIDIA A40"
+      ],
+      "cuda": "13.0"
+    },
+    "prompt_files": {
+      "single_prompt.md": "098d2feeddc5905866da3a7e69805e4989110bc039b9c414a63fb277a92700e8",
+      "multiple_prompt1.md": "336e8bab5e7650f96c105ebab7d19998d2938c4e29b8df7273091555e11e6898",
+      "multiple_prompt2.md": "999693b4c0715509ff5f73cfa7876f20668da0f96ed8a92c8790af67cd791580",
+      "multiple_prompt3.md": "156065102a9113bb3a198f2981bae4de3b80e9627edc18b1d8ca7365b333cf4c"
+    },
+    "files": {
+      "checkpoint": "./data/tmp/syntype_Mistral-7B-Instruct-v0.2_Test_NoDef_NoCom_NoStr_NoCOT_FS.json",
+      "prompt_log": "./data/logs/prompts_Mistral-7B-Instruct-v0.2_Test_NoDef_NoCom_NoStr_NoCOT_FS.log"
+    },
+    "config": {
+      "model_id": [
+        "google/medgemma-4b-it",
+        "Qwen/Qwen3-4B-Instruct-2507",
+        "mistralai/Mistral-7B-Instruct-v0.2",
+        "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8",
+        "google/medgemma-27b-text-it",
+        "mistralai/Mistral-Small-3.1-24B-Instruct-2503"
+      ],
+      "revision": {},
+      "seed": 2898231092,
+      "temperature": 0.01,
+      "top_p": 0.95,
+      "max_model_len": 8192,
+      "max_num_batched_tokens": 16384,
+      "enforce_eager": false,
+      "gpu_memory_utilization": 0.9,
+      "dtype": "auto",
+      "quantization": null,
+      "enable_prefix_caching": true,
+      "enable_thinking": null,
+      "reasoning_start_tag": "<think>",
+      "reasoning_end_tag": "</think>",
+      "max_tokens": 2048,
+      "prompt_log_folder": "./data/logs/",
+      "prompt_log_file": "prompts.log",
+      "device": "cuda",
+      "metadata_folder": "./data/logs/",
+      "metadata_file": "run_metadata.json",
+      "prompt_folder": "./prompts/",
+      "prompt_files": [
+        "single_prompt.md",
+        "multiple_prompt1.md",
+        "multiple_prompt2.md",
+        "multiple_prompt3.md"
+      ],
+      "prompt_tmp_file": "syntype.json",
+      "prompt_tmp_folder": "./data/tmp/",
+      "chunk_size": 500,
+      "expert_parallel_models": [
+        "Qwen3-30B"
+      ]
+    },
+    "generations": [
+      {
+        "started": "2026-11-06T09:51:35+00:00",
+        "finished": "2026-11-06T09:52:07+00:00",
+        "seconds": 32.5,
+        "histories": 1000,
+        "answers": 1000,
+        "stored": 0,
+        "shared": 0,
+        "skipped": [],
+        "truncated": [],
+        "prompt_tokens": 1154228,
+        "generated_tokens": 92426,
+        "reasoning_tokens": 0
+      }
+    ]
+  },
+  {
+    "run_id": "6875874db14a49fda5df8ca33e2946f5",
+    "started": "2026-11-06T09:52:14+00:00",
+    "updated": "2026-11-06T09:55:11+00:00",
+    "host": "gpu",
+    "slurm_job_id": "11973",
+    "python": "3.12.13",
+    "packages": {
+      "model": "3.1.0",
+      "logger": "1.7.0",
+      "vllm": "0.29.0",
+      "torch": "2.13.0",
+      "transformers": "5.16.1"
+    },
+    "model": {
+      "id": "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8",
+      "index": 3,
+      "revision": "5a5a776300a41aaa681dd7ff0106608ef2bc90db"
+    },
+    "gpus": {
+      "count": 2,
+      "names": [
+        "NVIDIA A40",
+        "NVIDIA A40"
+      ],
+      "cuda": "13.0"
+    },
+    "prompt_files": {
+      "single_prompt.md": "098d2feeddc5905866da3a7e69805e4989110bc039b9c414a63fb277a92700e8",
+      "multiple_prompt1.md": "336e8bab5e7650f96c105ebab7d19998d2938c4e29b8df7273091555e11e6898",
+      "multiple_prompt2.md": "999693b4c0715509ff5f73cfa7876f20668da0f96ed8a92c8790af67cd791580",
+      "multiple_prompt3.md": "156065102a9113bb3a198f2981bae4de3b80e9627edc18b1d8ca7365b333cf4c"
+    },
+    "files": {
+      "checkpoint": "./data/tmp/syntype_Qwen3-30B-A3B-Instruct-2507-FP8_Test_NoDef_NoCom_NoStr_NoCOT_FS.json",
+      "prompt_log": "./data/logs/prompts_Qwen3-30B-A3B-Instruct-2507-FP8_Test_NoDef_NoCom_NoStr_NoCOT_FS.log"
+    },
+    "config": {
+      "model_id": [
+        "google/medgemma-4b-it",
+        "Qwen/Qwen3-4B-Instruct-2507",
+        "mistralai/Mistral-7B-Instruct-v0.2",
+        "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8",
+        "google/medgemma-27b-text-it",
+        "mistralai/Mistral-Small-3.1-24B-Instruct-2503"
+      ],
+      "revision": {},
+      "seed": 2898231092,
+      "temperature": 0.01,
+      "top_p": 0.95,
+      "max_model_len": 8192,
+      "max_num_batched_tokens": 16384,
+      "enforce_eager": false,
+      "gpu_memory_utilization": 0.9,
+      "dtype": "auto",
+      "quantization": null,
+      "enable_prefix_caching": true,
+      "enable_thinking": null,
+      "reasoning_start_tag": "<think>",
+      "reasoning_end_tag": "</think>",
+      "max_tokens": 2048,
+      "prompt_log_folder": "./data/logs/",
+      "prompt_log_file": "prompts.log",
+      "device": "cuda",
+      "metadata_folder": "./data/logs/",
+      "metadata_file": "run_metadata.json",
+      "prompt_folder": "./prompts/",
+      "prompt_files": [
+        "single_prompt.md",
+        "multiple_prompt1.md",
+        "multiple_prompt2.md",
+        "multiple_prompt3.md"
+      ],
+      "prompt_tmp_file": "syntype.json",
+      "prompt_tmp_folder": "./data/tmp/",
+      "chunk_size": 500,
+      "expert_parallel_models": [
+        "Qwen3-30B"
+      ]
+    },
+    "generations": [
+      {
+        "started": "2026-11-06T09:54:39+00:00",
+        "finished": "2026-11-06T09:55:11+00:00",
+        "seconds": 31.6,
+        "histories": 1000,
+        "answers": 1000,
+        "stored": 0,
+        "shared": 0,
+        "skipped": [],
+        "truncated": [],
+        "prompt_tokens": 954774,
+        "generated_tokens": 92377,
+        "reasoning_tokens": 0
+      }
+    ]
+  },
+  {
+    "run_id": "6be0ac8d610c48d88c474e6e88e55d48",
+    "started": "2026-11-06T09:55:18+00:00",
+    "updated": "2026-11-06T09:59:10+00:00",
+    "host": "gpu",
+    "slurm_job_id": "11973",
+    "python": "3.12.13",
+    "packages": {
+      "model": "3.1.0",
+      "logger": "1.7.0",
+      "vllm": "0.29.0",
+      "torch": "2.13.0",
+      "transformers": "5.16.1"
+    },
+    "model": {
+      "id": "google/medgemma-27b-text-it",
+      "index": 4,
+      "revision": "5b667cf2ddcf064085bc90952edb35a0edbfb79c"
+    },
+    "gpus": {
+      "count": 2,
+      "names": [
+        "NVIDIA A40",
+        "NVIDIA A40"
+      ],
+      "cuda": "13.0"
+    },
+    "prompt_files": {
+      "single_prompt.md": "098d2feeddc5905866da3a7e69805e4989110bc039b9c414a63fb277a92700e8",
+      "multiple_prompt1.md": "336e8bab5e7650f96c105ebab7d19998d2938c4e29b8df7273091555e11e6898",
+      "multiple_prompt2.md": "999693b4c0715509ff5f73cfa7876f20668da0f96ed8a92c8790af67cd791580",
+      "multiple_prompt3.md": "156065102a9113bb3a198f2981bae4de3b80e9627edc18b1d8ca7365b333cf4c"
+    },
+    "files": {
+      "checkpoint": "./data/tmp/syntype_medgemma-27b-text-it_Test_NoDef_NoCom_NoStr_NoCOT_FS.json",
+      "prompt_log": "./data/logs/prompts_medgemma-27b-text-it_Test_NoDef_NoCom_NoStr_NoCOT_FS.log"
+    },
+    "config": {
+      "model_id": [
+        "google/medgemma-4b-it",
+        "Qwen/Qwen3-4B-Instruct-2507",
+        "mistralai/Mistral-7B-Instruct-v0.2",
+        "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8",
+        "google/medgemma-27b-text-it",
+        "mistralai/Mistral-Small-3.1-24B-Instruct-2503"
+      ],
+      "revision": {},
+      "seed": 2898231092,
+      "temperature": 0.01,
+      "top_p": 0.95,
+      "max_model_len": 8192,
+      "max_num_batched_tokens": 16384,
+      "enforce_eager": false,
+      "gpu_memory_utilization": 0.9,
+      "dtype": "auto",
+      "quantization": null,
+      "enable_prefix_caching": true,
+      "enable_thinking": null,
+      "reasoning_start_tag": "<think>",
+      "reasoning_end_tag": "</think>",
+      "max_tokens": 2048,
+      "prompt_log_folder": "./data/logs/",
+      "prompt_log_file": "prompts.log",
+      "device": "cuda",
+      "metadata_folder": "./data/logs/",
+      "metadata_file": "run_metadata.json",
+      "prompt_folder": "./prompts/",
+      "prompt_files": [
+        "single_prompt.md",
+        "multiple_prompt1.md",
+        "multiple_prompt2.md",
+        "multiple_prompt3.md"
+      ],
+      "prompt_tmp_file": "syntype.json",
+      "prompt_tmp_folder": "./data/tmp/",
+      "chunk_size": 500,
+      "expert_parallel_models": [
+        "Qwen3-30B"
+      ]
+    },
+    "generations": [
+      {
+        "started": "2026-11-06T09:57:46+00:00",
+        "finished": "2026-11-06T09:59:10+00:00",
+        "seconds": 84.3,
+        "histories": 1000,
+        "answers": 1000,
+        "stored": 0,
+        "shared": 0,
+        "skipped": [],
+        "truncated": [],
+        "prompt_tokens": 991066,
+        "generated_tokens": 81496,
+        "reasoning_tokens": 0
+      }
+    ]
+  },
+  {
+    "run_id": "f17e6f77e14b48c5ad0aedcd5fc0c5f8",
+    "started": "2026-11-06T09:59:17+00:00",
+    "updated": "2026-11-06T10:02:08+00:00",
+    "host": "gpu",
+    "slurm_job_id": "11973",
+    "python": "3.12.13",
+    "packages": {
+      "model": "3.1.0",
+      "logger": "1.7.0",
+      "vllm": "0.29.0",
+      "torch": "2.13.0",
+      "transformers": "5.16.1"
+    },
+    "model": {
+      "id": "mistralai/Mistral-Small-3.1-24B-Instruct-2503",
+      "index": 5,
+      "revision": "68faf511d618ef198fef186659617cfd2eb8e33a"
+    },
+    "gpus": {
+      "count": 2,
+      "names": [
+        "NVIDIA A40",
+        "NVIDIA A40"
+      ],
+      "cuda": "13.0"
+    },
+    "prompt_files": {
+      "single_prompt.md": "098d2feeddc5905866da3a7e69805e4989110bc039b9c414a63fb277a92700e8",
+      "multiple_prompt1.md": "336e8bab5e7650f96c105ebab7d19998d2938c4e29b8df7273091555e11e6898",
+      "multiple_prompt2.md": "999693b4c0715509ff5f73cfa7876f20668da0f96ed8a92c8790af67cd791580",
+      "multiple_prompt3.md": "156065102a9113bb3a198f2981bae4de3b80e9627edc18b1d8ca7365b333cf4c"
+    },
+    "files": {
+      "checkpoint": "./data/tmp/syntype_Mistral-Small-3.1-24B-Instruct-2503_Test_NoDef_NoCom_NoStr_NoCOT_FS.json",
+      "prompt_log": "./data/logs/prompts_Mistral-Small-3.1-24B-Instruct-2503_Test_NoDef_NoCom_NoStr_NoCOT_FS.log"
+    },
+    "config": {
+      "model_id": [
+        "google/medgemma-4b-it",
+        "Qwen/Qwen3-4B-Instruct-2507",
+        "mistralai/Mistral-7B-Instruct-v0.2",
+        "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8",
+        "google/medgemma-27b-text-it",
+        "mistralai/Mistral-Small-3.1-24B-Instruct-2503"
+      ],
+      "revision": {},
+      "seed": 2898231092,
+      "temperature": 0.01,
+      "top_p": 0.95,
+      "max_model_len": 8192,
+      "max_num_batched_tokens": 16384,
+      "enforce_eager": false,
+      "gpu_memory_utilization": 0.9,
+      "dtype": "auto",
+      "quantization": null,
+      "enable_prefix_caching": true,
+      "enable_thinking": null,
+      "reasoning_start_tag": "<think>",
+      "reasoning_end_tag": "</think>",
+      "max_tokens": 2048,
+      "prompt_log_folder": "./data/logs/",
+      "prompt_log_file": "prompts.log",
+      "device": "cuda",
+      "metadata_folder": "./data/logs/",
+      "metadata_file": "run_metadata.json",
+      "prompt_folder": "./prompts/",
+      "prompt_files": [
+        "single_prompt.md",
+        "multiple_prompt1.md",
+        "multiple_prompt2.md",
+        "multiple_prompt3.md"
+      ],
+      "prompt_tmp_file": "syntype.json",
+      "prompt_tmp_folder": "./data/tmp/",
+      "chunk_size": 500,
+      "expert_parallel_models": [
+        "Qwen3-30B"
+      ]
+    },
+    "generations": [
+      {
+        "started": "2026-11-06T10:01:24+00:00",
+        "finished": "2026-11-06T10:02:08+00:00",
+        "seconds": 43.7,
+        "histories": 1000,
+        "answers": 1000,
+        "stored": 0,
+        "shared": 0,
+        "skipped": [],
+        "truncated": [],
+        "prompt_tokens": 967103,
+        "generated_tokens": 76036,
+        "reasoning_tokens": 0
+      }
+    ]
+  }
+]
