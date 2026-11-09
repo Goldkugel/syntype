@@ -15,6 +15,10 @@ dependencies = [
     "adapter @ git+https://github.com/Goldkugel/adapter.git@v1.5.2",
     "embedder @ git+https://github.com/Goldkugel/embedder.git@v2.3.1",
     "model @ git+https://github.com/Goldkugel/model.git@v3.1.0",
+    # Below 5: transformers 5 removed tokenizer attributes vLLM reads when it
+    # loads a model ("Qwen2Tokenizer has no attribute
+    # all_special_tokens_extended").
+    "transformers>=4.45,<5",
     # config.py reads and validates the configuration file itself.
     "pydantic>=2",
     "pyyaml",
