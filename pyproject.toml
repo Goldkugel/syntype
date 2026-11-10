@@ -15,10 +15,12 @@ dependencies = [
     "adapter @ git+https://github.com/Goldkugel/adapter.git@v1.5.2",
     "embedder @ git+https://github.com/Goldkugel/embedder.git@v2.3.1",
     "model @ git+https://github.com/Goldkugel/model.git@v3.2.1",
-    # Below 5: transformers 5 removed tokenizer attributes vLLM reads when it
-    # loads a model ("Qwen2Tokenizer has no attribute
-    # all_special_tokens_extended").
-    "transformers>=4.45,<5",
+    # 5.5.1 or newer: vLLM 0.19 excludes 5.0 to 5.5.0, which lack tokenizer
+    # attributes vLLM reads ("Qwen2Tokenizer has no attribute
+    # all_special_tokens_extended"), and the tokenizer of Mistral's models
+    # (mistral_common 1.10 or newer) needs huggingface_hub 1.0 or newer,
+    # which transformers 4 does not allow.
+    "transformers>=5.5.1",
     # config.py reads and validates the configuration file itself.
     "pydantic>=2",
     "pyyaml",
