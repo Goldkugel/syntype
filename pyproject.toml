@@ -14,7 +14,7 @@ dependencies = [
     "logger @ git+https://github.com/Goldkugel/logger.git@v1.7.0",
     "adapter @ git+https://github.com/Goldkugel/adapter.git@v1.5.2",
     "embedder @ git+https://github.com/Goldkugel/embedder.git@v2.3.1",
-    "model @ git+https://github.com/Goldkugel/model.git@v3.1.0",
+    "model @ git+https://github.com/Goldkugel/model.git@v3.2.1",
     # Below 5: transformers 5 removed tokenizer attributes vLLM reads when it
     # loads a model ("Qwen2Tokenizer has no attribute
     # all_special_tokens_extended").
