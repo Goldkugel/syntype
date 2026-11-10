@@ -1,0 +1,1057 @@
+[2026-11-09 13:54:48] [INFO   ] (0 Minutes) Command: python3 ./src/SynTypeClassification.py 0
+[2026-11-09 13:54:48] [INFO   ] (0 Minutes) The transformed HPO is up to date.
+[2026-11-09 13:54:48] [INFO   ] (0 Minutes) The development and evaluation set are up to date.
+[2026-11-09 13:54:48] [INFO   ] (0 Minutes) Model 1/6: "google/medgemma-4b-it".
+[2026-11-09 13:54:48] [INFO   ] (0 Minutes) Classifying the synonyms (medgemma-4b-it)...
+[2026-11-09 13:55:20] [INFO   ] (0 Minutes) ==========================================================================================
+[2026-11-09 13:55:20] [INFO   ] (0 Minutes) =                       Classifying the Synonyms (medgemma-4b-it)                        =
+[2026-11-09 13:55:20] [INFO   ] (0 Minutes) ==========================================================================================
+[2026-11-09 13:55:20] [INFO   ] (0 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-09 13:55:20] [INFO   ] (0 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-09 13:55:20] [INFO   ] (0 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-09 13:55:20] [INFO   ] (0 Minutes) File(s): "type_Test_NoDef_NoCom_NoStr_NoCOT_FS_*.csv".
+[2026-11-09 13:55:20] [INFO   ] (0 Minutes) Prompt file(s): "single_prompt.md".
+[2026-11-09 13:55:20] [INFO   ] (0 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-09 13:55:20] [INFO   ] (0 Minutes) Setting up the LLM (medgemma-4b-it)...
+[2026-11-09 13:55:20] [INFO   ] (0 Minutes) Loading model at index 0: 'google/medgemma-4b-it'...
+[2026-11-09 13:55:20] [INFO   ] (0 Minutes) Scanning device 'cuda'...
+[2026-11-09 13:55:20] [INFO   ] (0 Minutes) Cuda available: True.
+[2026-11-09 13:55:20] [INFO   ] (0 Minutes) GPU Amount: 2.
+[2026-11-09 13:55:20] [INFO   ] (0 Minutes) Scanning device 'cuda' completed.
+[2026-11-09 13:55:20] [INFO   ] (0 Minutes) Loading model into cuda...
+(MainProcess pid=3460380) INFO 11-09 13:55:20 [startup.py:96] non-default args: {'seed': 2898231092, 'max_model_len': 8192, 'tensor_parallel_size': 2, 'enable_prefix_caching': True, 'gpu_memory_utilization': 0.9, 'max_num_batched_tokens': 16384, 'disable_log_stats': True, 'model': 'google/medgemma-4b-it'}
+(MainProcess pid=3460380) INFO 11-09 13:55:42 [model.py:744] Resolved architecture: Gemma3ForConditionalGeneration
+(MainProcess pid=3460380) INFO 11-09 13:55:42 [model.py:2170] Using max model len 8192
+(MainProcess pid=3460380) WARNING 11-09 13:55:42 [model.py:1116] Model does not support mm_device_do_normalize, forcing mm_device_do_normalize = False.
+(MainProcess pid=3460380) INFO 11-09 13:55:45 [scheduler.py:310] Chunked prefill is enabled with max_num_batched_tokens=16384.
+(MainProcess pid=3460380) INFO 11-09 13:55:46 [kernel.py:480] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native'])
+(MainProcess pid=3460380) WARNING 11-09 13:55:46 [cuda.py:341] Forcing --disable_chunked_mm_input for models with multimodal-bidirectional attention.
+(EngineCore pid=3460477) INFO 11-09 13:56:04 [core.py:139] Initializing a V1 LLM engine (v0.33.0) with config: model='google/medgemma-4b-it', speculative_config=None, tokenizer='google/medgemma-4b-it', skip_tokenizer_init=False, tokenizer_mode=auto, revision=main, tokenizer_revision=main, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=8192, download_dir=None, load_format=auto, tensor_parallel_size=2, pipeline_parallel_size=1, data_parallel_size=1, decode_context_parallel_size=1, dcp_comm_backend=ag_rs, disable_custom_all_reduce=False, quantization=None, quantization_config=None, enforce_eager=False, aux_output_config=AuxOutputConfig(enable_return_routed_experts=False, max_bytes=None), kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, per_request_spec_decode_metrics='none', kv_cache_metrics=False, kv_cache_metrics_sample=0.01, custom_histogram_buckets=None, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False, jit_monitor_mode='warn', jit_monitor_verbose=False), seed=2898231092, served_model_name=google/medgemma-4b-it, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'mode': <CompilationMode.VLLM_COMPILE: 3>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['none'], 'ir_enable_torch_wrap': True, 'splitting_ops': ['vllm::unified_attention_with_output', 'vllm::unified_mla_attention_with_output', 'vllm::mamba_mixer2', 'vllm::mamba_mixer', 'vllm::short_conv', 'vllm::qwen4_exp_ple_short_conv', 'vllm::qwen4_exp_qsa_with_output', 'vllm::qwen4_exp_qsa_prepare_with_output', 'vllm::linear_attention', 'vllm::qwen_gdn_attention_core', 'vllm::qwen_gdn_attention_core_fused_norm_packed', 'vllm::gdn_attention_core_xpu', 'vllm::olmo_hybrid_gdn_full_forward', 'vllm::sparse_attn_indexer', 'vllm::rocm_aiter_sparse_attn_indexer', 'vllm::deepseek_v4_attention', 'vllm::hpc_rope_norm_forward', 'vllm::unified_kv_cache_update', 'vllm::unified_mla_kv_cache_update'], 'compile_mm_encoder': False, 'cudagraph_mm_encoder': False, 'encoder_cudagraph_token_budgets': [], 'encoder_cudagraph_max_vision_items_per_batch': 0, 'encoder_cudagraph_max_frames_per_batch': None, 'cudagraph_decoder_replay': True, 'decoder_replay_cudagraph_capture_sizes': [], 'decoder_replay_trim_threshold': 768, 'compile_sizes': [], 'compile_ranges_endpoints': [16384], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.FULL_AND_PIECEWISE: (2, 1)>, 'cudagraph_num_of_warmups': 1, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192, 200, 208, 216, 224, 232, 240, 248, 256, 272, 288, 304, 320, 336, 352, 368, 384, 400, 416, 432, 448, 464, 480, 496, 512], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'fuse_allreduce_rms': False, 'enable_qk_norm_rope_fusion': False, 'fuse_rope_kvcache_cat_mla': False, 'fuse_act_padding': False, 'fuse_qk_norm_rope_kvcache': False}, 'max_cudagraph_capture_size': 512, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': False}, 'local_cache_dir': None, 'fast_moe_cold_start': False, 'static_all_moe_layers': []}, kernel_config=KernelConfig(ir_op_priority=IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native']), enable_flashinfer_autotune=True, enable_rocm_segmented_attn_autotune=False, enable_cutedsl_warmup=True, enable_jit_warmup=True, monokernel=False, moe_backend='auto', sparse_indexer_topk_backend='auto', linear_backend='auto', linear_backend_per_quant=None)
+(EngineCore pid=3460477) INFO 11-09 13:56:04 [multiproc_executor.py:167] DP group leader: node_rank=0, node_rank_within_dp=0, master_addr=127.0.0.1, mq_connect_ip=141.39.131.12 (local), world_size=2, local_world_size=2
+(Worker pid=3460485) INFO 11-09 13:56:13 [parallel_state.py:1929] world_size=2 rank=0 local_rank=0 distributed_init_method=file:///tmp/vllm_dist_041dd138913040679a24ad982286a4e3 backend=nccl
+(Worker pid=3460486) INFO 11-09 13:56:14 [parallel_state.py:1929] world_size=2 rank=1 local_rank=1 distributed_init_method=file:///tmp/vllm_dist_041dd138913040679a24ad982286a4e3 backend=nccl
+(Worker pid=3460485) INFO 11-09 13:56:19 [pynccl.py:148] vLLM is using nccl==2.30.7
+(Worker pid=3460485) WARNING 11-09 13:56:21 [symm_mem.py:67] SymmMemCommunicator: Device capability 8.6 not supported, communicator is not available.
+(Worker pid=3460486) WARNING 11-09 13:56:21 [symm_mem.py:67] SymmMemCommunicator: Device capability 8.6 not supported, communicator is not available.
+(Worker pid=3460486) WARNING 11-09 13:56:21 [flashinfer_all_reduce.py:424] FlashInfer All Reduce is disabled because it is not supported for world_size=2.
+(Worker pid=3460485) WARNING 11-09 13:56:21 [flashinfer_all_reduce.py:424] FlashInfer All Reduce is disabled because it is not supported for world_size=2.
+(Worker pid=3460485) INFO 11-09 13:56:21 [cuda_communicator.py:353] Using ['CUSTOM', 'PYNCCL'] all-reduce backends (in dispatch order) for group 'tp:0' out of potential backends: ['FLASHINFER_PCIE_IPC', 'FLASHINFER', 'NCCL_SYMM_MEM', 'QUICK_REDUCE', 'AITER_CUSTOM', 'CUSTOM', 'SYMM_MEM', 'PYNCCL'].
+(Worker pid=3460485) INFO 11-09 13:56:21 [parallel_state.py:2385] rank 0 in world size 2 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, ETP rank 0, EP rank N/A, EPLB rank N/A
+(Worker pid=3460485) INFO 11-09 13:56:21 [gpu_worker.py:513] Using V2 Model Runner
+(Worker_TP1 pid=3460486) INFO 11-09 13:56:26 [interfaces.py:265] Contains out of vocabulary multimodal tokens? False
+(Worker_TP0 pid=3460485) INFO 11-09 13:56:27 [model_runner.py:399] Loading model from scratch...
+(Worker_TP0 pid=3460485) INFO 11-09 13:56:27 [interfaces.py:265] Contains out of vocabulary multimodal tokens? False
+(Worker_TP0 pid=3460485) INFO 11-09 13:56:27 [cuda.py:567] Using backend AttentionBackendEnum.FLASH_ATTN for vit attention
+(Worker_TP0 pid=3460485) INFO 11-09 13:56:27 [mm_encoder_attention.py:372] Using AttentionBackendEnum.FLASH_ATTN for MMEncoderAttention.
+(Worker_TP0 pid=3460485) INFO 11-09 13:56:28 [cuda.py:508] Using TRITON_ATTN attention backend out of potential backends: ['TRITON_ATTN', 'FLEX_ATTENTION'].
+(Worker_TP0 pid=3460485) INFO 11-09 13:56:28 [base_loader.py:82] Initializing model took 1.679843 seconds
+(Worker_TP0 pid=3460485) INFO 11-09 13:56:29 [weight_utils.py:1144] Filesystem type for checkpoints: NFS4. Checkpoint size: 8.01 GiB. Available RAM: 979.63 GiB.
+(Worker_TP0 pid=3460485) INFO 11-09 13:56:29 [weight_utils.py:1106] Prefetching checkpoint files into page cache started (in background, num_threads=8, block_size=16777216 bytes)
+(Worker_TP1 pid=3460486) INFO 11-09 13:56:29 [weight_utils.py:1106] Prefetching checkpoint files into page cache started (in background, num_threads=8, block_size=16777216 bytes)
+(Worker_TP1 pid=3460486) INFO 11-09 13:56:31 [weight_utils.py:1078] Prefetching checkpoint files: 10% (1/1)
+(Worker_TP1 pid=3460486) INFO 11-09 13:56:31 [weight_utils.py:1101] Prefetching checkpoint files into page cache finished in 1.93s
+(Worker_TP0 pid=3460485) INFO 11-09 13:56:32 [weight_utils.py:1078] Prefetching checkpoint files: 10% (1/1)
+(Worker_TP0 pid=3460485) INFO 11-09 13:56:32 [weight_utils.py:1101] Prefetching checkpoint files into page cache finished in 2.89s
+(Worker_TP0 pid=3460485) INFO 11-09 13:56:33 [default_loader.py:506] Loading weights took 3.67 seconds
+(Worker_TP1 pid=3460486) INFO 11-09 13:56:36 [model_runner.py:428] Model loading took 4.65 GiB memory and 10.096734 seconds
+(Worker_TP0 pid=3460485) INFO 11-09 13:56:36 [model_runner.py:428] Model loading took 4.65 GiB memory and 10.150588 seconds
+(Worker_TP0 pid=3460485) INFO 11-09 13:56:36 [topk_topp_sampler.py:121] FlashInfer top-p/top-k sampling disabled via VLLM_USE_FLASHINFER_SAMPLER=0.
+(EngineCore pid=3460477) INFO 11-09 13:56:36 [utils.py:381] Using LBNHC KV cache layout.
+(EngineCore pid=3460477) WARNING 11-09 13:56:36 [kv_cache_planning.py:537] Add 1 padding layers, may waste at most 3.45% KV cache memory
+(Worker_TP0 pid=3460485) INFO 11-09 13:56:37 [encoder_runner.py:131] Encoder cache will be initialized with a budget of 16384 tokens, and profiled with 64 image items of the maximum feature size.
+(Worker_TP0 pid=3460485) INFO 11-09 13:56:48 [monitor.py:40] [backbone] Starting torch.compile
+(Worker_TP1 pid=3460486) INFO 11-09 13:56:48 [monitor.py:40] [backbone] Starting torch.compile
+(Worker_TP0 pid=3460485) INFO 11-09 13:57:06 [backends.py:1125] [backbone] Using cache directory: /home/pallaoro/.cache/vllm/torch_compile_cache/78b3b84c0f/rank_0_0/backbone for vLLM's torch.compile
+(Worker_TP0 pid=3460485) INFO 11-09 13:57:06 [backends.py:1187] [backbone] Dynamo bytecode transform time: 17.63 s
+(MainProcess pid=3460380) INFO 11-09 13:57:10 [base.py:283] Multi-modal warmup completed in 65.478s
+(Worker_TP1 pid=3460486) INFO 11-09 13:57:10 [backends.py:1125] [backbone] Using cache directory: /home/pallaoro/.cache/vllm/torch_compile_cache/78b3b84c0f/rank_1_0/backbone for vLLM's torch.compile
+(Worker_TP1 pid=3460486) INFO 11-09 13:57:10 [backends.py:1187] [backbone] Dynamo bytecode transform time: 21.40 s
+(Worker_TP0 pid=3460485) INFO 11-09 13:57:27 [backends.py:417] [backbone] Compiling a graph for compile range (1, 16384) takes 20.77 s
+(Worker_TP1 pid=3460486) INFO 11-09 13:57:28 [backends.py:417] [backbone] Compiling a graph for compile range (1, 16384) takes 17.84 s
+(Worker_TP0 pid=3460485) INFO 11-09 13:57:36 [backends.py:948] collected artifacts: 35 entries, 5 artifacts, 16846479 bytes total
+(Worker_TP0 pid=3460485) INFO 11-09 13:57:36 [decorators.py:752] [backbone] saved AOT compiled function to /home/pallaoro/.cache/vllm/torch_compile_cache/torch_aot_compile/84c73e20f79641188a9f69881116e2c703099f7908c135221a0e0bcd38773882/rank_0_0/model
+(Worker_TP0 pid=3460485) INFO 11-09 13:57:36 [monitor.py:62] [backbone] torch.compile took 47.43 s in total
+(Worker_TP0 pid=3460485) INFO 11-09 13:57:36 [monitor.py:91] [backbone] Initial profiling/warmup run took 0.03 s
+(Worker_TP1 pid=3460486) INFO 11-09 13:57:36 [backends.py:948] collected artifacts: 35 entries, 5 artifacts, 16846485 bytes total
+(Worker_TP1 pid=3460486) INFO 11-09 13:57:37 [decorators.py:752] [backbone] saved AOT compiled function to /home/pallaoro/.cache/vllm/torch_compile_cache/torch_aot_compile/84c73e20f79641188a9f69881116e2c703099f7908c135221a0e0bcd38773882/rank_1_0/model
+(Worker_TP1 pid=3460486) INFO 11-09 13:57:37 [monitor.py:62] [backbone] torch.compile took 48.11 s in total
+(Worker_TP1 pid=3460486) INFO 11-09 13:57:37 [monitor.py:91] [backbone] Initial profiling/warmup run took 0.02 s
+(EngineCore pid=3460477) INFO 11-09 13:57:37 [shm_broadcast.py:878] No available shared memory broadcast block found in 60 seconds. This typically happens when some processes are hanging or doing some time-consuming work (e.g. compilation, weight/kv cache quantization).
+(Worker_TP0 pid=3460485) WARNING 11-09 13:57:52 [kv_cache_planning.py:537] Add 1 padding layers, may waste at most 3.45% KV cache memory
+(Worker_TP1 pid=3460486) WARNING 11-09 13:57:52 [kv_cache_planning.py:537] Add 1 padding layers, may waste at most 3.45% KV cache memory
+(Worker_TP1 pid=3460486) INFO 11-09 13:58:12 [model_runner.py:1163] Graph capturing finished in 20 secs, took 0.38 GiB
+(Worker_TP0 pid=3460485) INFO 11-09 13:58:12 [model_runner.py:1163] Graph capturing finished in 20 secs, took 0.38 GiB
+(Worker_TP1 pid=3460486) INFO 11-09 13:58:13 [gpu_worker.py:787] CUDA graph memory profiling is enabled (default since v0.21.0). The current --gpu-memory-utilization=0.9000 is equivalent to --gpu-memory-utilization=0.8903 without CUDA graph memory profiling. To maintain the same effective KV cache size as before, increase --gpu-memory-utilization to 0.9097. To disable, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=0.
+(Worker_TP0 pid=3460485) INFO 11-09 13:58:13 [gpu_worker.py:772] Available KV cache memory: 29.83 GiB
+(Worker_TP0 pid=3460485) INFO 11-09 13:58:13 [gpu_worker.py:787] CUDA graph memory profiling is enabled (default since v0.21.0). The current --gpu-memory-utilization=0.9000 is equivalent to --gpu-memory-utilization=0.8903 without CUDA graph memory profiling. To maintain the same effective KV cache size as before, increase --gpu-memory-utilization to 0.9097. To disable, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=0.
+(EngineCore pid=3460477) INFO 11-09 13:58:13 [kv_cache_utils.py:1147] GPU KV cache size: 446,110 tokens, Maximum concurrency for 8,192 tokens per request: 54.46x
+(EngineCore pid=3460477) INFO 11-09 13:58:13 [kv_cache_utils.py:865] kv cache group sizes (16, 16, 16, 16, 16, 16, 16)
+(EngineCore pid=3460477) INFO 11-09 13:58:13 [kv_cache_utils.py:866] kv lcm block sizes 16
+(Worker_TP1 pid=3460486) INFO 11-09 13:58:13 [kernel_warmup.py:179] JIT kernel warmup starting.
+(Worker_TP1 pid=3460486) INFO 11-09 13:58:13 [kernel_warmup.py:192] JIT kernel warmup finished in 0.00s.
+(Worker_TP0 pid=3460485) INFO 11-09 13:58:13 [kernel_warmup.py:179] JIT kernel warmup starting.
+(Worker_TP0 pid=3460485) INFO 11-09 13:58:13 [kernel_warmup.py:192] JIT kernel warmup finished in 0.00s.
+(Worker_TP1 pid=3460486) INFO 11-09 13:58:41 [model_runner.py:1163] Graph capturing finished in 9 secs, took 0.20 GiB
+(Worker_TP1 pid=3460486) INFO 11-09 13:58:41 [gpu_worker.py:1003] CUDA graph pool memory: 0.2 GiB (actual), 0.43 GiB (estimated), difference: 0.23 GiB (114.6%).
+(Worker_TP1 pid=3460486) INFO 11-09 13:58:41 [gpu_worker.py:1066] Free memory on device (43.87/44.42 GiB) on startup. Desired GPU memory utilization is (0.9, 39.98 GiB). Actual usage is 5.09 GiB for consumed memory (weights + non-torch), 5.06 GiB for peak activation, and 0.2 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=31657560064` (29.48 GiB) to fit into requested memory, or `--kv-cache-memory=35837315072` (33.38 GiB) to fully utilize gpu memory. Current kv cache memory in use is 29.83 GiB.
+(Worker_TP0 pid=3460485) INFO 11-09 13:58:41 [model_runner.py:1163] Graph capturing finished in 9 secs, took 0.20 GiB
+(Worker_TP0 pid=3460485) INFO 11-09 13:58:41 [gpu_worker.py:1003] CUDA graph pool memory: 0.2 GiB (actual), 0.43 GiB (estimated), difference: 0.23 GiB (114.6%).
+(Worker_TP0 pid=3460485) INFO 11-09 13:58:41 [gpu_worker.py:1066] Free memory on device (43.87/44.42 GiB) on startup. Desired GPU memory utilization is (0.9, 39.98 GiB). Actual usage is 5.09 GiB for consumed memory (weights + non-torch), 5.06 GiB for peak activation, and 0.2 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=31657560064` (29.48 GiB) to fit into requested memory, or `--kv-cache-memory=35837315072` (33.38 GiB) to fully utilize gpu memory. Current kv cache memory in use is 29.83 GiB.
+(Worker_TP1 pid=3460486) INFO 11-09 13:58:43 [jit_monitor.py:84] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.
+(Worker_TP0 pid=3460485) INFO 11-09 13:58:43 [jit_monitor.py:84] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.
+(EngineCore pid=3460477) INFO 11-09 13:58:44 [core.py:405] init engine (profile, create kv cache, warmup model) took 127.70 s (compilation: 48.11 s)
+(EngineCore pid=3460477) INFO 11-09 13:58:45 [kernel.py:480] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native'])
+(MainProcess pid=3460380) INFO 11-09 13:58:48 [hf.py:736] Detected the chat template content format to be 'openai'. You can set `--chat-template-content-format` to override this.
+(Worker_TP0 pid=3460485) WARNING 11-09 13:58:50 [jit_monitor.py:140] Triton kernel JIT compilation during inference: kernel_unified_attention. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP0 pid=3460485) WARNING 11-09 13:58:52 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_stats_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP0 pid=3460485) WARNING 11-09 13:58:53 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_step_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP0 pid=3460485) WARNING 11-09 13:58:56 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_mask_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP0 pid=3460485) WARNING 11-09 13:58:59 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topk_topp_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+[2026-11-09 13:58:48] [INFO   ] (4 Minutes) Loading model into cuda completed.
+[2026-11-09 13:58:48] [INFO   ] (4 Minutes) Loading model at index 0: 'google/medgemma-4b-it' completed.
+[2026-11-09 13:58:48] [INFO   ] (4 Minutes) Checkpoint: './data/tmp/syntype_medgemma-4b-it_Test_NoDef_NoCom_NoStr_NoCOT_FS.json'.
+[2026-11-09 13:58:48] [INFO   ] (4 Minutes) Prompt log: './data/logs/prompts_medgemma-4b-it_Test_NoDef_NoCom_NoStr_NoCOT_FS.log'.
+[2026-11-09 13:58:48] [INFO   ] (4 Minutes) Setting up the LLM (medgemma-4b-it) completed.
+[2026-11-09 13:58:48] [INFO   ] (4 Minutes) Turn 1/1: generating the answers...
+[2026-11-09 13:58:48] [INFO   ] (4 Minutes) Loading prompt from file 'single_prompt.md'...
+[2026-11-09 13:58:48] [INFO   ] (4 Minutes) Loaded prompt with base length 2623.
+[2026-11-09 13:58:48] [INFO   ] (4 Minutes) Added the prompt to 1000 histories.
+[2026-11-09 13:58:48] [INFO   ] (4 Minutes) Loading prompt from file 'single_prompt.md' completed.
+[2026-11-09 13:58:48] [INFO   ] (4 Minutes) Answer store 'syntype_medgemma-4b-it_Test_NoDef_NoCom_NoStr_NoCOT_FS.json': 0 stored answers.
+[2026-11-09 13:58:48] [INFO   ] (4 Minutes) Generating answers for 1000 histories...
+[2026-11-09 13:58:48] [INFO   ] (4 Minutes) 1000 histories to generate in 2 chunk(s) of up to 500.
+[2026-11-09 13:58:48] [INFO   ] (4 Minutes) Running vLLM generation for chunk 1/2 [Indices 0 to 499]...
+[2026-11-09 13:59:07] [INFO   ] (4 Minutes) Running vLLM generation for chunk 1/2 [Indices 0 to 499] completed.
+[2026-11-09 13:59:08] [INFO   ] (4 Minutes) Chunk 1/2: 500 answers, 39298 tokens in 19.8 s (1989 tokens/s).
+[2026-11-09 13:59:08] [INFO   ] (4 Minutes) Progress: 500/1000 histories, elapsed 0:00:20, remaining ~0:00:20.
+[2026-11-09 13:59:08] [INFO   ] (4 Minutes) Running vLLM generation for chunk 2/2 [Indices 500 to 999]...
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Running vLLM generation for chunk 2/2 [Indices 500 to 999] completed.
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Chunk 2/2: 500 answers, 39076 tokens in 10.3 s (3811 tokens/s).
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Progress: 1000/1000 histories, elapsed 0:00:30, remaining ~0:00:00.
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) 1000 answers generated, 0 stored and 0 shared with identical histories.
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) 991066 prompt and 78374 generated tokens in 0:00:30 (2608 generated tokens/s).
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Generating answers for 1000 histories completed.
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Writing to a temporary file first...
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_medgemma-4b-it.csv.tmp'...
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_medgemma-4b-it.csv.tmp' completed.
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Writing to a temporary file first completed.
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Replacing original data with temporary data...
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Replacing original data with temporary data completed.
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Turn 1/1: generating the answers completed.
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Parsing the answers...
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Could not locate a valid JSON object at index 886.
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) 999 of 1000 answers contain a valid classification, 999 a rationale.
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Parsing the answers completed.
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Writing to a temporary file first...
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_medgemma-4b-it.csv.tmp'...
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_medgemma-4b-it.csv.tmp' completed.
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Writing to a temporary file first completed.
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Replacing original data with temporary data...
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Replacing original data with temporary data completed.
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Writing the prompts and answers to the prompt log...
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Logging prompts in 'prompts_medgemma-4b-it_Test_NoDef_NoCom_NoStr_NoCOT_FS.log'...
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Logging prompts in 'prompts_medgemma-4b-it_Test_NoDef_NoCom_NoStr_NoCOT_FS.log' completed.
+[2026-11-09 13:59:18] [INFO   ] (4 Minutes) Writing the prompts and answers to the prompt log completed.
+(MainProcess pid=3460380) INFO 11-09 13:59:18 [utils.py:628] [shutdown] Process manager: send sigterm to process EngineCore
+(EngineCore pid=3460477) INFO 11-09 13:59:18 [core.py:1525] [shutdown] EngineCore: trigger received signal=SIGTERM
+(EngineCore pid=3460477) INFO 11-09 13:59:18 [core.py:1712] [shutdown] EngineCore: start mode=abort timeout=0s
+(EngineCore pid=3460477) INFO 11-09 13:59:18 [core.py:1743] [shutdown] EngineCore: request processing complete; starting resource teardown
+(EngineCore pid=3460477) INFO 11-09 13:59:18 [core.py:1573] [shutdown] EngineCore: exiting busy loop
+(EngineCore pid=3460477) INFO 11-09 13:59:18 [multiproc_executor.py:580] [shutdown] Executor: waiting for worker exit count=2
+(Worker_TP0 pid=3460485) INFO 11-09 13:59:18 [multiproc_executor.py:944] Parent process exited, terminating worker queues
+(EngineCore pid=3460477) INFO 11-09 13:59:20 [multiproc_executor.py:587] [shutdown] Executor: all workers exited gracefully
+[2026-11-09 13:59:21] [INFO   ] (4 Minutes) Classifying the synonyms (medgemma-4b-it) took 00:04:33.91.
+[2026-11-09 13:59:21] [INFO   ] (4 Minutes) Formatting the answers (medgemma-4b-it)...
+[2026-11-09 13:59:21] [INFO   ] (4 Minutes) ==========================================================================================
+[2026-11-09 13:59:21] [INFO   ] (4 Minutes) =                        Formatting the Answers (medgemma-4b-it)                         =
+[2026-11-09 13:59:21] [INFO   ] (4 Minutes) ==========================================================================================
+[2026-11-09 13:59:21] [INFO   ] (4 Minutes) Writing to a temporary file first...
+[2026-11-09 13:59:21] [INFO   ] (4 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_formatted_medgemma-4b-it.csv.tmp'...
+[2026-11-09 13:59:22] [INFO   ] (4 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_formatted_medgemma-4b-it.csv.tmp' completed.
+[2026-11-09 13:59:22] [INFO   ] (4 Minutes) Writing to a temporary file first completed.
+[2026-11-09 13:59:22] [INFO   ] (4 Minutes) Replacing original data with temporary data...
+[2026-11-09 13:59:22] [INFO   ] (4 Minutes) Replacing original data with temporary data completed.
+[2026-11-09 13:59:22] [INFO   ] (4 Minutes) Logging the wrong classifications...
+[2026-11-09 13:59:22] [INFO   ] (4 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-09 13:59:22] [INFO   ] (4 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Wrong or undefined classifications: 334.
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Correct classifications: 666.
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Logging the wrong classifications completed.
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Summary of medgemma-4b-it: 996 synonyms.
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Gold types expert, layperson, without the few-shot examples; 1 answers undefined.
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Gold / Classified         expert   layperson   undefined
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) expert                       189         308           1
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) layperson                     25         473           0
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) "expert": precision 0.883, recall 0.380, F1 0.531.
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) "expert": mean confidence 4.56 of the 214 classified as expert.
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) "layperson": precision 0.606, recall 0.950, F1 0.740.
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) "layperson": mean confidence 4.11 of the 781 classified as layperson.
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Formatting the answers (medgemma-4b-it) took 00:00:01.59.
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Model 2/6: "Qwen/Qwen3-4B-Instruct-2507".
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Classifying the synonyms (Qwen3-4B-Instruct-2507)...
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) ==========================================================================================
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) =                   Classifying the Synonyms (Qwen3-4B-Instruct-2507)                    =
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) ==========================================================================================
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) File(s): "type_Test_NoDef_NoCom_NoStr_NoCOT_FS_*.csv".
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Prompt file(s): "single_prompt.md".
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Setting up the LLM (Qwen3-4B-Instruct-2507)...
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Loading model at index 1: 'Qwen/Qwen3-4B-Instruct-2507'...
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Scanning device 'cuda'...
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Cuda available: True.
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) GPU Amount: 2.
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Scanning device 'cuda' completed.
+[2026-11-09 13:59:23] [INFO   ] (4 Minutes) Loading model into cuda...
+(EngineCore pid=3460930) INFO 11-09 14:00:02 [core.py:139] Initializing a V1 LLM engine (v0.33.0) with config: model='Qwen/Qwen3-4B-Instruct-2507', speculative_config=None, tokenizer='Qwen/Qwen3-4B-Instruct-2507', skip_tokenizer_init=False, tokenizer_mode=auto, revision=main, tokenizer_revision=main, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=8192, download_dir=None, load_format=auto, tensor_parallel_size=2, pipeline_parallel_size=1, data_parallel_size=1, decode_context_parallel_size=1, dcp_comm_backend=ag_rs, disable_custom_all_reduce=False, quantization=None, quantization_config=None, enforce_eager=False, aux_output_config=AuxOutputConfig(enable_return_routed_experts=False, max_bytes=None), kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, per_request_spec_decode_metrics='none', kv_cache_metrics=False, kv_cache_metrics_sample=0.01, custom_histogram_buckets=None, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False, jit_monitor_mode='warn', jit_monitor_verbose=False), seed=2898231092, served_model_name=Qwen/Qwen3-4B-Instruct-2507, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'mode': <CompilationMode.VLLM_COMPILE: 3>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['none'], 'ir_enable_torch_wrap': True, 'splitting_ops': ['vllm::unified_attention_with_output', 'vllm::unified_mla_attention_with_output', 'vllm::mamba_mixer2', 'vllm::mamba_mixer', 'vllm::short_conv', 'vllm::qwen4_exp_ple_short_conv', 'vllm::qwen4_exp_qsa_with_output', 'vllm::qwen4_exp_qsa_prepare_with_output', 'vllm::linear_attention', 'vllm::qwen_gdn_attention_core', 'vllm::qwen_gdn_attention_core_fused_norm_packed', 'vllm::gdn_attention_core_xpu', 'vllm::olmo_hybrid_gdn_full_forward', 'vllm::sparse_attn_indexer', 'vllm::rocm_aiter_sparse_attn_indexer', 'vllm::deepseek_v4_attention', 'vllm::hpc_rope_norm_forward', 'vllm::unified_kv_cache_update', 'vllm::unified_mla_kv_cache_update'], 'compile_mm_encoder': False, 'cudagraph_mm_encoder': False, 'encoder_cudagraph_token_budgets': [], 'encoder_cudagraph_max_vision_items_per_batch': 0, 'encoder_cudagraph_max_frames_per_batch': None, 'cudagraph_decoder_replay': True, 'decoder_replay_cudagraph_capture_sizes': [], 'decoder_replay_trim_threshold': 768, 'compile_sizes': [], 'compile_ranges_endpoints': [16384], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.FULL_AND_PIECEWISE: (2, 1)>, 'cudagraph_num_of_warmups': 1, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192, 200, 208, 216, 224, 232, 240, 248, 256, 272, 288, 304, 320, 336, 352, 368, 384, 400, 416, 432, 448, 464, 480, 496, 512], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'fuse_allreduce_rms': False, 'enable_qk_norm_rope_fusion': False, 'fuse_rope_kvcache_cat_mla': False, 'fuse_act_padding': False, 'fuse_qk_norm_rope_kvcache': False}, 'max_cudagraph_capture_size': 512, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': False}, 'local_cache_dir': None, 'fast_moe_cold_start': False, 'static_all_moe_layers': []}, kernel_config=KernelConfig(ir_op_priority=IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native']), enable_flashinfer_autotune=True, enable_rocm_segmented_attn_autotune=False, enable_cutedsl_warmup=True, enable_jit_warmup=True, monokernel=False, moe_backend='auto', sparse_indexer_topk_backend='auto', linear_backend='auto', linear_backend_per_quant=None)
+(EngineCore pid=3460930) INFO 11-09 14:00:02 [multiproc_executor.py:167] DP group leader: node_rank=0, node_rank_within_dp=0, master_addr=127.0.0.1, mq_connect_ip=141.39.131.12 (local), world_size=2, local_world_size=2
+(Worker pid=3460949) INFO 11-09 14:00:25 [parallel_state.py:1929] world_size=2 rank=0 local_rank=0 distributed_init_method=file:///tmp/vllm_dist_1c89e9e77d9b44c4ac3894663bce4212 backend=nccl
+(Worker pid=3460948) INFO 11-09 14:00:25 [parallel_state.py:1929] world_size=2 rank=1 local_rank=1 distributed_init_method=file:///tmp/vllm_dist_1c89e9e77d9b44c4ac3894663bce4212 backend=nccl
+(Worker pid=3460949) INFO 11-09 14:00:29 [pynccl.py:148] vLLM is using nccl==2.30.7
+(Worker pid=3460949) WARNING 11-09 14:00:30 [symm_mem.py:67] SymmMemCommunicator: Device capability 8.6 not supported, communicator is not available.
+(Worker pid=3460948) WARNING 11-09 14:00:30 [symm_mem.py:67] SymmMemCommunicator: Device capability 8.6 not supported, communicator is not available.
+(Worker pid=3460949) WARNING 11-09 14:00:30 [flashinfer_all_reduce.py:424] FlashInfer All Reduce is disabled because it is not supported for world_size=2.
+(Worker pid=3460948) WARNING 11-09 14:00:30 [flashinfer_all_reduce.py:424] FlashInfer All Reduce is disabled because it is not supported for world_size=2.
+(Worker pid=3460949) INFO 11-09 14:00:30 [cuda_communicator.py:353] Using ['CUSTOM', 'PYNCCL'] all-reduce backends (in dispatch order) for group 'tp:0' out of potential backends: ['FLASHINFER_PCIE_IPC', 'FLASHINFER', 'NCCL_SYMM_MEM', 'QUICK_REDUCE', 'AITER_CUSTOM', 'CUSTOM', 'SYMM_MEM', 'PYNCCL'].
+(Worker pid=3460949) INFO 11-09 14:00:30 [parallel_state.py:2385] rank 0 in world size 2 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, ETP rank 0, EP rank N/A, EPLB rank N/A
+(Worker pid=3460949) INFO 11-09 14:00:30 [gpu_worker.py:513] Using V2 Model Runner
+(Worker_TP0 pid=3460949) INFO 11-09 14:00:34 [model_runner.py:399] Loading model from scratch...
+(Worker_TP0 pid=3460949) INFO 11-09 14:00:35 [cuda.py:508] Using FLASH_ATTN attention backend out of potential backends: ['FLASH_ATTN', 'FLASHINFER', 'TRITON_ATTN', 'FLEX_ATTENTION'].
+(Worker_TP0 pid=3460949) INFO 11-09 14:00:35 [flash_attn.py:1122] Using FlashAttention version 2
+(Worker_TP0 pid=3460949) INFO 11-09 14:00:37 [base_loader.py:82] Initializing model took 2.381729 seconds
+(Worker_TP1 pid=3460948) INFO 11-09 14:00:37 [weight_utils.py:1106] Prefetching checkpoint files into page cache started (in background, num_threads=8, block_size=16777216 bytes)
+(Worker_TP0 pid=3460949) INFO 11-09 14:00:37 [weight_utils.py:1144] Filesystem type for checkpoints: NFS4. Checkpoint size: 7.49 GiB. Available RAM: 978.47 GiB.
+(Worker_TP0 pid=3460949) INFO 11-09 14:00:37 [weight_utils.py:1106] Prefetching checkpoint files into page cache started (in background, num_threads=8, block_size=16777216 bytes)
+(Worker_TP0 pid=3460949) INFO 11-09 14:00:38 [weight_utils.py:1078] Prefetching checkpoint files: 10% (1/2)
+(Worker_TP1 pid=3460948) INFO 11-09 14:00:39 [weight_utils.py:1078] Prefetching checkpoint files: 10% (1/1)
+(Worker_TP1 pid=3460948) INFO 11-09 14:00:39 [weight_utils.py:1101] Prefetching checkpoint files into page cache finished in 1.75s
+(Worker_TP0 pid=3460949) INFO 11-09 14:00:39 [weight_utils.py:1078] Prefetching checkpoint files: 20% (2/2)
+(Worker_TP0 pid=3460949) INFO 11-09 14:00:39 [weight_utils.py:1101] Prefetching checkpoint files into page cache finished in 1.93s
+(Worker_TP0 pid=3460949) INFO 11-09 14:00:40 [default_loader.py:506] Loading weights took 2.55 seconds
+(Worker_TP1 pid=3460948) INFO 11-09 14:00:42 [model_runner.py:428] Model loading took 3.9 GiB memory and 8.936908 seconds
+(Worker_TP0 pid=3460949) INFO 11-09 14:00:42 [model_runner.py:428] Model loading took 3.9 GiB memory and 9.247186 seconds
+(Worker_TP0 pid=3460949) INFO 11-09 14:00:42 [topk_topp_sampler.py:121] FlashInfer top-p/top-k sampling disabled via VLLM_USE_FLASHINFER_SAMPLER=0.
+(EngineCore pid=3460930) INFO 11-09 14:00:42 [utils.py:381] Using LBNHC KV cache layout.
+(Worker_TP0 pid=3460949) INFO 11-09 14:00:45 [monitor.py:40] [backbone] Starting torch.compile
+(Worker_TP1 pid=3460948) INFO 11-09 14:00:45 [monitor.py:40] [backbone] Starting torch.compile
+(Worker_TP0 pid=3460949) INFO 11-09 14:00:57 [backends.py:1125] [backbone] Using cache directory: /home/pallaoro/.cache/vllm/torch_compile_cache/0363867164/rank_0_0/backbone for vLLM's torch.compile
+(Worker_TP0 pid=3460949) INFO 11-09 14:00:57 [backends.py:1187] [backbone] Dynamo bytecode transform time: 11.82 s
+(Worker_TP1 pid=3460948) INFO 11-09 14:00:57 [backends.py:1125] [backbone] Using cache directory: /home/pallaoro/.cache/vllm/torch_compile_cache/0363867164/rank_1_0/backbone for vLLM's torch.compile
+(Worker_TP1 pid=3460948) INFO 11-09 14:00:57 [backends.py:1187] [backbone] Dynamo bytecode transform time: 11.82 s
+(Worker_TP1 pid=3460948) INFO 11-09 14:01:17 [backends.py:417] [backbone] Compiling a graph for compile range (1, 16384) takes 19.83 s
+(Worker_TP0 pid=3460949) INFO 11-09 14:01:17 [backends.py:417] [backbone] Compiling a graph for compile range (1, 16384) takes 19.86 s
+(Worker_TP0 pid=3460949) INFO 11-09 14:01:25 [backends.py:948] collected artifacts: 37 entries, 3 artifacts, 5577686 bytes total
+(Worker_TP1 pid=3460948) INFO 11-09 14:01:25 [backends.py:948] collected artifacts: 37 entries, 3 artifacts, 5453977 bytes total
+(Worker_TP0 pid=3460949) INFO 11-09 14:01:26 [decorators.py:752] [backbone] saved AOT compiled function to /home/pallaoro/.cache/vllm/torch_compile_cache/torch_aot_compile/584ef3e76cfd6eb8bff56f099938e253c947906e10064c1be08076bd31003d6e/rank_0_0/model
+(Worker_TP0 pid=3460949) INFO 11-09 14:01:26 [monitor.py:62] [backbone] torch.compile took 40.53 s in total
+(Worker_TP1 pid=3460948) INFO 11-09 14:01:26 [decorators.py:752] [backbone] saved AOT compiled function to /home/pallaoro/.cache/vllm/torch_compile_cache/torch_aot_compile/584ef3e76cfd6eb8bff56f099938e253c947906e10064c1be08076bd31003d6e/rank_1_0/model
+(Worker_TP1 pid=3460948) INFO 11-09 14:01:26 [monitor.py:62] [backbone] torch.compile took 40.57 s in total
+(Worker_TP0 pid=3460949) INFO 11-09 14:01:26 [monitor.py:91] [backbone] Initial profiling/warmup run took 0.09 s
+(Worker_TP1 pid=3460948) INFO 11-09 14:01:26 [monitor.py:91] [backbone] Initial profiling/warmup run took 0.05 s
+(EngineCore pid=3460930) INFO 11-09 14:01:43 [shm_broadcast.py:878] No available shared memory broadcast block found in 60 seconds. This typically happens when some processes are hanging or doing some time-consuming work (e.g. compilation, weight/kv cache quantization).
+(Worker_TP1 pid=3460948) INFO 11-09 14:01:47 [model_runner.py:1163] Graph capturing finished in 7 secs, took 0.40 GiB
+(Worker_TP0 pid=3460949) INFO 11-09 14:01:47 [model_runner.py:1163] Graph capturing finished in 7 secs, took 0.40 GiB
+(Worker_TP1 pid=3460948) INFO 11-09 14:01:48 [gpu_worker.py:787] CUDA graph memory profiling is enabled (default since v0.21.0). The current --gpu-memory-utilization=0.9000 is equivalent to --gpu-memory-utilization=0.8897 without CUDA graph memory profiling. To maintain the same effective KV cache size as before, increase --gpu-memory-utilization to 0.9103. To disable, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=0.
+(Worker_TP0 pid=3460949) INFO 11-09 14:01:48 [gpu_worker.py:772] Available KV cache memory: 34.77 GiB
+(Worker_TP0 pid=3460949) INFO 11-09 14:01:48 [gpu_worker.py:787] CUDA graph memory profiling is enabled (default since v0.21.0). The current --gpu-memory-utilization=0.9000 is equivalent to --gpu-memory-utilization=0.8897 without CUDA graph memory profiling. To maintain the same effective KV cache size as before, increase --gpu-memory-utilization to 0.9103. To disable, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=0.
+(EngineCore pid=3460930) INFO 11-09 14:01:48 [kv_cache_utils.py:1147] GPU KV cache size: 506,368 tokens, Maximum concurrency for 8,192 tokens per request: 61.81x
+(Worker_TP1 pid=3460948) INFO 11-09 14:01:48 [kernel_warmup.py:179] JIT kernel warmup starting.
+(Worker_TP1 pid=3460948) INFO 11-09 14:01:48 [kernel_warmup.py:192] JIT kernel warmup finished in 0.00s.
+(Worker_TP0 pid=3460949) INFO 11-09 14:01:48 [kernel_warmup.py:179] JIT kernel warmup starting.
+(Worker_TP0 pid=3460949) INFO 11-09 14:01:48 [kernel_warmup.py:192] JIT kernel warmup finished in 0.00s.
+(Worker_TP1 pid=3460948) INFO 11-09 14:02:17 [model_runner.py:1163] Graph capturing finished in 11 secs, took 0.25 GiB
+(Worker_TP1 pid=3460948) INFO 11-09 14:02:17 [gpu_worker.py:1003] CUDA graph pool memory: 0.25 GiB (actual), 0.46 GiB (estimated), difference: 0.21 GiB (85.7%).
+(Worker_TP1 pid=3460948) INFO 11-09 14:02:17 [gpu_worker.py:1066] Free memory on device (43.87/44.42 GiB) on startup. Desired GPU memory utilization is (0.9, 39.98 GiB). Actual usage is 4.12 GiB for consumed memory (weights + non-torch), 1.09 GiB for peak activation, and 0.25 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=36913017344` (34.38 GiB) to fit into requested memory, or `--kv-cache-memory=41092772352` (38.27 GiB) to fully utilize gpu memory. Current kv cache memory in use is 34.77 GiB.
+(Worker_TP0 pid=3460949) INFO 11-09 14:02:17 [model_runner.py:1163] Graph capturing finished in 11 secs, took 0.25 GiB
+(Worker_TP0 pid=3460949) INFO 11-09 14:02:17 [gpu_worker.py:1003] CUDA graph pool memory: 0.25 GiB (actual), 0.46 GiB (estimated), difference: 0.21 GiB (85.7%).
+(Worker_TP0 pid=3460949) INFO 11-09 14:02:17 [gpu_worker.py:1066] Free memory on device (43.87/44.42 GiB) on startup. Desired GPU memory utilization is (0.9, 39.98 GiB). Actual usage is 4.12 GiB for consumed memory (weights + non-torch), 1.09 GiB for peak activation, and 0.25 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=36913017344` (34.38 GiB) to fit into requested memory, or `--kv-cache-memory=41092772352` (38.27 GiB) to fully utilize gpu memory. Current kv cache memory in use is 34.77 GiB.
+(Worker_TP0 pid=3460949) INFO 11-09 14:02:19 [jit_monitor.py:84] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.
+(Worker_TP1 pid=3460948) INFO 11-09 14:02:19 [jit_monitor.py:84] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.
+(EngineCore pid=3460930) INFO 11-09 14:02:20 [core.py:405] init engine (profile, create kv cache, warmup model) took 97.61 s (compilation: 40.57 s)
+(EngineCore pid=3460930) INFO 11-09 14:02:22 [kernel.py:480] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native'])
+(Worker_TP0 pid=3460949) WARNING 11-09 14:02:24 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_stats_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP0 pid=3460949) WARNING 11-09 14:02:26 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_step_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP0 pid=3460949) WARNING 11-09 14:02:28 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_mask_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP0 pid=3460949) WARNING 11-09 14:02:31 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topk_topp_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(EngineCore pid=3460930) INFO 11-09 14:03:01 [core.py:1525] [shutdown] EngineCore: trigger received signal=SIGTERM
+(EngineCore pid=3460930) INFO 11-09 14:03:01 [core.py:1712] [shutdown] EngineCore: start mode=abort timeout=0s
+(EngineCore pid=3460930) INFO 11-09 14:03:01 [core.py:1743] [shutdown] EngineCore: request processing complete; starting resource teardown
+(EngineCore pid=3460930) INFO 11-09 14:03:01 [core.py:1573] [shutdown] EngineCore: exiting busy loop
+(Worker_TP0 pid=3460949) INFO 11-09 14:03:01 [multiproc_executor.py:944] Parent process exited, terminating worker queues
+(EngineCore pid=3460930) INFO 11-09 14:03:01 [multiproc_executor.py:580] [shutdown] Executor: waiting for worker exit count=2
+(EngineCore pid=3460930) WARNING 11-09 14:03:06 [multiproc_executor.py:592] [shutdown] Executor: workers still running after grace period; sending SIGTERM count=1
+[2026-11-09 14:02:23] [INFO   ] (7 Minutes) Loading model into cuda completed.
+[2026-11-09 14:02:23] [INFO   ] (7 Minutes) Loading model at index 1: 'Qwen/Qwen3-4B-Instruct-2507' completed.
+[2026-11-09 14:02:23] [INFO   ] (7 Minutes) Checkpoint: './data/tmp/syntype_Qwen3-4B-Instruct-2507_Test_NoDef_NoCom_NoStr_NoCOT_FS.json'.
+[2026-11-09 14:02:23] [INFO   ] (7 Minutes) Prompt log: './data/logs/prompts_Qwen3-4B-Instruct-2507_Test_NoDef_NoCom_NoStr_NoCOT_FS.log'.
+[2026-11-09 14:02:23] [INFO   ] (7 Minutes) Setting up the LLM (Qwen3-4B-Instruct-2507) completed.
+[2026-11-09 14:02:23] [INFO   ] (7 Minutes) Turn 1/1: generating the answers...
+[2026-11-09 14:02:23] [INFO   ] (7 Minutes) Loading prompt from file 'single_prompt.md'...
+[2026-11-09 14:02:23] [INFO   ] (7 Minutes) Loaded prompt with base length 2623.
+[2026-11-09 14:02:23] [INFO   ] (7 Minutes) Added the prompt to 1000 histories.
+[2026-11-09 14:02:23] [INFO   ] (7 Minutes) Loading prompt from file 'single_prompt.md' completed.
+[2026-11-09 14:02:23] [INFO   ] (7 Minutes) Answer store 'syntype_Qwen3-4B-Instruct-2507_Test_NoDef_NoCom_NoStr_NoCOT_FS.json': 0 stored answers.
+[2026-11-09 14:02:23] [INFO   ] (7 Minutes) Generating answers for 1000 histories...
+[2026-11-09 14:02:23] [INFO   ] (7 Minutes) 1000 histories to generate in 2 chunk(s) of up to 500.
+[2026-11-09 14:02:24] [INFO   ] (7 Minutes) Running vLLM generation for chunk 1/2 [Indices 0 to 499]...
+[2026-11-09 14:02:47] [INFO   ] (7 Minutes) Running vLLM generation for chunk 1/2 [Indices 0 to 499] completed.
+[2026-11-09 14:02:47] [INFO   ] (7 Minutes) Chunk 1/2: 500 answers, 51134 tokens in 23.8 s (2149 tokens/s).
+[2026-11-09 14:02:47] [INFO   ] (7 Minutes) Progress: 500/1000 histories, elapsed 0:00:24, remaining ~0:00:24.
+[2026-11-09 14:02:48] [INFO   ] (8 Minutes) Running vLLM generation for chunk 2/2 [Indices 500 to 999]...
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Running vLLM generation for chunk 2/2 [Indices 500 to 999] completed.
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Chunk 2/2: 500 answers, 51212 tokens in 14.3 s (3584 tokens/s).
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Progress: 1000/1000 histories, elapsed 0:00:38, remaining ~0:00:00.
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) 1000 answers generated, 0 stored and 0 shared with identical histories.
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) 954774 prompt and 102346 generated tokens in 0:00:38 (2684 generated tokens/s).
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Generating answers for 1000 histories completed.
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Writing to a temporary file first...
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_Qwen3-4B-Instruct-2507.csv.tmp'...
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_Qwen3-4B-Instruct-2507.csv.tmp' completed.
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Writing to a temporary file first completed.
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Replacing original data with temporary data...
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Replacing original data with temporary data completed.
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Turn 1/1: generating the answers completed.
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Parsing the answers...
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) 1000 of 1000 answers contain a valid classification, 1000 a rationale.
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Parsing the answers completed.
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Writing to a temporary file first...
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_Qwen3-4B-Instruct-2507.csv.tmp'...
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_Qwen3-4B-Instruct-2507.csv.tmp' completed.
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Writing to a temporary file first completed.
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Replacing original data with temporary data...
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Replacing original data with temporary data completed.
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Writing the prompts and answers to the prompt log...
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Logging prompts in 'prompts_Qwen3-4B-Instruct-2507_Test_NoDef_NoCom_NoStr_NoCOT_FS.log'...
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Logging prompts in 'prompts_Qwen3-4B-Instruct-2507_Test_NoDef_NoCom_NoStr_NoCOT_FS.log' completed.
+[2026-11-09 14:03:01] [INFO   ] (8 Minutes) Writing the prompts and answers to the prompt log completed.
+[2026-11-09 14:03:07] [INFO   ] (8 Minutes) Classifying the synonyms (Qwen3-4B-Instruct-2507) took 00:03:43.99.
+[2026-11-09 14:03:07] [INFO   ] (8 Minutes) Formatting the answers (Qwen3-4B-Instruct-2507)...
+[2026-11-09 14:03:07] [INFO   ] (8 Minutes) ==========================================================================================
+[2026-11-09 14:03:07] [INFO   ] (8 Minutes) =                    Formatting the Answers (Qwen3-4B-Instruct-2507)                     =
+[2026-11-09 14:03:07] [INFO   ] (8 Minutes) ==========================================================================================
+[2026-11-09 14:03:07] [INFO   ] (8 Minutes) Writing to a temporary file first...
+[2026-11-09 14:03:07] [INFO   ] (8 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_formatted_Qwen3-4B-Instruct-2507.csv.tmp'...
+[2026-11-09 14:03:07] [INFO   ] (8 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_formatted_Qwen3-4B-Instruct-2507.csv.tmp' completed.
+[2026-11-09 14:03:07] [INFO   ] (8 Minutes) Writing to a temporary file first completed.
+[2026-11-09 14:03:07] [INFO   ] (8 Minutes) Replacing original data with temporary data...
+[2026-11-09 14:03:07] [INFO   ] (8 Minutes) Replacing original data with temporary data completed.
+[2026-11-09 14:03:07] [INFO   ] (8 Minutes) Logging the wrong classifications...
+[2026-11-09 14:03:07] [INFO   ] (8 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-09 14:03:07] [INFO   ] (8 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Wrong or undefined classifications: 195.
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Correct classifications: 805.
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Logging the wrong classifications completed.
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Summary of Qwen3-4B-Instruct-2507: 996 synonyms.
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Gold types expert, layperson, without the few-shot examples; 0 answers undefined.
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Gold / Classified         expert   layperson   undefined
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) expert                       409          89           0
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) layperson                    106         392           0
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) "expert": precision 0.794, recall 0.821, F1 0.808.
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) "expert": mean confidence 4.30 of the 515 classified as expert.
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) "layperson": precision 0.815, recall 0.787, F1 0.801.
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) "layperson": mean confidence 4.34 of the 481 classified as layperson.
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Formatting the answers (Qwen3-4B-Instruct-2507) took 00:00:00.85.
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Model 3/6: "mistralai/Mistral-7B-Instruct-v0.2".
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Classifying the synonyms (Mistral-7B-Instruct-v0.2)...
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) ==========================================================================================
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) =                  Classifying the Synonyms (Mistral-7B-Instruct-v0.2)                   =
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) ==========================================================================================
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) File(s): "type_Test_NoDef_NoCom_NoStr_NoCOT_FS_*.csv".
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Prompt file(s): "single_prompt.md".
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Setting up the LLM (Mistral-7B-Instruct-v0.2)...
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Loading model at index 2: 'mistralai/Mistral-7B-Instruct-v0.2'...
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Scanning device 'cuda'...
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Cuda available: True.
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) GPU Amount: 2.
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Scanning device 'cuda' completed.
+[2026-11-09 14:03:08] [INFO   ] (8 Minutes) Loading model into cuda...
+(EngineCore pid=3461398) INFO 11-09 14:03:44 [core.py:139] Initializing a V1 LLM engine (v0.33.0) with config: model='mistralai/Mistral-7B-Instruct-v0.2', speculative_config=None, tokenizer='mistralai/Mistral-7B-Instruct-v0.2', skip_tokenizer_init=False, tokenizer_mode=auto, revision=main, tokenizer_revision=main, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=8192, download_dir=None, load_format=auto, tensor_parallel_size=2, pipeline_parallel_size=1, data_parallel_size=1, decode_context_parallel_size=1, dcp_comm_backend=ag_rs, disable_custom_all_reduce=False, quantization=None, quantization_config=None, enforce_eager=False, aux_output_config=AuxOutputConfig(enable_return_routed_experts=False, max_bytes=None), kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, per_request_spec_decode_metrics='none', kv_cache_metrics=False, kv_cache_metrics_sample=0.01, custom_histogram_buckets=None, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False, jit_monitor_mode='warn', jit_monitor_verbose=False), seed=2898231092, served_model_name=mistralai/Mistral-7B-Instruct-v0.2, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'mode': <CompilationMode.VLLM_COMPILE: 3>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['none'], 'ir_enable_torch_wrap': True, 'splitting_ops': ['vllm::unified_attention_with_output', 'vllm::unified_mla_attention_with_output', 'vllm::mamba_mixer2', 'vllm::mamba_mixer', 'vllm::short_conv', 'vllm::qwen4_exp_ple_short_conv', 'vllm::qwen4_exp_qsa_with_output', 'vllm::qwen4_exp_qsa_prepare_with_output', 'vllm::linear_attention', 'vllm::qwen_gdn_attention_core', 'vllm::qwen_gdn_attention_core_fused_norm_packed', 'vllm::gdn_attention_core_xpu', 'vllm::olmo_hybrid_gdn_full_forward', 'vllm::sparse_attn_indexer', 'vllm::rocm_aiter_sparse_attn_indexer', 'vllm::deepseek_v4_attention', 'vllm::hpc_rope_norm_forward', 'vllm::unified_kv_cache_update', 'vllm::unified_mla_kv_cache_update'], 'compile_mm_encoder': False, 'cudagraph_mm_encoder': False, 'encoder_cudagraph_token_budgets': [], 'encoder_cudagraph_max_vision_items_per_batch': 0, 'encoder_cudagraph_max_frames_per_batch': None, 'cudagraph_decoder_replay': True, 'decoder_replay_cudagraph_capture_sizes': [], 'decoder_replay_trim_threshold': 768, 'compile_sizes': [], 'compile_ranges_endpoints': [16384], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.FULL_AND_PIECEWISE: (2, 1)>, 'cudagraph_num_of_warmups': 1, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192, 200, 208, 216, 224, 232, 240, 248, 256, 272, 288, 304, 320, 336, 352, 368, 384, 400, 416, 432, 448, 464, 480, 496, 512], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'fuse_allreduce_rms': False, 'enable_qk_norm_rope_fusion': False, 'fuse_rope_kvcache_cat_mla': False, 'fuse_act_padding': False, 'fuse_qk_norm_rope_kvcache': False}, 'max_cudagraph_capture_size': 512, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': False}, 'local_cache_dir': None, 'fast_moe_cold_start': False, 'static_all_moe_layers': []}, kernel_config=KernelConfig(ir_op_priority=IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native']), enable_flashinfer_autotune=True, enable_rocm_segmented_attn_autotune=False, enable_cutedsl_warmup=True, enable_jit_warmup=True, monokernel=False, moe_backend='auto', sparse_indexer_topk_backend='auto', linear_backend='auto', linear_backend_per_quant=None)
+(EngineCore pid=3461398) INFO 11-09 14:03:44 [multiproc_executor.py:167] DP group leader: node_rank=0, node_rank_within_dp=0, master_addr=127.0.0.1, mq_connect_ip=141.39.131.12 (local), world_size=2, local_world_size=2
+(Worker pid=3461415) INFO 11-09 14:04:06 [parallel_state.py:1929] world_size=2 rank=0 local_rank=0 distributed_init_method=file:///tmp/vllm_dist_fcce2f4724d8482cbb9575868badddfe backend=nccl
+(Worker pid=3461416) INFO 11-09 14:04:07 [parallel_state.py:1929] world_size=2 rank=1 local_rank=1 distributed_init_method=file:///tmp/vllm_dist_fcce2f4724d8482cbb9575868badddfe backend=nccl
+(Worker pid=3461415) INFO 11-09 14:04:10 [pynccl.py:148] vLLM is using nccl==2.30.7
+(Worker pid=3461415) WARNING 11-09 14:04:12 [symm_mem.py:67] SymmMemCommunicator: Device capability 8.6 not supported, communicator is not available.
+(Worker pid=3461416) WARNING 11-09 14:04:12 [symm_mem.py:67] SymmMemCommunicator: Device capability 8.6 not supported, communicator is not available.
+(Worker pid=3461415) WARNING 11-09 14:04:12 [flashinfer_all_reduce.py:424] FlashInfer All Reduce is disabled because it is not supported for world_size=2.
+(Worker pid=3461416) WARNING 11-09 14:04:12 [flashinfer_all_reduce.py:424] FlashInfer All Reduce is disabled because it is not supported for world_size=2.
+(Worker pid=3461415) INFO 11-09 14:04:12 [cuda_communicator.py:353] Using ['CUSTOM', 'PYNCCL'] all-reduce backends (in dispatch order) for group 'tp:0' out of potential backends: ['FLASHINFER_PCIE_IPC', 'FLASHINFER', 'NCCL_SYMM_MEM', 'QUICK_REDUCE', 'AITER_CUSTOM', 'CUSTOM', 'SYMM_MEM', 'PYNCCL'].
+(Worker pid=3461415) INFO 11-09 14:04:12 [parallel_state.py:2385] rank 0 in world size 2 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, ETP rank 0, EP rank N/A, EPLB rank N/A
+(Worker pid=3461415) INFO 11-09 14:04:12 [gpu_worker.py:513] Using V2 Model Runner
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:16 [model_runner.py:399] Loading model from scratch...
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:17 [cuda.py:508] Using FLASH_ATTN attention backend out of potential backends: ['FLASH_ATTN', 'FLASHINFER', 'TRITON_ATTN', 'FLEX_ATTENTION'].
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:17 [flash_attn.py:1122] Using FlashAttention version 2
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:19 [base_loader.py:82] Initializing model took 2.507632 seconds
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:19 [weight_utils.py:1144] Filesystem type for checkpoints: NFS4. Checkpoint size: 13.49 GiB. Available RAM: 978.38 GiB.
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:19 [weight_utils.py:1106] Prefetching checkpoint files into page cache started (in background, num_threads=8, block_size=16777216 bytes)
+(Worker_TP1 pid=3461416) INFO 11-09 14:04:19 [weight_utils.py:1106] Prefetching checkpoint files into page cache started (in background, num_threads=8, block_size=16777216 bytes)
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:22 [weight_utils.py:1078] Prefetching checkpoint files: 10% (1/2)
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:22 [weight_utils.py:1078] Prefetching checkpoint files: 20% (2/2)
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:22 [weight_utils.py:1101] Prefetching checkpoint files into page cache finished in 2.47s
+(Worker_TP1 pid=3461416) INFO 11-09 14:04:22 [weight_utils.py:1078] Prefetching checkpoint files: 10% (1/1)
+(Worker_TP1 pid=3461416) INFO 11-09 14:04:22 [weight_utils.py:1101] Prefetching checkpoint files into page cache finished in 2.54s
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:25 [default_loader.py:506] Loading weights took 5.58 seconds
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:27 [model_runner.py:428] Model loading took 6.75 GiB memory and 12.103020 seconds
+(Worker_TP1 pid=3461416) INFO 11-09 14:04:27 [model_runner.py:428] Model loading took 6.75 GiB memory and 12.155714 seconds
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:27 [topk_topp_sampler.py:121] FlashInfer top-p/top-k sampling disabled via VLLM_USE_FLASHINFER_SAMPLER=0.
+(EngineCore pid=3461398) INFO 11-09 14:04:27 [utils.py:381] Using LBNHC KV cache layout.
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:30 [monitor.py:40] [backbone] Starting torch.compile
+(Worker_TP1 pid=3461416) INFO 11-09 14:04:30 [monitor.py:40] [backbone] Starting torch.compile
+(Worker_TP1 pid=3461416) INFO 11-09 14:04:39 [backends.py:1125] [backbone] Using cache directory: /home/pallaoro/.cache/vllm/torch_compile_cache/3e4b76da61/rank_1_0/backbone for vLLM's torch.compile
+(Worker_TP1 pid=3461416) INFO 11-09 14:04:39 [backends.py:1187] [backbone] Dynamo bytecode transform time: 8.63 s
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:39 [backends.py:1125] [backbone] Using cache directory: /home/pallaoro/.cache/vllm/torch_compile_cache/3e4b76da61/rank_0_0/backbone for vLLM's torch.compile
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:39 [backends.py:1187] [backbone] Dynamo bytecode transform time: 8.70 s
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:50 [backends.py:417] [backbone] Compiling a graph for compile range (1, 16384) takes 10.43 s
+(Worker_TP1 pid=3461416) INFO 11-09 14:04:50 [backends.py:417] [backbone] Compiling a graph for compile range (1, 16384) takes 10.51 s
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:57 [backends.py:948] collected artifacts: 33 entries, 3 artifacts, 3475037 bytes total
+(Worker_TP1 pid=3461416) INFO 11-09 14:04:57 [backends.py:948] collected artifacts: 33 entries, 3 artifacts, 3482991 bytes total
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:57 [decorators.py:752] [backbone] saved AOT compiled function to /home/pallaoro/.cache/vllm/torch_compile_cache/torch_aot_compile/8307bf2bbdba23bf0ab3d334164108fadb43d06610f159e69c270a47013e64cf/rank_0_0/model
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:57 [monitor.py:62] [backbone] torch.compile took 26.67 s in total
+(Worker_TP1 pid=3461416) INFO 11-09 14:04:57 [decorators.py:752] [backbone] saved AOT compiled function to /home/pallaoro/.cache/vllm/torch_compile_cache/torch_aot_compile/8307bf2bbdba23bf0ab3d334164108fadb43d06610f159e69c270a47013e64cf/rank_1_0/model
+(Worker_TP1 pid=3461416) INFO 11-09 14:04:57 [monitor.py:62] [backbone] torch.compile took 26.77 s in total
+(Worker_TP0 pid=3461415) INFO 11-09 14:04:57 [monitor.py:91] [backbone] Initial profiling/warmup run took 0.13 s
+(Worker_TP1 pid=3461416) INFO 11-09 14:04:57 [monitor.py:91] [backbone] Initial profiling/warmup run took 0.03 s
+(Worker_TP1 pid=3461416) INFO 11-09 14:05:18 [model_runner.py:1163] Graph capturing finished in 6 secs, took 0.38 GiB
+(Worker_TP0 pid=3461415) INFO 11-09 14:05:18 [model_runner.py:1163] Graph capturing finished in 6 secs, took 0.38 GiB
+(Worker_TP1 pid=3461416) INFO 11-09 14:05:19 [gpu_worker.py:787] CUDA graph memory profiling is enabled (default since v0.21.0). The current --gpu-memory-utilization=0.9000 is equivalent to --gpu-memory-utilization=0.8905 without CUDA graph memory profiling. To maintain the same effective KV cache size as before, increase --gpu-memory-utilization to 0.9095. To disable, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=0.
+(Worker_TP0 pid=3461415) INFO 11-09 14:05:19 [gpu_worker.py:772] Available KV cache memory: 31.8 GiB
+(Worker_TP0 pid=3461415) INFO 11-09 14:05:19 [gpu_worker.py:787] CUDA graph memory profiling is enabled (default since v0.21.0). The current --gpu-memory-utilization=0.9000 is equivalent to --gpu-memory-utilization=0.8905 without CUDA graph memory profiling. To maintain the same effective KV cache size as before, increase --gpu-memory-utilization to 0.9095. To disable, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=0.
+(EngineCore pid=3461398) INFO 11-09 14:05:19 [kv_cache_utils.py:1147] GPU KV cache size: 520,976 tokens, Maximum concurrency for 8,192 tokens per request: 63.60x
+(Worker_TP1 pid=3461416) INFO 11-09 14:05:19 [kernel_warmup.py:179] JIT kernel warmup starting.
+(Worker_TP1 pid=3461416) INFO 11-09 14:05:19 [kernel_warmup.py:192] JIT kernel warmup finished in 0.00s.
+(Worker_TP0 pid=3461415) INFO 11-09 14:05:19 [kernel_warmup.py:179] JIT kernel warmup starting.
+(Worker_TP0 pid=3461415) INFO 11-09 14:05:19 [kernel_warmup.py:192] JIT kernel warmup finished in 0.00s.
+(Worker_TP0 pid=3461415) INFO 11-09 14:05:45 [model_runner.py:1163] Graph capturing finished in 8 secs, took 0.23 GiB
+(Worker_TP0 pid=3461415) INFO 11-09 14:05:45 [gpu_worker.py:1003] CUDA graph pool memory: 0.23 GiB (actual), 0.42 GiB (estimated), difference: 0.19 GiB (79.2%).
+(Worker_TP0 pid=3461415) INFO 11-09 14:05:45 [gpu_worker.py:1066] Free memory on device (43.87/44.42 GiB) on startup. Desired GPU memory utilization is (0.9, 39.98 GiB). Actual usage is 6.8 GiB for consumed memory (weights + non-torch), 1.38 GiB for peak activation, and 0.23 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=33734001152` (31.42 GiB) to fit into requested memory, or `--kv-cache-memory=37913756160` (35.31 GiB) to fully utilize gpu memory. Current kv cache memory in use is 31.8 GiB.
+(Worker_TP1 pid=3461416) INFO 11-09 14:05:45 [model_runner.py:1163] Graph capturing finished in 8 secs, took 0.23 GiB
+(Worker_TP1 pid=3461416) INFO 11-09 14:05:45 [gpu_worker.py:1003] CUDA graph pool memory: 0.23 GiB (actual), 0.42 GiB (estimated), difference: 0.19 GiB (79.2%).
+(Worker_TP1 pid=3461416) INFO 11-09 14:05:45 [gpu_worker.py:1066] Free memory on device (43.87/44.42 GiB) on startup. Desired GPU memory utilization is (0.9, 39.98 GiB). Actual usage is 6.8 GiB for consumed memory (weights + non-torch), 1.38 GiB for peak activation, and 0.23 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=33734001152` (31.42 GiB) to fit into requested memory, or `--kv-cache-memory=37913756160` (35.31 GiB) to fully utilize gpu memory. Current kv cache memory in use is 31.8 GiB.
+(Worker_TP1 pid=3461416) INFO 11-09 14:05:46 [jit_monitor.py:84] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.
+(Worker_TP0 pid=3461415) INFO 11-09 14:05:46 [jit_monitor.py:84] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.
+(EngineCore pid=3461398) INFO 11-09 14:05:47 [core.py:405] init engine (profile, create kv cache, warmup model) took 80.14 s (compilation: 26.77 s)
+(EngineCore pid=3461398) INFO 11-09 14:05:48 [kernel.py:480] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native'])
+(Worker_TP0 pid=3461415) WARNING 11-09 14:05:50 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_stats_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP0 pid=3461415) WARNING 11-09 14:05:52 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_step_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP0 pid=3461415) WARNING 11-09 14:05:54 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_mask_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP0 pid=3461415) WARNING 11-09 14:05:57 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topk_topp_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(EngineCore pid=3461398) INFO 11-09 14:06:40 [core.py:1525] [shutdown] EngineCore: trigger received signal=SIGTERM
+(EngineCore pid=3461398) INFO 11-09 14:06:40 [core.py:1712] [shutdown] EngineCore: start mode=abort timeout=0s
+(EngineCore pid=3461398) INFO 11-09 14:06:40 [core.py:1743] [shutdown] EngineCore: request processing complete; starting resource teardown
+(EngineCore pid=3461398) INFO 11-09 14:06:40 [core.py:1573] [shutdown] EngineCore: exiting busy loop
+(EngineCore pid=3461398) INFO 11-09 14:06:40 [multiproc_executor.py:580] [shutdown] Executor: waiting for worker exit count=2
+(Worker_TP0 pid=3461415) INFO 11-09 14:06:40 [multiproc_executor.py:944] Parent process exited, terminating worker queues
+(EngineCore pid=3461398) WARNING 11-09 14:06:45 [multiproc_executor.py:592] [shutdown] Executor: workers still running after grace period; sending SIGTERM count=1
+[2026-11-09 14:05:48] [INFO   ] (11 Minutes) Loading model into cuda completed.
+[2026-11-09 14:05:48] [INFO   ] (11 Minutes) Loading model at index 2: 'mistralai/Mistral-7B-Instruct-v0.2' completed.
+[2026-11-09 14:05:48] [INFO   ] (11 Minutes) Checkpoint: './data/tmp/syntype_Mistral-7B-Instruct-v0.2_Test_NoDef_NoCom_NoStr_NoCOT_FS.json'.
+[2026-11-09 14:05:48] [INFO   ] (11 Minutes) Prompt log: './data/logs/prompts_Mistral-7B-Instruct-v0.2_Test_NoDef_NoCom_NoStr_NoCOT_FS.log'.
+[2026-11-09 14:05:48] [INFO   ] (11 Minutes) Setting up the LLM (Mistral-7B-Instruct-v0.2) completed.
+[2026-11-09 14:05:48] [INFO   ] (11 Minutes) Turn 1/1: generating the answers...
+[2026-11-09 14:05:48] [INFO   ] (11 Minutes) Loading prompt from file 'single_prompt.md'...
+[2026-11-09 14:05:48] [INFO   ] (11 Minutes) Loaded prompt with base length 2623.
+[2026-11-09 14:05:48] [INFO   ] (11 Minutes) Added the prompt to 1000 histories.
+[2026-11-09 14:05:48] [INFO   ] (11 Minutes) Loading prompt from file 'single_prompt.md' completed.
+[2026-11-09 14:05:48] [INFO   ] (11 Minutes) Answer store 'syntype_Mistral-7B-Instruct-v0.2_Test_NoDef_NoCom_NoStr_NoCOT_FS.json': 0 stored answers.
+[2026-11-09 14:05:48] [INFO   ] (11 Minutes) Generating answers for 1000 histories...
+[2026-11-09 14:05:48] [INFO   ] (11 Minutes) 1000 histories to generate in 2 chunk(s) of up to 500.
+[2026-11-09 14:05:49] [INFO   ] (11 Minutes) Running vLLM generation for chunk 1/2 [Indices 0 to 499]...
+[2026-11-09 14:06:24] [INFO   ] (11 Minutes) Running vLLM generation for chunk 1/2 [Indices 0 to 499] completed.
+[2026-11-09 14:06:24] [INFO   ] (11 Minutes) Chunk 1/2: 500 answers, 47254 tokens in 35.7 s (1323 tokens/s).
+[2026-11-09 14:06:24] [INFO   ] (11 Minutes) Progress: 500/1000 histories, elapsed 0:00:36, remaining ~0:00:36.
+[2026-11-09 14:06:25] [INFO   ] (11 Minutes) Running vLLM generation for chunk 2/2 [Indices 500 to 999]...
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Running vLLM generation for chunk 2/2 [Indices 500 to 999] completed.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Chunk 2/2: 500 answers, 45512 tokens in 15.0 s (3029 tokens/s).
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Progress: 1000/1000 histories, elapsed 0:00:51, remaining ~0:00:00.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) 1000 answers generated, 0 stored and 0 shared with identical histories.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) 1154228 prompt and 92766 generated tokens in 0:00:51 (1826 generated tokens/s).
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Generating answers for 1000 histories completed.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Writing to a temporary file first...
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_Mistral-7B-Instruct-v0.2.csv.tmp'...
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_Mistral-7B-Instruct-v0.2.csv.tmp' completed.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Writing to a temporary file first completed.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Replacing original data with temporary data...
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Replacing original data with temporary data completed.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Turn 1/1: generating the answers completed.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Parsing the answers...
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Could not locate a valid JSON object at index 23.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Could not locate a valid JSON object at index 62.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Could not locate a valid JSON object at index 119.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Could not locate a valid JSON object at index 187.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Could not locate a valid JSON object at index 524.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Could not locate a valid JSON object at index 534.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Could not locate a valid JSON object at index 535.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Could not locate a valid JSON object at index 555.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Could not locate a valid JSON object at index 565.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Could not locate a valid JSON object at index 678.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Could not locate a valid JSON object at index 804.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Could not locate a valid JSON object at index 891.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Could not locate a valid JSON object at index 922.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Could not locate a valid JSON object at index 940.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Could not locate a valid JSON object at index 984.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) 982 of 1000 answers contain a valid classification, 985 a rationale.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Parsing the answers completed.
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Writing to a temporary file first...
+[2026-11-09 14:06:39] [INFO   ] (11 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_Mistral-7B-Instruct-v0.2.csv.tmp'...
+[2026-11-09 14:06:40] [INFO   ] (11 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_Mistral-7B-Instruct-v0.2.csv.tmp' completed.
+[2026-11-09 14:06:40] [INFO   ] (11 Minutes) Writing to a temporary file first completed.
+[2026-11-09 14:06:40] [INFO   ] (11 Minutes) Replacing original data with temporary data...
+[2026-11-09 14:06:40] [INFO   ] (11 Minutes) Replacing original data with temporary data completed.
+[2026-11-09 14:06:40] [INFO   ] (11 Minutes) Writing the prompts and answers to the prompt log...
+[2026-11-09 14:06:40] [INFO   ] (11 Minutes) Logging prompts in 'prompts_Mistral-7B-Instruct-v0.2_Test_NoDef_NoCom_NoStr_NoCOT_FS.log'...
+[2026-11-09 14:06:40] [INFO   ] (11 Minutes) Logging prompts in 'prompts_Mistral-7B-Instruct-v0.2_Test_NoDef_NoCom_NoStr_NoCOT_FS.log' completed.
+[2026-11-09 14:06:40] [INFO   ] (11 Minutes) Writing the prompts and answers to the prompt log completed.
+[2026-11-09 14:06:45] [INFO   ] (11 Minutes) Classifying the synonyms (Mistral-7B-Instruct-v0.2) took 00:03:37.38.
+[2026-11-09 14:06:45] [INFO   ] (11 Minutes) Formatting the answers (Mistral-7B-Instruct-v0.2)...
+[2026-11-09 14:06:45] [INFO   ] (11 Minutes) ==========================================================================================
+[2026-11-09 14:06:45] [INFO   ] (11 Minutes) =                   Formatting the Answers (Mistral-7B-Instruct-v0.2)                    =
+[2026-11-09 14:06:45] [INFO   ] (11 Minutes) ==========================================================================================
+[2026-11-09 14:06:45] [INFO   ] (11 Minutes) Writing to a temporary file first...
+[2026-11-09 14:06:45] [INFO   ] (11 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_formatted_Mistral-7B-Instruct-v0.2.csv.tmp'...
+[2026-11-09 14:06:45] [INFO   ] (11 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_formatted_Mistral-7B-Instruct-v0.2.csv.tmp' completed.
+[2026-11-09 14:06:45] [INFO   ] (11 Minutes) Writing to a temporary file first completed.
+[2026-11-09 14:06:45] [INFO   ] (11 Minutes) Replacing original data with temporary data...
+[2026-11-09 14:06:45] [INFO   ] (11 Minutes) Replacing original data with temporary data completed.
+[2026-11-09 14:06:45] [INFO   ] (11 Minutes) Logging the wrong classifications...
+[2026-11-09 14:06:45] [INFO   ] (11 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-09 14:06:45] [INFO   ] (11 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Wrong or undefined classifications: 187.
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Correct classifications: 813.
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Logging the wrong classifications completed.
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Summary of Mistral-7B-Instruct-v0.2: 996 synonyms.
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Gold types expert, layperson, without the few-shot examples; 18 answers undefined.
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Gold / Classified         expert   layperson   undefined
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) expert                       344         140          14
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) layperson                     28         466           4
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) "expert": precision 0.925, recall 0.691, F1 0.791.
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) "expert": mean confidence 4.96 of the 372 classified as expert.
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) "layperson": precision 0.769, recall 0.936, F1 0.844.
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) "layperson": mean confidence 4.93 of the 606 classified as layperson.
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Formatting the answers (Mistral-7B-Instruct-v0.2) took 00:00:01.03.
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Model 4/6: "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8".
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Classifying the synonyms (Qwen3-30B-A3B-Instruct-2507-FP8)...
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) ==========================================================================================
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) =               Classifying the Synonyms (Qwen3-30B-A3B-Instruct-2507-FP8)               =
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) ==========================================================================================
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) File(s): "type_Test_NoDef_NoCom_NoStr_NoCOT_FS_*.csv".
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Prompt file(s): "single_prompt.md".
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Setting up the LLM (Qwen3-30B-A3B-Instruct-2507-FP8)...
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Loading model at index 3: 'Qwen/Qwen3-30B-A3B-Instruct-2507-FP8'...
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Scanning device 'cuda'...
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Cuda available: True.
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) GPU Amount: 2.
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Scanning device 'cuda' completed.
+[2026-11-09 14:06:46] [INFO   ] (11 Minutes) Loading model into cuda...
+(EngineCore pid=3461890) INFO 11-09 14:07:32 [core.py:139] Initializing a V1 LLM engine (v0.33.0) with config: model='Qwen/Qwen3-30B-A3B-Instruct-2507-FP8', speculative_config=None, tokenizer='Qwen/Qwen3-30B-A3B-Instruct-2507-FP8', skip_tokenizer_init=False, tokenizer_mode=auto, revision=main, tokenizer_revision=main, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=8192, download_dir=None, load_format=auto, tensor_parallel_size=2, pipeline_parallel_size=1, data_parallel_size=1, decode_context_parallel_size=1, dcp_comm_backend=ag_rs, disable_custom_all_reduce=False, quantization=fp8, quantization_config=None, enforce_eager=False, aux_output_config=AuxOutputConfig(enable_return_routed_experts=False, max_bytes=None), kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, per_request_spec_decode_metrics='none', kv_cache_metrics=False, kv_cache_metrics_sample=0.01, custom_histogram_buckets=None, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False, jit_monitor_mode='warn', jit_monitor_verbose=False), seed=2898231092, served_model_name=Qwen/Qwen3-30B-A3B-Instruct-2507-FP8, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'mode': <CompilationMode.VLLM_COMPILE: 3>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['+quant_fp8', 'none', '+quant_fp8'], 'ir_enable_torch_wrap': True, 'splitting_ops': ['vllm::unified_attention_with_output', 'vllm::unified_mla_attention_with_output', 'vllm::mamba_mixer2', 'vllm::mamba_mixer', 'vllm::short_conv', 'vllm::qwen4_exp_ple_short_conv', 'vllm::qwen4_exp_qsa_with_output', 'vllm::qwen4_exp_qsa_prepare_with_output', 'vllm::linear_attention', 'vllm::qwen_gdn_attention_core', 'vllm::qwen_gdn_attention_core_fused_norm_packed', 'vllm::gdn_attention_core_xpu', 'vllm::olmo_hybrid_gdn_full_forward', 'vllm::sparse_attn_indexer', 'vllm::rocm_aiter_sparse_attn_indexer', 'vllm::deepseek_v4_attention', 'vllm::hpc_rope_norm_forward', 'vllm::unified_kv_cache_update', 'vllm::unified_mla_kv_cache_update'], 'compile_mm_encoder': False, 'cudagraph_mm_encoder': False, 'encoder_cudagraph_token_budgets': [], 'encoder_cudagraph_max_vision_items_per_batch': 0, 'encoder_cudagraph_max_frames_per_batch': None, 'cudagraph_decoder_replay': True, 'decoder_replay_cudagraph_capture_sizes': [], 'decoder_replay_trim_threshold': 768, 'compile_sizes': [], 'compile_ranges_endpoints': [16384], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.FULL_AND_PIECEWISE: (2, 1)>, 'cudagraph_num_of_warmups': 1, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192, 200, 208, 216, 224, 232, 240, 248, 256, 272, 288, 304, 320, 336, 352, 368, 384, 400, 416, 432, 448, 464, 480, 496, 512], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': True, 'fuse_act_quant': True, 'fuse_attn_quant': False, 'fuse_allreduce_rms': False, 'enable_qk_norm_rope_fusion': False, 'fuse_rope_kvcache_cat_mla': False, 'fuse_act_padding': False, 'fuse_qk_norm_rope_kvcache': False}, 'max_cudagraph_capture_size': 512, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': False}, 'local_cache_dir': None, 'fast_moe_cold_start': False, 'static_all_moe_layers': []}, kernel_config=KernelConfig(ir_op_priority=IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native']), enable_flashinfer_autotune=True, enable_rocm_segmented_attn_autotune=False, enable_cutedsl_warmup=True, enable_jit_warmup=True, monokernel=False, moe_backend='auto', sparse_indexer_topk_backend='auto', linear_backend='auto', linear_backend_per_quant=None)
+(EngineCore pid=3461890) INFO 11-09 14:07:32 [multiproc_executor.py:167] DP group leader: node_rank=0, node_rank_within_dp=0, master_addr=127.0.0.1, mq_connect_ip=141.39.131.12 (local), world_size=2, local_world_size=2
+(Worker pid=3461917) INFO 11-09 14:07:59 [parallel_state.py:1929] world_size=2 rank=0 local_rank=0 distributed_init_method=file:///tmp/vllm_dist_cf2a4f70be3c475da9e91ff40622c98c backend=nccl
+(Worker pid=3461918) INFO 11-09 14:07:59 [parallel_state.py:1929] world_size=2 rank=1 local_rank=1 distributed_init_method=file:///tmp/vllm_dist_cf2a4f70be3c475da9e91ff40622c98c backend=nccl
+(Worker pid=3461917) INFO 11-09 14:08:02 [pynccl.py:148] vLLM is using nccl==2.30.7
+(Worker pid=3461917) WARNING 11-09 14:08:03 [symm_mem.py:67] SymmMemCommunicator: Device capability 8.6 not supported, communicator is not available.
+(Worker pid=3461918) WARNING 11-09 14:08:03 [symm_mem.py:67] SymmMemCommunicator: Device capability 8.6 not supported, communicator is not available.
+(Worker pid=3461918) WARNING 11-09 14:08:03 [flashinfer_all_reduce.py:424] FlashInfer All Reduce is disabled because it is not supported for world_size=2.
+(Worker pid=3461917) WARNING 11-09 14:08:03 [flashinfer_all_reduce.py:424] FlashInfer All Reduce is disabled because it is not supported for world_size=2.
+(Worker pid=3461917) INFO 11-09 14:08:03 [cuda_communicator.py:353] Using ['CUSTOM', 'PYNCCL'] all-reduce backends (in dispatch order) for group 'tp:0' out of potential backends: ['FLASHINFER_PCIE_IPC', 'FLASHINFER', 'NCCL_SYMM_MEM', 'QUICK_REDUCE', 'AITER_CUSTOM', 'CUSTOM', 'SYMM_MEM', 'PYNCCL'].
+(Worker pid=3461917) INFO 11-09 14:08:04 [cuda_communicator.py:353] Using ['PYNCCL'] all-reduce backends (in dispatch order) for group 'ep:0' out of potential backends: ['FLASHINFER_PCIE_IPC', 'FLASHINFER', 'NCCL_SYMM_MEM', 'QUICK_REDUCE', 'AITER_CUSTOM', 'CUSTOM', 'SYMM_MEM', 'PYNCCL'].
+(Worker pid=3461917) INFO 11-09 14:08:04 [parallel_state.py:2385] rank 0 in world size 2 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, ETP rank 0, EP rank 0, EPLB rank N/A
+(Worker pid=3461917) INFO 11-09 14:08:04 [gpu_worker.py:513] Using V2 Model Runner
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:08:07 [model_runner.py:399] Loading model from scratch...
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:08:07 [__init__.py:778] Selected MarlinFP8ScaledMMLinearKernel for Fp8LinearMethod
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:08:08 [cuda.py:508] Using FLASH_ATTN attention backend out of potential backends: ['FLASH_ATTN', 'FLASHINFER', 'TRITON_ATTN', 'FLEX_ATTENTION'].
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:08:08 [flash_attn.py:1122] Using FlashAttention version 2
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:08:08 [expert_map_manager.py:250] [EP Rank 0/2] Expert parallelism is enabled. Expert placement strategy: linear. Local/global number of experts: 64/128. Experts local to global index map: 0->0, 1->1, 2->2, 3->3, 4->4, 5->5, 6->6, 7->7, 8->8, 9->9, 10->10, 11->11, 12->12, 13->13, 14->14, 15->15, 16->16, 17->17, 18->18, 19->19, 20->20, 21->21, 22->22, 23->23, 24->24, 25->25, 26->26, 27->27, 28->28, 29->29, 30->30, 31->31, 32->32, 33->33, 34->34, 35->35, 36->36, 37->37, 38->38, 39->39, 40->40, 41->41, 42->42, 43->43, 44->44, 45->45, 46->46, 47->47, 48->48, 49->49, 50->50, 51->51, 52->52, 53->53, 54->54, 55->55, 56->56, 57->57, 58->58, 59->59, 60->60, 61->61, 62->62, 63->63.
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:08:08 [fp8.py:536] Using MARLIN Fp8 MoE backend out of potential backends: ['AITER', 'FLASHINFER_TRTLLM', 'FLASHINFER_CUTLASS', 'DEEPGEMM', 'TRITON', 'MARLIN', 'HUMMING', 'BATCHED_DEEPGEMM', 'BATCHED_TRITON', 'XPU', 'CPU_W8A8', 'CPU', 'HPC'].
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:08:10 [base_loader.py:82] Initializing model took 3.095810 seconds
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:08:11 [weight_utils.py:1144] Filesystem type for checkpoints: NFS4. Checkpoint size: 29.03 GiB. Available RAM: 977.53 GiB.
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:08:11 [weight_utils.py:1106] Prefetching checkpoint files into page cache started (in background, num_threads=8, block_size=16777216 bytes)
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:08:11 [weight_utils.py:1106] Prefetching checkpoint files into page cache started (in background, num_threads=8, block_size=16777216 bytes)
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:08:12 [weight_utils.py:1078] Prefetching checkpoint files: 10% (1/2)
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:08:17 [weight_utils.py:1078] Prefetching checkpoint files: 10% (1/2)
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:08:17 [weight_utils.py:1078] Prefetching checkpoint files: 20% (2/2)
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:08:17 [weight_utils.py:1101] Prefetching checkpoint files into page cache finished in 5.86s
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:08:17 [weight_utils.py:1078] Prefetching checkpoint files: 20% (2/2)
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:08:17 [weight_utils.py:1101] Prefetching checkpoint files into page cache finished in 6.08s
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:08:27 [default_loader.py:506] Loading weights took 15.81 seconds
+(Worker_TP0_EP0 pid=3461917) WARNING 11-09 14:08:27 [marlin_utils_fp8.py:108] Your GPU does not have native support for FP8 computation but FP8 quantization is being used. Weight-only FP8 compression will be used leveraging the Marlin kernel. This may degrade performance for compute-heavy workloads.
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:08:27 [fp8.py:880] Using MoEPrepareAndFinalizeNoDPEPModular
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:08:31 [model_runner.py:428] Model loading took 14.89 GiB memory and 25.012742 seconds
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:08:31 [model_runner.py:428] Model loading took 14.89 GiB memory and 25.326270 seconds
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:08:31 [topk_topp_sampler.py:121] FlashInfer top-p/top-k sampling disabled via VLLM_USE_FLASHINFER_SAMPLER=0.
+(EngineCore pid=3461890) INFO 11-09 14:08:31 [utils.py:381] Using LBNHC KV cache layout.
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:08:34 [monitor.py:40] [backbone] Starting torch.compile
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:08:34 [monitor.py:40] [backbone] Starting torch.compile
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:08:53 [backends.py:1125] [backbone] Using cache directory: /home/pallaoro/.cache/vllm/torch_compile_cache/5a7b4ff61a/rank_0_0/backbone for vLLM's torch.compile
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:08:53 [backends.py:1187] [backbone] Dynamo bytecode transform time: 18.75 s
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:08:53 [backends.py:1125] [backbone] Using cache directory: /home/pallaoro/.cache/vllm/torch_compile_cache/5a7b4ff61a/rank_1_0/backbone for vLLM's torch.compile
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:08:53 [backends.py:1187] [backbone] Dynamo bytecode transform time: 18.75 s
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:09:14 [backends.py:417] [backbone] Compiling a graph for compile range (1, 16384) takes 19.03 s
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:09:14 [backends.py:417] [backbone] Compiling a graph for compile range (1, 16384) takes 19.03 s
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:09:27 [backends.py:948] collected artifacts: 49 entries, 3 artifacts, 4928267 bytes total
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:09:27 [backends.py:948] collected artifacts: 49 entries, 3 artifacts, 4928352 bytes total
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:09:28 [decorators.py:752] [backbone] saved AOT compiled function to /home/pallaoro/.cache/vllm/torch_compile_cache/torch_aot_compile/e718f15edcd6db5feb9296de57c25a641af8218c22cd9df73ae96575fa049bdc/rank_0_0/model
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:09:28 [monitor.py:62] [backbone] torch.compile took 53.57 s in total
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:09:28 [decorators.py:752] [backbone] saved AOT compiled function to /home/pallaoro/.cache/vllm/torch_compile_cache/torch_aot_compile/e718f15edcd6db5feb9296de57c25a641af8218c22cd9df73ae96575fa049bdc/rank_1_0/model
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:09:28 [monitor.py:62] [backbone] torch.compile took 53.59 s in total
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:09:28 [monitor.py:91] [backbone] Initial profiling/warmup run took 0.18 s
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:09:28 [monitor.py:91] [backbone] Initial profiling/warmup run took 0.20 s
+(EngineCore pid=3461890) INFO 11-09 14:09:32 [shm_broadcast.py:878] No available shared memory broadcast block found in 60 seconds. This typically happens when some processes are hanging or doing some time-consuming work (e.g. compilation, weight/kv cache quantization).
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:09:55 [model_runner.py:1163] Graph capturing finished in 12 secs, took 0.62 GiB
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:09:55 [model_runner.py:1163] Graph capturing finished in 12 secs, took 0.62 GiB
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:09:56 [gpu_worker.py:772] Available KV cache memory: 22.83 GiB
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:09:56 [gpu_worker.py:787] CUDA graph memory profiling is enabled (default since v0.21.0). The current --gpu-memory-utilization=0.9000 is equivalent to --gpu-memory-utilization=0.8850 without CUDA graph memory profiling. To maintain the same effective KV cache size as before, increase --gpu-memory-utilization to 0.9150. To disable, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=0.
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:09:56 [gpu_worker.py:787] CUDA graph memory profiling is enabled (default since v0.21.0). The current --gpu-memory-utilization=0.9000 is equivalent to --gpu-memory-utilization=0.8850 without CUDA graph memory profiling. To maintain the same effective KV cache size as before, increase --gpu-memory-utilization to 0.9150. To disable, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=0.
+(EngineCore pid=3461890) INFO 11-09 14:09:56 [kv_cache_utils.py:1147] GPU KV cache size: 498,672 tokens, Maximum concurrency for 8,192 tokens per request: 60.87x
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:09:56 [kernel_warmup.py:179] JIT kernel warmup starting.
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:09:56 [kernel_warmup.py:192] JIT kernel warmup finished in 0.00s.
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:09:56 [kernel_warmup.py:179] JIT kernel warmup starting.
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:09:56 [kernel_warmup.py:192] JIT kernel warmup finished in 0.00s.
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:10:31 [model_runner.py:1163] Graph capturing finished in 17 secs, took 0.33 GiB
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:10:31 [gpu_worker.py:1003] CUDA graph pool memory: 0.33 GiB (actual), 0.67 GiB (estimated), difference: 0.33 GiB (100.6%).
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:10:31 [gpu_worker.py:1066] Free memory on device (43.8/44.42 GiB) on startup. Desired GPU memory utilization is (0.9, 39.98 GiB). Actual usage is 16.13 GiB for consumed memory (weights + non-torch), 1.02 GiB for peak activation, and 0.33 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=23997140992` (22.35 GiB) to fit into requested memory, or `--kv-cache-memory=28097204224` (26.17 GiB) to fully utilize gpu memory. Current kv cache memory in use is 22.83 GiB.
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:10:31 [model_runner.py:1163] Graph capturing finished in 17 secs, took 0.33 GiB
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:10:31 [gpu_worker.py:1003] CUDA graph pool memory: 0.33 GiB (actual), 0.67 GiB (estimated), difference: 0.33 GiB (100.6%).
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:10:31 [gpu_worker.py:1066] Free memory on device (43.8/44.42 GiB) on startup. Desired GPU memory utilization is (0.9, 39.98 GiB). Actual usage is 16.13 GiB for consumed memory (weights + non-torch), 1.02 GiB for peak activation, and 0.33 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=23997140992` (22.35 GiB) to fit into requested memory, or `--kv-cache-memory=28097204224` (26.17 GiB) to fully utilize gpu memory. Current kv cache memory in use is 22.83 GiB.
+(Worker_TP1_EP1 pid=3461918) INFO 11-09 14:10:33 [jit_monitor.py:84] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:10:33 [jit_monitor.py:84] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.
+(EngineCore pid=3461890) INFO 11-09 14:10:34 [core.py:405] init engine (profile, create kv cache, warmup model) took 122.86 s (compilation: 53.59 s)
+(EngineCore pid=3461890) INFO 11-09 14:10:35 [kernel.py:480] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native'])
+(EngineCore pid=3461890) INFO 11-09 14:10:35 [compilation.py:317] Enabled custom fusions: norm_quant, act_quant
+(Worker_TP0_EP0 pid=3461917) WARNING 11-09 14:10:38 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_stats_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP0_EP0 pid=3461917) WARNING 11-09 14:10:39 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_step_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP0_EP0 pid=3461917) WARNING 11-09 14:10:42 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_mask_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP0_EP0 pid=3461917) WARNING 11-09 14:10:45 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topk_topp_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(EngineCore pid=3461890) INFO 11-09 14:11:18 [core.py:1525] [shutdown] EngineCore: trigger received signal=SIGTERM
+(EngineCore pid=3461890) INFO 11-09 14:11:18 [core.py:1712] [shutdown] EngineCore: start mode=abort timeout=0s
+(EngineCore pid=3461890) INFO 11-09 14:11:18 [core.py:1743] [shutdown] EngineCore: request processing complete; starting resource teardown
+(EngineCore pid=3461890) INFO 11-09 14:11:18 [core.py:1573] [shutdown] EngineCore: exiting busy loop
+(EngineCore pid=3461890) INFO 11-09 14:11:18 [multiproc_executor.py:580] [shutdown] Executor: waiting for worker exit count=2
+(Worker_TP0_EP0 pid=3461917) INFO 11-09 14:11:18 [multiproc_executor.py:944] Parent process exited, terminating worker queues
+(EngineCore pid=3461890) WARNING 11-09 14:11:23 [multiproc_executor.py:592] [shutdown] Executor: workers still running after grace period; sending SIGTERM count=2
+[2026-11-09 14:10:36] [INFO   ] (15 Minutes) Loading model into cuda completed.
+[2026-11-09 14:10:36] [INFO   ] (15 Minutes) Loading model at index 3: 'Qwen/Qwen3-30B-A3B-Instruct-2507-FP8' completed.
+[2026-11-09 14:10:36] [INFO   ] (15 Minutes) Checkpoint: './data/tmp/syntype_Qwen3-30B-A3B-Instruct-2507-FP8_Test_NoDef_NoCom_NoStr_NoCOT_FS.json'.
+[2026-11-09 14:10:36] [INFO   ] (15 Minutes) Prompt log: './data/logs/prompts_Qwen3-30B-A3B-Instruct-2507-FP8_Test_NoDef_NoCom_NoStr_NoCOT_FS.log'.
+[2026-11-09 14:10:36] [INFO   ] (15 Minutes) Setting up the LLM (Qwen3-30B-A3B-Instruct-2507-FP8) completed.
+[2026-11-09 14:10:36] [INFO   ] (15 Minutes) Turn 1/1: generating the answers...
+[2026-11-09 14:10:36] [INFO   ] (15 Minutes) Loading prompt from file 'single_prompt.md'...
+[2026-11-09 14:10:36] [INFO   ] (15 Minutes) Loaded prompt with base length 2623.
+[2026-11-09 14:10:36] [INFO   ] (15 Minutes) Added the prompt to 1000 histories.
+[2026-11-09 14:10:36] [INFO   ] (15 Minutes) Loading prompt from file 'single_prompt.md' completed.
+[2026-11-09 14:10:36] [INFO   ] (15 Minutes) Answer store 'syntype_Qwen3-30B-A3B-Instruct-2507-FP8_Test_NoDef_NoCom_NoStr_NoCOT_FS.json': 0 stored answers.
+[2026-11-09 14:10:36] [INFO   ] (15 Minutes) Generating answers for 1000 histories...
+[2026-11-09 14:10:36] [INFO   ] (15 Minutes) 1000 histories to generate in 2 chunk(s) of up to 500.
+[2026-11-09 14:10:37] [INFO   ] (15 Minutes) Running vLLM generation for chunk 1/2 [Indices 0 to 499]...
+[2026-11-09 14:11:02] [INFO   ] (16 Minutes) Running vLLM generation for chunk 1/2 [Indices 0 to 499] completed.
+[2026-11-09 14:11:02] [INFO   ] (16 Minutes) Chunk 1/2: 500 answers, 45836 tokens in 25.7 s (1783 tokens/s).
+[2026-11-09 14:11:02] [INFO   ] (16 Minutes) Progress: 500/1000 histories, elapsed 0:00:26, remaining ~0:00:26.
+[2026-11-09 14:11:03] [INFO   ] (16 Minutes) Running vLLM generation for chunk 2/2 [Indices 500 to 999]...
+[2026-11-09 14:11:17] [INFO   ] (16 Minutes) Running vLLM generation for chunk 2/2 [Indices 500 to 999] completed.
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Chunk 2/2: 500 answers, 46305 tokens in 15.7 s (2950 tokens/s).
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Progress: 1000/1000 histories, elapsed 0:00:41, remaining ~0:00:00.
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) 1000 answers generated, 0 stored and 0 shared with identical histories.
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) 954774 prompt and 92141 generated tokens in 0:00:41 (2223 generated tokens/s).
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Generating answers for 1000 histories completed.
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Writing to a temporary file first...
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_Qwen3-30B-A3B-Instruct-2507-FP8.csv.tmp'...
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_Qwen3-30B-A3B-Instruct-2507-FP8.csv.tmp' completed.
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Writing to a temporary file first completed.
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Replacing original data with temporary data...
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Replacing original data with temporary data completed.
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Turn 1/1: generating the answers completed.
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Parsing the answers...
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) 1000 of 1000 answers contain a valid classification, 1000 a rationale.
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Parsing the answers completed.
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Writing to a temporary file first...
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_Qwen3-30B-A3B-Instruct-2507-FP8.csv.tmp'...
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_Qwen3-30B-A3B-Instruct-2507-FP8.csv.tmp' completed.
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Writing to a temporary file first completed.
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Replacing original data with temporary data...
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Replacing original data with temporary data completed.
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Writing the prompts and answers to the prompt log...
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Logging prompts in 'prompts_Qwen3-30B-A3B-Instruct-2507-FP8_Test_NoDef_NoCom_NoStr_NoCOT_FS.log'...
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Logging prompts in 'prompts_Qwen3-30B-A3B-Instruct-2507-FP8_Test_NoDef_NoCom_NoStr_NoCOT_FS.log' completed.
+[2026-11-09 14:11:18] [INFO   ] (16 Minutes) Writing the prompts and answers to the prompt log completed.
+[2026-11-09 14:11:24] [INFO   ] (16 Minutes) Classifying the synonyms (Qwen3-30B-A3B-Instruct-2507-FP8) took 00:04:37.72.
+[2026-11-09 14:11:24] [INFO   ] (16 Minutes) Formatting the answers (Qwen3-30B-A3B-Instruct-2507-FP8)...
+[2026-11-09 14:11:24] [INFO   ] (16 Minutes) ==========================================================================================
+[2026-11-09 14:11:24] [INFO   ] (16 Minutes) =                Formatting the Answers (Qwen3-30B-A3B-Instruct-2507-FP8)                =
+[2026-11-09 14:11:24] [INFO   ] (16 Minutes) ==========================================================================================
+[2026-11-09 14:11:24] [INFO   ] (16 Minutes) Writing to a temporary file first...
+[2026-11-09 14:11:24] [INFO   ] (16 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_formatted_Qwen3-30B-A3B-Instruct-2507-FP8.csv.tmp'...
+[2026-11-09 14:11:24] [INFO   ] (16 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_formatted_Qwen3-30B-A3B-Instruct-2507-FP8.csv.tmp' completed.
+[2026-11-09 14:11:24] [INFO   ] (16 Minutes) Writing to a temporary file first completed.
+[2026-11-09 14:11:24] [INFO   ] (16 Minutes) Replacing original data with temporary data...
+[2026-11-09 14:11:24] [INFO   ] (16 Minutes) Replacing original data with temporary data completed.
+[2026-11-09 14:11:24] [INFO   ] (16 Minutes) Logging the wrong classifications...
+[2026-11-09 14:11:24] [INFO   ] (16 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-09 14:11:24] [INFO   ] (16 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Wrong or undefined classifications: 165.
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Correct classifications: 835.
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Logging the wrong classifications completed.
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Summary of Qwen3-30B-A3B-Instruct-2507-FP8: 996 synonyms.
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Gold types expert, layperson, without the few-shot examples; 0 answers undefined.
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Gold / Classified         expert   layperson   undefined
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) expert                       408          90           0
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) layperson                     75         423           0
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) "expert": precision 0.845, recall 0.819, F1 0.832.
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) "expert": mean confidence 4.32 of the 483 classified as expert.
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) "layperson": precision 0.825, recall 0.849, F1 0.837.
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) "layperson": mean confidence 4.04 of the 513 classified as layperson.
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Formatting the answers (Qwen3-30B-A3B-Instruct-2507-FP8) took 00:00:00.96.
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Model 5/6: "google/medgemma-27b-text-it".
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Classifying the synonyms (medgemma-27b-text-it)...
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) ==========================================================================================
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) =                    Classifying the Synonyms (medgemma-27b-text-it)                     =
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) ==========================================================================================
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) File(s): "type_Test_NoDef_NoCom_NoStr_NoCOT_FS_*.csv".
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Prompt file(s): "single_prompt.md".
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Setting up the LLM (medgemma-27b-text-it)...
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Loading model at index 4: 'google/medgemma-27b-text-it'...
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Scanning device 'cuda'...
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Cuda available: True.
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) GPU Amount: 2.
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Scanning device 'cuda' completed.
+[2026-11-09 14:11:25] [INFO   ] (16 Minutes) Loading model into cuda...
+(EngineCore pid=3462412) INFO 11-09 14:12:10 [core.py:139] Initializing a V1 LLM engine (v0.33.0) with config: model='google/medgemma-27b-text-it', speculative_config=None, tokenizer='google/medgemma-27b-text-it', skip_tokenizer_init=False, tokenizer_mode=auto, revision=main, tokenizer_revision=main, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=8192, download_dir=None, load_format=auto, tensor_parallel_size=2, pipeline_parallel_size=1, data_parallel_size=1, decode_context_parallel_size=1, dcp_comm_backend=ag_rs, disable_custom_all_reduce=False, quantization=None, quantization_config=None, enforce_eager=False, aux_output_config=AuxOutputConfig(enable_return_routed_experts=False, max_bytes=None), kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, per_request_spec_decode_metrics='none', kv_cache_metrics=False, kv_cache_metrics_sample=0.01, custom_histogram_buckets=None, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False, jit_monitor_mode='warn', jit_monitor_verbose=False), seed=2898231092, served_model_name=google/medgemma-27b-text-it, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'mode': <CompilationMode.VLLM_COMPILE: 3>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['none'], 'ir_enable_torch_wrap': True, 'splitting_ops': ['vllm::unified_attention_with_output', 'vllm::unified_mla_attention_with_output', 'vllm::mamba_mixer2', 'vllm::mamba_mixer', 'vllm::short_conv', 'vllm::qwen4_exp_ple_short_conv', 'vllm::qwen4_exp_qsa_with_output', 'vllm::qwen4_exp_qsa_prepare_with_output', 'vllm::linear_attention', 'vllm::qwen_gdn_attention_core', 'vllm::qwen_gdn_attention_core_fused_norm_packed', 'vllm::gdn_attention_core_xpu', 'vllm::olmo_hybrid_gdn_full_forward', 'vllm::sparse_attn_indexer', 'vllm::rocm_aiter_sparse_attn_indexer', 'vllm::deepseek_v4_attention', 'vllm::hpc_rope_norm_forward', 'vllm::unified_kv_cache_update', 'vllm::unified_mla_kv_cache_update'], 'compile_mm_encoder': False, 'cudagraph_mm_encoder': False, 'encoder_cudagraph_token_budgets': [], 'encoder_cudagraph_max_vision_items_per_batch': 0, 'encoder_cudagraph_max_frames_per_batch': None, 'cudagraph_decoder_replay': True, 'decoder_replay_cudagraph_capture_sizes': [], 'decoder_replay_trim_threshold': 768, 'compile_sizes': [], 'compile_ranges_endpoints': [16384], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.FULL_AND_PIECEWISE: (2, 1)>, 'cudagraph_num_of_warmups': 1, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192, 200, 208, 216, 224, 232, 240, 248, 256, 272, 288, 304, 320, 336, 352, 368, 384, 400, 416, 432, 448, 464, 480, 496, 512], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'fuse_allreduce_rms': False, 'enable_qk_norm_rope_fusion': False, 'fuse_rope_kvcache_cat_mla': False, 'fuse_act_padding': False, 'fuse_qk_norm_rope_kvcache': False}, 'max_cudagraph_capture_size': 512, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': False}, 'local_cache_dir': None, 'fast_moe_cold_start': False, 'static_all_moe_layers': []}, kernel_config=KernelConfig(ir_op_priority=IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native']), enable_flashinfer_autotune=True, enable_rocm_segmented_attn_autotune=False, enable_cutedsl_warmup=True, enable_jit_warmup=True, monokernel=False, moe_backend='auto', sparse_indexer_topk_backend='auto', linear_backend='auto', linear_backend_per_quant=None)
+(EngineCore pid=3462412) INFO 11-09 14:12:10 [multiproc_executor.py:167] DP group leader: node_rank=0, node_rank_within_dp=0, master_addr=127.0.0.1, mq_connect_ip=141.39.131.12 (local), world_size=2, local_world_size=2
+(Worker pid=3462448) INFO 11-09 14:12:32 [parallel_state.py:1929] world_size=2 rank=0 local_rank=0 distributed_init_method=file:///tmp/vllm_dist_52e519806eb9484c80818dbe6160e8f4 backend=nccl
+(Worker pid=3462449) INFO 11-09 14:12:32 [parallel_state.py:1929] world_size=2 rank=1 local_rank=1 distributed_init_method=file:///tmp/vllm_dist_52e519806eb9484c80818dbe6160e8f4 backend=nccl
+(Worker pid=3462448) INFO 11-09 14:12:35 [pynccl.py:148] vLLM is using nccl==2.30.7
+(Worker pid=3462448) WARNING 11-09 14:12:37 [symm_mem.py:67] SymmMemCommunicator: Device capability 8.6 not supported, communicator is not available.
+(Worker pid=3462449) WARNING 11-09 14:12:37 [symm_mem.py:67] SymmMemCommunicator: Device capability 8.6 not supported, communicator is not available.
+(Worker pid=3462449) WARNING 11-09 14:12:37 [flashinfer_all_reduce.py:424] FlashInfer All Reduce is disabled because it is not supported for world_size=2.
+(Worker pid=3462448) WARNING 11-09 14:12:37 [flashinfer_all_reduce.py:424] FlashInfer All Reduce is disabled because it is not supported for world_size=2.
+(Worker pid=3462448) INFO 11-09 14:12:37 [cuda_communicator.py:353] Using ['CUSTOM', 'PYNCCL'] all-reduce backends (in dispatch order) for group 'tp:0' out of potential backends: ['FLASHINFER_PCIE_IPC', 'FLASHINFER', 'NCCL_SYMM_MEM', 'QUICK_REDUCE', 'AITER_CUSTOM', 'CUSTOM', 'SYMM_MEM', 'PYNCCL'].
+(Worker pid=3462448) INFO 11-09 14:12:37 [parallel_state.py:2385] rank 0 in world size 2 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, ETP rank 0, EP rank N/A, EPLB rank N/A
+(Worker pid=3462448) INFO 11-09 14:12:37 [gpu_worker.py:513] Using V2 Model Runner
+(Worker_TP0 pid=3462448) INFO 11-09 14:12:41 [model_runner.py:399] Loading model from scratch...
+(Worker_TP0 pid=3462448) INFO 11-09 14:12:42 [cuda.py:508] Using FLASH_ATTN attention backend out of potential backends: ['FLASH_ATTN', 'FLASHINFER', 'TRITON_ATTN', 'FLEX_ATTENTION'].
+(Worker_TP0 pid=3462448) INFO 11-09 14:12:42 [flash_attn.py:1122] Using FlashAttention version 2
+(Worker_TP0 pid=3462448) INFO 11-09 14:12:44 [base_loader.py:82] Initializing model took 2.533657 seconds
+(Worker_TP1 pid=3462449) INFO 11-09 14:12:44 [weight_utils.py:1106] Prefetching checkpoint files into page cache started (in background, num_threads=8, block_size=16777216 bytes)
+(Worker_TP0 pid=3462448) INFO 11-09 14:12:44 [weight_utils.py:1144] Filesystem type for checkpoints: NFS4. Checkpoint size: 50.31 GiB. Available RAM: 977.31 GiB.
+(Worker_TP0 pid=3462448) INFO 11-09 14:12:44 [weight_utils.py:1106] Prefetching checkpoint files into page cache started (in background, num_threads=8, block_size=16777216 bytes)
+(Worker_TP1 pid=3462449) INFO 11-09 14:12:50 [weight_utils.py:1078] Prefetching checkpoint files: 10% (1/5)
+(Worker_TP1 pid=3462449) INFO 11-09 14:12:51 [weight_utils.py:1078] Prefetching checkpoint files: 20% (2/5)
+(Worker_TP1 pid=3462449) INFO 11-09 14:12:51 [weight_utils.py:1078] Prefetching checkpoint files: 30% (3/5)
+(Worker_TP1 pid=3462449) INFO 11-09 14:12:51 [weight_utils.py:1078] Prefetching checkpoint files: 40% (4/5)
+(Worker_TP0 pid=3462448) INFO 11-09 14:12:51 [weight_utils.py:1078] Prefetching checkpoint files: 10% (1/6)
+(Worker_TP1 pid=3462449) INFO 11-09 14:12:51 [weight_utils.py:1078] Prefetching checkpoint files: 50% (5/5)
+(Worker_TP1 pid=3462449) INFO 11-09 14:12:51 [weight_utils.py:1101] Prefetching checkpoint files into page cache finished in 6.48s
+(Worker_TP0 pid=3462448) INFO 11-09 14:12:51 [weight_utils.py:1078] Prefetching checkpoint files: 20% (2/6)
+(Worker_TP0 pid=3462448) INFO 11-09 14:12:51 [weight_utils.py:1078] Prefetching checkpoint files: 30% (3/6)
+(Worker_TP0 pid=3462448) INFO 11-09 14:12:51 [weight_utils.py:1078] Prefetching checkpoint files: 40% (4/6)
+(Worker_TP0 pid=3462448) INFO 11-09 14:12:51 [weight_utils.py:1078] Prefetching checkpoint files: 50% (5/6)
+(Worker_TP0 pid=3462448) INFO 11-09 14:12:51 [weight_utils.py:1078] Prefetching checkpoint files: 60% (6/6)
+(Worker_TP0 pid=3462448) INFO 11-09 14:12:51 [weight_utils.py:1101] Prefetching checkpoint files into page cache finished in 6.61s
+(Worker_TP0 pid=3462448) INFO 11-09 14:13:04 [default_loader.py:506] Loading weights took 19.66 seconds
+(Worker_TP0 pid=3462448) INFO 11-09 14:13:06 [model_runner.py:428] Model loading took 25.71 GiB memory and 26.821664 seconds
+(Worker_TP0 pid=3462448) INFO 11-09 14:13:06 [topk_topp_sampler.py:121] FlashInfer top-p/top-k sampling disabled via VLLM_USE_FLASHINFER_SAMPLER=0.
+(Worker_TP1 pid=3462449) INFO 11-09 14:13:06 [model_runner.py:428] Model loading took 25.71 GiB memory and 26.930744 seconds
+(EngineCore pid=3462412) INFO 11-09 14:13:06 [utils.py:381] Using LBNHC KV cache layout.
+(EngineCore pid=3462412) WARNING 11-09 14:13:06 [kv_cache_planning.py:537] Add 8 padding layers, may waste at most 15.38% KV cache memory
+(Worker_TP1 pid=3462449) INFO 11-09 14:13:10 [monitor.py:40] [backbone] Starting torch.compile
+(Worker_TP0 pid=3462448) INFO 11-09 14:13:10 [monitor.py:40] [backbone] Starting torch.compile
+(Worker_TP1 pid=3462449) INFO 11-09 14:13:31 [backends.py:1125] [backbone] Using cache directory: /home/pallaoro/.cache/vllm/torch_compile_cache/7e3c6af6f7/rank_1_0/backbone for vLLM's torch.compile
+(Worker_TP1 pid=3462449) INFO 11-09 14:13:31 [backends.py:1187] [backbone] Dynamo bytecode transform time: 21.22 s
+(Worker_TP0 pid=3462448) INFO 11-09 14:13:31 [backends.py:1125] [backbone] Using cache directory: /home/pallaoro/.cache/vllm/torch_compile_cache/7e3c6af6f7/rank_0_0/backbone for vLLM's torch.compile
+(Worker_TP0 pid=3462448) INFO 11-09 14:13:31 [backends.py:1187] [backbone] Dynamo bytecode transform time: 21.25 s
+(Worker_TP0 pid=3462448) INFO 11-09 14:14:01 [backends.py:417] [backbone] Compiling a graph for compile range (1, 16384) takes 29.12 s
+(Worker_TP1 pid=3462449) INFO 11-09 14:14:01 [backends.py:417] [backbone] Compiling a graph for compile range (1, 16384) takes 29.10 s
+(EngineCore pid=3462412) INFO 11-09 14:14:07 [shm_broadcast.py:878] No available shared memory broadcast block found in 60 seconds. This typically happens when some processes are hanging or doing some time-consuming work (e.g. compilation, weight/kv cache quantization).
+(Worker_TP0 pid=3462448) INFO 11-09 14:14:18 [backends.py:948] collected artifacts: 63 entries, 4 artifacts, 9767241 bytes total
+(Worker_TP1 pid=3462449) INFO 11-09 14:14:18 [backends.py:948] collected artifacts: 63 entries, 4 artifacts, 9767274 bytes total
+(Worker_TP0 pid=3462448) INFO 11-09 14:14:18 [decorators.py:752] [backbone] saved AOT compiled function to /home/pallaoro/.cache/vllm/torch_compile_cache/torch_aot_compile/3f56fddd2d945a69d8b4fac27307a98d73615610ed429f8420c6b1973d5c29c5/rank_0_0/model
+(Worker_TP0 pid=3462448) INFO 11-09 14:14:18 [monitor.py:62] [backbone] torch.compile took 68.49 s in total
+(Worker_TP1 pid=3462449) INFO 11-09 14:14:18 [decorators.py:752] [backbone] saved AOT compiled function to /home/pallaoro/.cache/vllm/torch_compile_cache/torch_aot_compile/3f56fddd2d945a69d8b4fac27307a98d73615610ed429f8420c6b1973d5c29c5/rank_1_0/model
+(Worker_TP1 pid=3462449) INFO 11-09 14:14:18 [monitor.py:62] [backbone] torch.compile took 68.61 s in total
+(Worker_TP0 pid=3462448) INFO 11-09 14:14:18 [monitor.py:91] [backbone] Initial profiling/warmup run took 0.18 s
+(Worker_TP1 pid=3462449) INFO 11-09 14:14:18 [monitor.py:91] [backbone] Initial profiling/warmup run took 0.05 s
+(Worker_TP1 pid=3462449) WARNING 11-09 14:14:37 [kv_cache_planning.py:537] Add 8 padding layers, may waste at most 15.38% KV cache memory
+(Worker_TP0 pid=3462448) WARNING 11-09 14:14:37 [kv_cache_planning.py:537] Add 8 padding layers, may waste at most 15.38% KV cache memory
+(Worker_TP1 pid=3462449) INFO 11-09 14:14:50 [model_runner.py:1163] Graph capturing finished in 12 secs, took 0.65 GiB
+(Worker_TP0 pid=3462448) INFO 11-09 14:14:50 [model_runner.py:1163] Graph capturing finished in 12 secs, took 0.65 GiB
+(Worker_TP1 pid=3462449) INFO 11-09 14:14:50 [gpu_worker.py:787] CUDA graph memory profiling is enabled (default since v0.21.0). The current --gpu-memory-utilization=0.9000 is equivalent to --gpu-memory-utilization=0.8843 without CUDA graph memory profiling. To maintain the same effective KV cache size as before, increase --gpu-memory-utilization to 0.9157. To disable, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=0.
+(Worker_TP0 pid=3462448) INFO 11-09 14:14:50 [gpu_worker.py:772] Available KV cache memory: 11.92 GiB
+(Worker_TP0 pid=3462448) INFO 11-09 14:14:50 [gpu_worker.py:787] CUDA graph memory profiling is enabled (default since v0.21.0). The current --gpu-memory-utilization=0.9000 is equivalent to --gpu-memory-utilization=0.8843 without CUDA graph memory profiling. To maintain the same effective KV cache size as before, increase --gpu-memory-utilization to 0.9157. To disable, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=0.
+(EngineCore pid=3462412) INFO 11-09 14:14:51 [kv_cache_utils.py:1147] GPU KV cache size: 44,558 tokens, Maximum concurrency for 8,192 tokens per request: 5.44x
+(EngineCore pid=3462412) INFO 11-09 14:14:51 [kv_cache_utils.py:865] kv cache group sizes (16, 16, 16, 16, 16, 16, 16)
+(EngineCore pid=3462412) INFO 11-09 14:14:51 [kv_cache_utils.py:866] kv lcm block sizes 16
+(Worker_TP0 pid=3462448) INFO 11-09 14:14:51 [kernel_warmup.py:179] JIT kernel warmup starting.
+(Worker_TP0 pid=3462448) INFO 11-09 14:14:51 [kernel_warmup.py:192] JIT kernel warmup finished in 0.00s.
+(Worker_TP1 pid=3462449) INFO 11-09 14:14:51 [kernel_warmup.py:179] JIT kernel warmup starting.
+(Worker_TP1 pid=3462449) INFO 11-09 14:14:51 [kernel_warmup.py:192] JIT kernel warmup finished in 0.00s.
+(Worker_TP1 pid=3462449) INFO 11-09 14:15:25 [model_runner.py:1163] Graph capturing finished in 16 secs, took 0.31 GiB
+(Worker_TP1 pid=3462449) INFO 11-09 14:15:25 [gpu_worker.py:1003] CUDA graph pool memory: 0.31 GiB (actual), 0.7 GiB (estimated), difference: 0.39 GiB (128.0%).
+(Worker_TP1 pid=3462449) INFO 11-09 14:15:25 [gpu_worker.py:1066] Free memory on device (43.87/44.42 GiB) on startup. Desired GPU memory utilization is (0.9, 39.98 GiB). Actual usage is 26.07 GiB for consumed memory (weights + non-torch), 1.99 GiB for peak activation, and 0.31 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=12311261696` (11.47 GiB) to fit into requested memory, or `--kv-cache-memory=16491016704` (15.36 GiB) to fully utilize gpu memory. Current kv cache memory in use is 11.92 GiB.
+(Worker_TP0 pid=3462448) INFO 11-09 14:15:25 [model_runner.py:1163] Graph capturing finished in 16 secs, took 0.31 GiB
+(Worker_TP0 pid=3462448) INFO 11-09 14:15:25 [gpu_worker.py:1003] CUDA graph pool memory: 0.31 GiB (actual), 0.7 GiB (estimated), difference: 0.39 GiB (128.0%).
+(Worker_TP0 pid=3462448) INFO 11-09 14:15:25 [gpu_worker.py:1066] Free memory on device (43.87/44.42 GiB) on startup. Desired GPU memory utilization is (0.9, 39.98 GiB). Actual usage is 26.07 GiB for consumed memory (weights + non-torch), 1.99 GiB for peak activation, and 0.31 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=12311261696` (11.47 GiB) to fit into requested memory, or `--kv-cache-memory=16491016704` (15.36 GiB) to fully utilize gpu memory. Current kv cache memory in use is 11.92 GiB.
+(Worker_TP1 pid=3462449) INFO 11-09 14:15:27 [jit_monitor.py:84] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.
+(Worker_TP0 pid=3462448) INFO 11-09 14:15:27 [jit_monitor.py:84] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.
+(EngineCore pid=3462412) INFO 11-09 14:15:28 [core.py:405] init engine (profile, create kv cache, warmup model) took 141.40 s (compilation: 68.61 s)
+(EngineCore pid=3462412) INFO 11-09 14:15:32 [kernel.py:480] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native'])
+(Worker_TP0 pid=3462448) WARNING 11-09 14:15:36 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_stats_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP0 pid=3462448) WARNING 11-09 14:15:37 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_step_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP0 pid=3462448) WARNING 11-09 14:15:40 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_mask_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP0 pid=3462448) WARNING 11-09 14:15:43 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topk_topp_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(EngineCore pid=3462412) INFO 11-09 14:17:04 [core.py:1525] [shutdown] EngineCore: trigger received signal=SIGTERM
+(EngineCore pid=3462412) INFO 11-09 14:17:04 [core.py:1712] [shutdown] EngineCore: start mode=abort timeout=0s
+(EngineCore pid=3462412) INFO 11-09 14:17:04 [core.py:1743] [shutdown] EngineCore: request processing complete; starting resource teardown
+(EngineCore pid=3462412) INFO 11-09 14:17:04 [core.py:1573] [shutdown] EngineCore: exiting busy loop
+(EngineCore pid=3462412) INFO 11-09 14:17:04 [multiproc_executor.py:580] [shutdown] Executor: waiting for worker exit count=2
+(Worker_TP0 pid=3462448) INFO 11-09 14:17:04 [multiproc_executor.py:944] Parent process exited, terminating worker queues
+(EngineCore pid=3462412) WARNING 11-09 14:17:09 [multiproc_executor.py:592] [shutdown] Executor: workers still running after grace period; sending SIGTERM count=2
+[2026-11-09 14:15:34] [INFO   ] (20 Minutes) Loading model into cuda completed.
+[2026-11-09 14:15:34] [INFO   ] (20 Minutes) Loading model at index 4: 'google/medgemma-27b-text-it' completed.
+[2026-11-09 14:15:34] [INFO   ] (20 Minutes) Checkpoint: './data/tmp/syntype_medgemma-27b-text-it_Test_NoDef_NoCom_NoStr_NoCOT_FS.json'.
+[2026-11-09 14:15:34] [INFO   ] (20 Minutes) Prompt log: './data/logs/prompts_medgemma-27b-text-it_Test_NoDef_NoCom_NoStr_NoCOT_FS.log'.
+[2026-11-09 14:15:34] [INFO   ] (20 Minutes) Setting up the LLM (medgemma-27b-text-it) completed.
+[2026-11-09 14:15:34] [INFO   ] (20 Minutes) Turn 1/1: generating the answers...
+[2026-11-09 14:15:34] [INFO   ] (20 Minutes) Loading prompt from file 'single_prompt.md'...
+[2026-11-09 14:15:34] [INFO   ] (20 Minutes) Loaded prompt with base length 2623.
+[2026-11-09 14:15:34] [INFO   ] (20 Minutes) Added the prompt to 1000 histories.
+[2026-11-09 14:15:34] [INFO   ] (20 Minutes) Loading prompt from file 'single_prompt.md' completed.
+[2026-11-09 14:15:34] [INFO   ] (20 Minutes) Answer store 'syntype_medgemma-27b-text-it_Test_NoDef_NoCom_NoStr_NoCOT_FS.json': 0 stored answers.
+[2026-11-09 14:15:34] [INFO   ] (20 Minutes) Generating answers for 1000 histories...
+[2026-11-09 14:15:34] [INFO   ] (20 Minutes) 1000 histories to generate in 2 chunk(s) of up to 500.
+[2026-11-09 14:15:35] [INFO   ] (20 Minutes) Running vLLM generation for chunk 1/2 [Indices 0 to 499]...
+[2026-11-09 14:16:22] [INFO   ] (21 Minutes) Running vLLM generation for chunk 1/2 [Indices 0 to 499] completed.
+[2026-11-09 14:16:22] [INFO   ] (21 Minutes) Chunk 1/2: 500 answers, 41794 tokens in 47.7 s (877 tokens/s).
+[2026-11-09 14:16:22] [INFO   ] (21 Minutes) Progress: 500/1000 histories, elapsed 0:00:48, remaining ~0:00:48.
+[2026-11-09 14:16:23] [INFO   ] (21 Minutes) Running vLLM generation for chunk 2/2 [Indices 500 to 999]...
+[2026-11-09 14:17:03] [INFO   ] (22 Minutes) Running vLLM generation for chunk 2/2 [Indices 500 to 999] completed.
+[2026-11-09 14:17:03] [INFO   ] (22 Minutes) Chunk 2/2: 500 answers, 39746 tokens in 41.3 s (961 tokens/s).
+[2026-11-09 14:17:03] [INFO   ] (22 Minutes) Progress: 1000/1000 histories, elapsed 0:01:29, remaining ~0:00:00.
+[2026-11-09 14:17:03] [INFO   ] (22 Minutes) 1000 answers generated, 0 stored and 0 shared with identical histories.
+[2026-11-09 14:17:03] [INFO   ] (22 Minutes) 991066 prompt and 81540 generated tokens in 0:01:29 (915 generated tokens/s).
+[2026-11-09 14:17:03] [INFO   ] (22 Minutes) Generating answers for 1000 histories completed.
+[2026-11-09 14:17:03] [INFO   ] (22 Minutes) Writing to a temporary file first...
+[2026-11-09 14:17:03] [INFO   ] (22 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_medgemma-27b-text-it.csv.tmp'...
+[2026-11-09 14:17:04] [INFO   ] (22 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_medgemma-27b-text-it.csv.tmp' completed.
+[2026-11-09 14:17:04] [INFO   ] (22 Minutes) Writing to a temporary file first completed.
+[2026-11-09 14:17:04] [INFO   ] (22 Minutes) Replacing original data with temporary data...
+[2026-11-09 14:17:04] [INFO   ] (22 Minutes) Replacing original data with temporary data completed.
+[2026-11-09 14:17:04] [INFO   ] (22 Minutes) Turn 1/1: generating the answers completed.
+[2026-11-09 14:17:04] [INFO   ] (22 Minutes) Parsing the answers...
+[2026-11-09 14:17:04] [INFO   ] (22 Minutes) 1000 of 1000 answers contain a valid classification, 1000 a rationale.
+[2026-11-09 14:17:04] [INFO   ] (22 Minutes) Parsing the answers completed.
+[2026-11-09 14:17:04] [INFO   ] (22 Minutes) Writing to a temporary file first...
+[2026-11-09 14:17:04] [INFO   ] (22 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_medgemma-27b-text-it.csv.tmp'...
+[2026-11-09 14:17:04] [INFO   ] (22 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_medgemma-27b-text-it.csv.tmp' completed.
+[2026-11-09 14:17:04] [INFO   ] (22 Minutes) Writing to a temporary file first completed.
+[2026-11-09 14:17:04] [INFO   ] (22 Minutes) Replacing original data with temporary data...
+[2026-11-09 14:17:04] [INFO   ] (22 Minutes) Replacing original data with temporary data completed.
+[2026-11-09 14:17:04] [INFO   ] (22 Minutes) Writing the prompts and answers to the prompt log...
+[2026-11-09 14:17:04] [INFO   ] (22 Minutes) Logging prompts in 'prompts_medgemma-27b-text-it_Test_NoDef_NoCom_NoStr_NoCOT_FS.log'...
+[2026-11-09 14:17:04] [INFO   ] (22 Minutes) Logging prompts in 'prompts_medgemma-27b-text-it_Test_NoDef_NoCom_NoStr_NoCOT_FS.log' completed.
+[2026-11-09 14:17:04] [INFO   ] (22 Minutes) Writing the prompts and answers to the prompt log completed.
+[2026-11-09 14:17:10] [INFO   ] (22 Minutes) Classifying the synonyms (medgemma-27b-text-it) took 00:05:44.81.
+[2026-11-09 14:17:10] [INFO   ] (22 Minutes) Formatting the answers (medgemma-27b-text-it)...
+[2026-11-09 14:17:10] [INFO   ] (22 Minutes) ==========================================================================================
+[2026-11-09 14:17:10] [INFO   ] (22 Minutes) =                     Formatting the Answers (medgemma-27b-text-it)                      =
+[2026-11-09 14:17:10] [INFO   ] (22 Minutes) ==========================================================================================
+[2026-11-09 14:17:10] [INFO   ] (22 Minutes) Writing to a temporary file first...
+[2026-11-09 14:17:10] [INFO   ] (22 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_formatted_medgemma-27b-text-it.csv.tmp'...
+[2026-11-09 14:17:10] [INFO   ] (22 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_formatted_medgemma-27b-text-it.csv.tmp' completed.
+[2026-11-09 14:17:10] [INFO   ] (22 Minutes) Writing to a temporary file first completed.
+[2026-11-09 14:17:10] [INFO   ] (22 Minutes) Replacing original data with temporary data...
+[2026-11-09 14:17:10] [INFO   ] (22 Minutes) Replacing original data with temporary data completed.
+[2026-11-09 14:17:10] [INFO   ] (22 Minutes) Logging the wrong classifications...
+[2026-11-09 14:17:10] [INFO   ] (22 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-09 14:17:10] [INFO   ] (22 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Wrong or undefined classifications: 173.
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Correct classifications: 827.
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Logging the wrong classifications completed.
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Summary of medgemma-27b-text-it: 996 synonyms.
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Gold types expert, layperson, without the few-shot examples; 0 answers undefined.
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Gold / Classified         expert   layperson   undefined
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) expert                       464          34           0
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) layperson                    139         359           0
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) "expert": precision 0.769, recall 0.932, F1 0.843.
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) "expert": mean confidence 4.31 of the 603 classified as expert.
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) "layperson": precision 0.913, recall 0.721, F1 0.806.
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) "layperson": mean confidence 3.84 of the 393 classified as layperson.
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Formatting the answers (medgemma-27b-text-it) took 00:00:00.92.
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Model 6/6: "mistralai/Mistral-Small-3.1-24B-Instruct-2503".
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Classifying the synonyms (Mistral-Small-3.1-24B-Instruct-2503)...
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) ==========================================================================================
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) =             Classifying the Synonyms (Mistral-Small-3.1-24B-Instruct-2503)             =
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) ==========================================================================================
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Experiment 0: "test", "few_shot".
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) File(s): "type_Test_NoDef_NoCom_NoStr_NoCOT_FS_*.csv".
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Prompt file(s): "single_prompt.md".
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Classifying 1000 synonyms of 956 concepts; gold types: expert 500, layperson 500.
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Setting up the LLM (Mistral-Small-3.1-24B-Instruct-2503)...
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Loading model at index 5: 'mistralai/Mistral-Small-3.1-24B-Instruct-2503'...
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Scanning device 'cuda'...
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Cuda available: True.
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) GPU Amount: 2.
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Scanning device 'cuda' completed.
+[2026-11-09 14:17:11] [INFO   ] (22 Minutes) Loading model into cuda...
+(EngineCore pid=3462982) INFO 11-09 14:17:48 [core.py:139] Initializing a V1 LLM engine (v0.33.0) with config: model='mistralai/Mistral-Small-3.1-24B-Instruct-2503', speculative_config=None, tokenizer='mistralai/Mistral-Small-3.1-24B-Instruct-2503', skip_tokenizer_init=False, tokenizer_mode=auto, revision=main, tokenizer_revision=main, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=8192, download_dir=None, load_format=auto, tensor_parallel_size=2, pipeline_parallel_size=1, data_parallel_size=1, decode_context_parallel_size=1, dcp_comm_backend=ag_rs, disable_custom_all_reduce=False, quantization=None, quantization_config=None, enforce_eager=False, aux_output_config=AuxOutputConfig(enable_return_routed_experts=False, max_bytes=None), kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, per_request_spec_decode_metrics='none', kv_cache_metrics=False, kv_cache_metrics_sample=0.01, custom_histogram_buckets=None, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False, jit_monitor_mode='warn', jit_monitor_verbose=False), seed=2898231092, served_model_name=mistralai/Mistral-Small-3.1-24B-Instruct-2503, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'mode': <CompilationMode.VLLM_COMPILE: 3>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['none'], 'ir_enable_torch_wrap': True, 'splitting_ops': ['vllm::unified_attention_with_output', 'vllm::unified_mla_attention_with_output', 'vllm::mamba_mixer2', 'vllm::mamba_mixer', 'vllm::short_conv', 'vllm::qwen4_exp_ple_short_conv', 'vllm::qwen4_exp_qsa_with_output', 'vllm::qwen4_exp_qsa_prepare_with_output', 'vllm::linear_attention', 'vllm::qwen_gdn_attention_core', 'vllm::qwen_gdn_attention_core_fused_norm_packed', 'vllm::gdn_attention_core_xpu', 'vllm::olmo_hybrid_gdn_full_forward', 'vllm::sparse_attn_indexer', 'vllm::rocm_aiter_sparse_attn_indexer', 'vllm::deepseek_v4_attention', 'vllm::hpc_rope_norm_forward', 'vllm::unified_kv_cache_update', 'vllm::unified_mla_kv_cache_update'], 'compile_mm_encoder': False, 'cudagraph_mm_encoder': False, 'encoder_cudagraph_token_budgets': [], 'encoder_cudagraph_max_vision_items_per_batch': 0, 'encoder_cudagraph_max_frames_per_batch': None, 'cudagraph_decoder_replay': True, 'decoder_replay_cudagraph_capture_sizes': [], 'decoder_replay_trim_threshold': 768, 'compile_sizes': [], 'compile_ranges_endpoints': [16384], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.FULL_AND_PIECEWISE: (2, 1)>, 'cudagraph_num_of_warmups': 1, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192, 200, 208, 216, 224, 232, 240, 248, 256, 272, 288, 304, 320, 336, 352, 368, 384, 400, 416, 432, 448, 464, 480, 496, 512], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'fuse_allreduce_rms': False, 'enable_qk_norm_rope_fusion': False, 'fuse_rope_kvcache_cat_mla': False, 'fuse_act_padding': False, 'fuse_qk_norm_rope_kvcache': False}, 'max_cudagraph_capture_size': 512, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': False}, 'local_cache_dir': None, 'fast_moe_cold_start': False, 'static_all_moe_layers': []}, kernel_config=KernelConfig(ir_op_priority=IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native']), enable_flashinfer_autotune=True, enable_rocm_segmented_attn_autotune=False, enable_cutedsl_warmup=True, enable_jit_warmup=True, monokernel=False, moe_backend='auto', sparse_indexer_topk_backend='auto', linear_backend='auto', linear_backend_per_quant=None)
+(EngineCore pid=3462982) INFO 11-09 14:17:48 [multiproc_executor.py:167] DP group leader: node_rank=0, node_rank_within_dp=0, master_addr=127.0.0.1, mq_connect_ip=141.39.131.12 (local), world_size=2, local_world_size=2
+(Worker pid=3462999) INFO 11-09 14:18:10 [parallel_state.py:1929] world_size=2 rank=0 local_rank=0 distributed_init_method=file:///tmp/vllm_dist_9c555782153d43a4bf3f649bb5dafbce backend=nccl
+(Worker pid=3462998) INFO 11-09 14:18:11 [parallel_state.py:1929] world_size=2 rank=1 local_rank=1 distributed_init_method=file:///tmp/vllm_dist_9c555782153d43a4bf3f649bb5dafbce backend=nccl
+(Worker pid=3462999) INFO 11-09 14:18:14 [pynccl.py:148] vLLM is using nccl==2.30.7
+(Worker pid=3462999) WARNING 11-09 14:18:16 [symm_mem.py:67] SymmMemCommunicator: Device capability 8.6 not supported, communicator is not available.
+(Worker pid=3462998) WARNING 11-09 14:18:16 [symm_mem.py:67] SymmMemCommunicator: Device capability 8.6 not supported, communicator is not available.
+(Worker pid=3462998) WARNING 11-09 14:18:16 [flashinfer_all_reduce.py:424] FlashInfer All Reduce is disabled because it is not supported for world_size=2.
+(Worker pid=3462999) WARNING 11-09 14:18:16 [flashinfer_all_reduce.py:424] FlashInfer All Reduce is disabled because it is not supported for world_size=2.
+(Worker pid=3462999) INFO 11-09 14:18:16 [cuda_communicator.py:353] Using ['CUSTOM', 'PYNCCL'] all-reduce backends (in dispatch order) for group 'tp:0' out of potential backends: ['FLASHINFER_PCIE_IPC', 'FLASHINFER', 'NCCL_SYMM_MEM', 'QUICK_REDUCE', 'AITER_CUSTOM', 'CUSTOM', 'SYMM_MEM', 'PYNCCL'].
+(Worker pid=3462999) INFO 11-09 14:18:16 [parallel_state.py:2385] rank 0 in world size 2 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, ETP rank 0, EP rank N/A, EPLB rank N/A
+(Worker pid=3462999) INFO 11-09 14:18:16 [gpu_worker.py:513] Using V2 Model Runner
+(Worker_TP0 pid=3462999) INFO 11-09 14:18:21 [model_runner.py:399] Loading model from scratch...
+(Worker_TP0 pid=3462999) INFO 11-09 14:18:22 [cuda.py:508] Using FLASH_ATTN attention backend out of potential backends: ['FLASH_ATTN', 'FLASHINFER', 'TRITON_ATTN', 'FLEX_ATTENTION'].
+(Worker_TP0 pid=3462999) INFO 11-09 14:18:22 [flash_attn.py:1122] Using FlashAttention version 2
+(Worker_TP0 pid=3462999) INFO 11-09 14:18:23 [cuda.py:567] Using backend AttentionBackendEnum.FLASH_ATTN for vit attention
+(Worker_TP0 pid=3462999) INFO 11-09 14:18:23 [mm_encoder_attention.py:372] Using AttentionBackendEnum.FLASH_ATTN for MMEncoderAttention.
+(Worker_TP0 pid=3462999) INFO 11-09 14:18:23 [base_loader.py:82] Initializing model took 2.317549 seconds
+(Worker_TP0 pid=3462999) INFO 11-09 14:18:24 [weight_utils.py:1144] Filesystem type for checkpoints: NFS4. Checkpoint size: 44.72 GiB. Available RAM: 976.98 GiB.
+(Worker_TP0 pid=3462999) INFO 11-09 14:18:24 [weight_utils.py:1106] Prefetching checkpoint files into page cache started (in background, num_threads=8, block_size=16777216 bytes)
+(Worker_TP1 pid=3462998) INFO 11-09 14:18:24 [weight_utils.py:1106] Prefetching checkpoint files into page cache started (in background, num_threads=8, block_size=16777216 bytes)
+(Worker_TP1 pid=3462998) INFO 11-09 14:18:24 [weight_utils.py:1101] Prefetching checkpoint files into page cache finished in 0.00s
+(Worker_TP0 pid=3462999) INFO 11-09 14:18:37 [weight_utils.py:1078] Prefetching checkpoint files: 10% (1/1)
+(Worker_TP0 pid=3462999) INFO 11-09 14:18:37 [weight_utils.py:1101] Prefetching checkpoint files into page cache finished in 12.97s
+(Worker_TP0 pid=3462999) INFO 11-09 14:18:44 [default_loader.py:506] Loading weights took 19.98 seconds
+(Worker_TP1 pid=3462998) INFO 11-09 14:18:44 [model_runner.py:428] Model loading took 22.47 GiB memory and 26.027713 seconds
+(Worker_TP0 pid=3462999) INFO 11-09 14:18:45 [model_runner.py:428] Model loading took 22.47 GiB memory and 26.282959 seconds
+(Worker_TP0 pid=3462999) INFO 11-09 14:18:45 [topk_topp_sampler.py:121] FlashInfer top-p/top-k sampling disabled via VLLM_USE_FLASHINFER_SAMPLER=0.
+(EngineCore pid=3462982) INFO 11-09 14:18:45 [utils.py:381] Using LBNHC KV cache layout.
+(Worker_TP0 pid=3462999) INFO 11-09 14:18:47 [config.py:518] Inferred from consolidated*.safetensors files torch.bfloat16 dtype.
+(Worker_TP0 pid=3462999) INFO 11-09 14:18:49 [encoder_runner.py:131] Encoder cache will be initialized with a budget of 16384 tokens, and profiled with 5 image items of the maximum feature size.
+(Worker_TP1 pid=3462998) INFO 11-09 14:18:56 [monitor.py:40] [backbone] Starting torch.compile
+(Worker_TP0 pid=3462999) INFO 11-09 14:18:56 [monitor.py:40] [backbone] Starting torch.compile
+(Worker_TP1 pid=3462998) INFO 11-09 14:19:06 [backends.py:1125] [backbone] Using cache directory: /home/pallaoro/.cache/vllm/torch_compile_cache/de2763a22e/rank_1_0/backbone for vLLM's torch.compile
+(Worker_TP1 pid=3462998) INFO 11-09 14:19:06 [backends.py:1187] [backbone] Dynamo bytecode transform time: 10.15 s
+(Worker_TP0 pid=3462999) INFO 11-09 14:19:06 [backends.py:1125] [backbone] Using cache directory: /home/pallaoro/.cache/vllm/torch_compile_cache/de2763a22e/rank_0_0/backbone for vLLM's torch.compile
+(Worker_TP0 pid=3462999) INFO 11-09 14:19:06 [backends.py:1187] [backbone] Dynamo bytecode transform time: 10.17 s
+(Worker_TP0 pid=3462999) INFO 11-09 14:19:17 [backends.py:417] [backbone] Compiling a graph for compile range (1, 16384) takes 11.05 s
+(Worker_TP1 pid=3462998) INFO 11-09 14:19:17 [backends.py:417] [backbone] Compiling a graph for compile range (1, 16384) takes 11.11 s
+(Worker_TP0 pid=3462999) INFO 11-09 14:19:26 [backends.py:948] collected artifacts: 41 entries, 4 artifacts, 5419878 bytes total
+(Worker_TP1 pid=3462998) INFO 11-09 14:19:26 [backends.py:948] collected artifacts: 41 entries, 4 artifacts, 5584340 bytes total
+(Worker_TP0 pid=3462999) INFO 11-09 14:19:26 [decorators.py:752] [backbone] saved AOT compiled function to /home/pallaoro/.cache/vllm/torch_compile_cache/torch_aot_compile/21640dd502b88023e1978ad107906f389d2e17666aac2ec0323cfb277c9c8451/rank_0_0/model
+(Worker_TP0 pid=3462999) INFO 11-09 14:19:26 [monitor.py:62] [backbone] torch.compile took 30.67 s in total
+(Worker_TP1 pid=3462998) INFO 11-09 14:19:26 [decorators.py:752] [backbone] saved AOT compiled function to /home/pallaoro/.cache/vllm/torch_compile_cache/torch_aot_compile/21640dd502b88023e1978ad107906f389d2e17666aac2ec0323cfb277c9c8451/rank_1_0/model
+(Worker_TP1 pid=3462998) INFO 11-09 14:19:26 [monitor.py:62] [backbone] torch.compile took 30.69 s in total
+(Worker_TP0 pid=3462999) INFO 11-09 14:19:26 [monitor.py:91] [backbone] Initial profiling/warmup run took 0.06 s
+(Worker_TP1 pid=3462998) INFO 11-09 14:19:26 [monitor.py:91] [backbone] Initial profiling/warmup run took 0.06 s
+(EngineCore pid=3462982) INFO 11-09 14:19:46 [shm_broadcast.py:878] No available shared memory broadcast block found in 60 seconds. This typically happens when some processes are hanging or doing some time-consuming work (e.g. compilation, weight/kv cache quantization).
+(Worker_TP1 pid=3462998) INFO 11-09 14:19:52 [model_runner.py:1163] Graph capturing finished in 10 secs, took 0.48 GiB
+(Worker_TP0 pid=3462999) INFO 11-09 14:19:52 [model_runner.py:1163] Graph capturing finished in 10 secs, took 0.48 GiB
+(Worker_TP1 pid=3462998) INFO 11-09 14:19:53 [gpu_worker.py:787] CUDA graph memory profiling is enabled (default since v0.21.0). The current --gpu-memory-utilization=0.9000 is equivalent to --gpu-memory-utilization=0.8877 without CUDA graph memory profiling. To maintain the same effective KV cache size as before, increase --gpu-memory-utilization to 0.9123. To disable, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=0.
+(Worker_TP0 pid=3462999) INFO 11-09 14:19:53 [gpu_worker.py:772] Available KV cache memory: 14.63 GiB
+(Worker_TP0 pid=3462999) INFO 11-09 14:19:53 [gpu_worker.py:787] CUDA graph memory profiling is enabled (default since v0.21.0). The current --gpu-memory-utilization=0.9000 is equivalent to --gpu-memory-utilization=0.8877 without CUDA graph memory profiling. To maintain the same effective KV cache size as before, increase --gpu-memory-utilization to 0.9123. To disable, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=0.
+(EngineCore pid=3462982) INFO 11-09 14:19:53 [kv_cache_utils.py:1147] GPU KV cache size: 191,728 tokens, Maximum concurrency for 8,192 tokens per request: 23.40x
+(Worker_TP1 pid=3462998) INFO 11-09 14:19:53 [kernel_warmup.py:179] JIT kernel warmup starting.
+(Worker_TP1 pid=3462998) INFO 11-09 14:19:53 [kernel_warmup.py:192] JIT kernel warmup finished in 0.00s.
+(Worker_TP0 pid=3462999) INFO 11-09 14:19:53 [kernel_warmup.py:179] JIT kernel warmup starting.
+(Worker_TP0 pid=3462999) INFO 11-09 14:19:53 [kernel_warmup.py:192] JIT kernel warmup finished in 0.00s.
+(Worker_TP1 pid=3462998) INFO 11-09 14:20:23 [model_runner.py:1163] Graph capturing finished in 13 secs, took 0.31 GiB
+(Worker_TP1 pid=3462998) INFO 11-09 14:20:23 [gpu_worker.py:1003] CUDA graph pool memory: 0.31 GiB (actual), 0.54 GiB (estimated), difference: 0.23 GiB (74.4%).
+(Worker_TP1 pid=3462998) INFO 11-09 14:20:23 [gpu_worker.py:1066] Free memory on device (43.87/44.42 GiB) on startup. Desired GPU memory utilization is (0.9, 39.98 GiB). Actual usage is 22.84 GiB for consumed memory (weights + non-torch), 2.51 GiB for peak activation, and 0.31 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=15213785600` (14.17 GiB) to fit into requested memory, or `--kv-cache-memory=19393540608` (18.06 GiB) to fully utilize gpu memory. Current kv cache memory in use is 14.63 GiB.
+(Worker_TP0 pid=3462999) INFO 11-09 14:20:23 [model_runner.py:1163] Graph capturing finished in 13 secs, took 0.31 GiB
+(Worker_TP0 pid=3462999) INFO 11-09 14:20:23 [gpu_worker.py:1003] CUDA graph pool memory: 0.31 GiB (actual), 0.54 GiB (estimated), difference: 0.23 GiB (74.4%).
+(Worker_TP0 pid=3462999) INFO 11-09 14:20:23 [gpu_worker.py:1066] Free memory on device (43.87/44.42 GiB) on startup. Desired GPU memory utilization is (0.9, 39.98 GiB). Actual usage is 22.84 GiB for consumed memory (weights + non-torch), 2.51 GiB for peak activation, and 0.31 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=15213785600` (14.17 GiB) to fit into requested memory, or `--kv-cache-memory=19393540608` (18.06 GiB) to fully utilize gpu memory. Current kv cache memory in use is 14.63 GiB.
+(Worker_TP1 pid=3462998) INFO 11-09 14:20:24 [jit_monitor.py:84] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.
+(Worker_TP0 pid=3462999) INFO 11-09 14:20:24 [jit_monitor.py:84] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.
+(EngineCore pid=3462982) INFO 11-09 14:20:25 [core.py:405] init engine (profile, create kv cache, warmup model) took 99.82 s (compilation: 30.69 s)
+(EngineCore pid=3462982) INFO 11-09 14:20:26 [config.py:518] Inferred from consolidated*.safetensors files torch.bfloat16 dtype.
+(EngineCore pid=3462982) INFO 11-09 14:20:29 [kernel.py:480] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native'])
+(Worker_TP0 pid=3462999) WARNING 11-09 14:20:30 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_stats_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP0 pid=3462999) WARNING 11-09 14:20:31 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_step_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP0 pid=3462999) WARNING 11-09 14:20:34 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_mask_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP0 pid=3462999) WARNING 11-09 14:20:36 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topk_topp_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(EngineCore pid=3462982) INFO 11-09 14:21:21 [core.py:1525] [shutdown] EngineCore: trigger received signal=SIGTERM
+(EngineCore pid=3462982) INFO 11-09 14:21:21 [core.py:1712] [shutdown] EngineCore: start mode=abort timeout=0s
+(EngineCore pid=3462982) INFO 11-09 14:21:21 [core.py:1743] [shutdown] EngineCore: request processing complete; starting resource teardown
+(EngineCore pid=3462982) INFO 11-09 14:21:21 [core.py:1573] [shutdown] EngineCore: exiting busy loop
+(Worker_TP0 pid=3462999) INFO 11-09 14:21:21 [multiproc_executor.py:944] Parent process exited, terminating worker queues
+(EngineCore pid=3462982) INFO 11-09 14:21:21 [multiproc_executor.py:580] [shutdown] Executor: waiting for worker exit count=2
+(EngineCore pid=3462982) WARNING 11-09 14:21:26 [multiproc_executor.py:592] [shutdown] Executor: workers still running after grace period; sending SIGTERM count=2
+[2026-11-09 14:20:29] [INFO   ] (25 Minutes) Loading model into cuda completed.
+[2026-11-09 14:20:29] [INFO   ] (25 Minutes) Loading model at index 5: 'mistralai/Mistral-Small-3.1-24B-Instruct-2503' completed.
+[2026-11-09 14:20:29] [INFO   ] (25 Minutes) Checkpoint: './data/tmp/syntype_Mistral-Small-3.1-24B-Instruct-2503_Test_NoDef_NoCom_NoStr_NoCOT_FS.json'.
+[2026-11-09 14:20:29] [INFO   ] (25 Minutes) Prompt log: './data/logs/prompts_Mistral-Small-3.1-24B-Instruct-2503_Test_NoDef_NoCom_NoStr_NoCOT_FS.log'.
+[2026-11-09 14:20:29] [INFO   ] (25 Minutes) Setting up the LLM (Mistral-Small-3.1-24B-Instruct-2503) completed.
+[2026-11-09 14:20:29] [INFO   ] (25 Minutes) Turn 1/1: generating the answers...
+[2026-11-09 14:20:29] [INFO   ] (25 Minutes) Loading prompt from file 'single_prompt.md'...
+[2026-11-09 14:20:29] [INFO   ] (25 Minutes) Loaded prompt with base length 2623.
+[2026-11-09 14:20:29] [INFO   ] (25 Minutes) Added the prompt to 1000 histories.
+[2026-11-09 14:20:29] [INFO   ] (25 Minutes) Loading prompt from file 'single_prompt.md' completed.
+[2026-11-09 14:20:29] [INFO   ] (25 Minutes) Answer store 'syntype_Mistral-Small-3.1-24B-Instruct-2503_Test_NoDef_NoCom_NoStr_NoCOT_FS.json': 0 stored answers.
+[2026-11-09 14:20:29] [INFO   ] (25 Minutes) Generating answers for 1000 histories...
+[2026-11-09 14:20:29] [INFO   ] (25 Minutes) 1000 histories to generate in 2 chunk(s) of up to 500.
+[2026-11-09 14:20:29] [INFO   ] (25 Minutes) Running vLLM generation for chunk 1/2 [Indices 0 to 499]...
+[2026-11-09 14:21:00] [INFO   ] (26 Minutes) Running vLLM generation for chunk 1/2 [Indices 0 to 499] completed.
+[2026-11-09 14:21:00] [INFO   ] (26 Minutes) Chunk 1/2: 500 answers, 38301 tokens in 31.0 s (1236 tokens/s).
+[2026-11-09 14:21:00] [INFO   ] (26 Minutes) Progress: 500/1000 histories, elapsed 0:00:31, remaining ~0:00:31.
+[2026-11-09 14:21:00] [INFO   ] (26 Minutes) Running vLLM generation for chunk 2/2 [Indices 500 to 999]...
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Running vLLM generation for chunk 2/2 [Indices 500 to 999] completed.
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Chunk 2/2: 500 answers, 37712 tokens in 21.1 s (1788 tokens/s).
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Progress: 1000/1000 histories, elapsed 0:00:52, remaining ~0:00:00.
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) 1000 answers generated, 0 stored and 0 shared with identical histories.
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) 967103 prompt and 76013 generated tokens in 0:00:52 (1458 generated tokens/s).
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Generating answers for 1000 histories completed.
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Writing to a temporary file first...
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_Mistral-Small-3.1-24B-Instruct-2503.csv.tmp'...
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_Mistral-Small-3.1-24B-Instruct-2503.csv.tmp' completed.
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Writing to a temporary file first completed.
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Replacing original data with temporary data...
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Replacing original data with temporary data completed.
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Turn 1/1: generating the answers completed.
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Parsing the answers...
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) 1000 of 1000 answers contain a valid classification, 1000 a rationale.
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Parsing the answers completed.
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Writing to a temporary file first...
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_Mistral-Small-3.1-24B-Instruct-2503.csv.tmp'...
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_raw_Mistral-Small-3.1-24B-Instruct-2503.csv.tmp' completed.
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Writing to a temporary file first completed.
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Replacing original data with temporary data...
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Replacing original data with temporary data completed.
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Writing the prompts and answers to the prompt log...
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Logging prompts in 'prompts_Mistral-Small-3.1-24B-Instruct-2503_Test_NoDef_NoCom_NoStr_NoCOT_FS.log'...
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Logging prompts in 'prompts_Mistral-Small-3.1-24B-Instruct-2503_Test_NoDef_NoCom_NoStr_NoCOT_FS.log' completed.
+[2026-11-09 14:21:21] [INFO   ] (26 Minutes) Writing the prompts and answers to the prompt log completed.
+[2026-11-09 14:21:27] [INFO   ] (26 Minutes) Classifying the synonyms (Mistral-Small-3.1-24B-Instruct-2503) took 00:04:16.35.
+[2026-11-09 14:21:27] [INFO   ] (26 Minutes) Formatting the answers (Mistral-Small-3.1-24B-Instruct-2503)...
+[2026-11-09 14:21:27] [INFO   ] (26 Minutes) ==========================================================================================
+[2026-11-09 14:21:27] [INFO   ] (26 Minutes) =              Formatting the Answers (Mistral-Small-3.1-24B-Instruct-2503)              =
+[2026-11-09 14:21:27] [INFO   ] (26 Minutes) ==========================================================================================
+[2026-11-09 14:21:27] [INFO   ] (26 Minutes) Writing to a temporary file first...
+[2026-11-09 14:21:27] [INFO   ] (26 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_formatted_Mistral-Small-3.1-24B-Instruct-2503.csv.tmp'...
+[2026-11-09 14:21:27] [INFO   ] (26 Minutes) Writing file 'type_Test_NoDef_NoCom_NoStr_NoCOT_FS_formatted_Mistral-Small-3.1-24B-Instruct-2503.csv.tmp' completed.
+[2026-11-09 14:21:27] [INFO   ] (26 Minutes) Writing to a temporary file first completed.
+[2026-11-09 14:21:27] [INFO   ] (26 Minutes) Replacing original data with temporary data...
+[2026-11-09 14:21:27] [INFO   ] (26 Minutes) Replacing original data with temporary data completed.
+[2026-11-09 14:21:27] [INFO   ] (26 Minutes) Logging the wrong classifications...
+[2026-11-09 14:21:27] [INFO   ] (26 Minutes) Reading file 'hpo.development.csv'...
+[2026-11-09 14:21:27] [INFO   ] (26 Minutes) Reading file 'hpo.development.csv' completed.
+[2026-11-09 14:21:28] [INFO   ] (26 Minutes) Wrong or undefined classifications: 174.
+[2026-11-09 14:21:28] [INFO   ] (26 Minutes) Correct classifications: 826.
+[2026-11-09 14:21:28] [INFO   ] (26 Minutes) Logging the wrong classifications completed.
+[2026-11-09 14:21:28] [INFO   ] (26 Minutes) Summary of Mistral-Small-3.1-24B-Instruct-2503: 996 synonyms.
+[2026-11-09 14:21:28] [INFO   ] (26 Minutes) Gold types expert, layperson, without the few-shot examples; 0 answers undefined.
+[2026-11-09 14:21:28] [INFO   ] (26 Minutes) Gold / Classified         expert   layperson   undefined
+[2026-11-09 14:21:28] [INFO   ] (26 Minutes) expert                       459          39           0
+[2026-11-09 14:21:28] [INFO   ] (26 Minutes) layperson                    135         363           0
+[2026-11-09 14:21:28] [INFO   ] (26 Minutes) "expert": precision 0.773, recall 0.922, F1 0.841.
+[2026-11-09 14:21:28] [INFO   ] (26 Minutes) "expert": mean confidence 4.13 of the 594 classified as expert.
+[2026-11-09 14:21:28] [INFO   ] (26 Minutes) "layperson": precision 0.903, recall 0.729, F1 0.807.
+[2026-11-09 14:21:28] [INFO   ] (26 Minutes) "layperson": mean confidence 4.02 of the 402 classified as layperson.
+[2026-11-09 14:21:28] [INFO   ] (26 Minutes) Formatting the answers (Mistral-Small-3.1-24B-Instruct-2503) took 00:00:00.95.
