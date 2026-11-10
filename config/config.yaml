@@ -79,7 +79,10 @@ llm:
   seed: 2898231092
   temperature: 0.01
   top_p: 0.95
-  max_model_len: 16384
+  # The three chain-of-thoughts turns with their answers (up to max_tokens
+  # each) must fit; a longer history is skipped and its answer undefined.
+  # 32768 is the longest context of Mistral-7B-Instruct-v0.2.
+  max_model_len: 32768
   max_num_batched_tokens: 16384
   # CUDA graphs, as vLLM used them before the switch to the model package.
   enforce_eager: false
