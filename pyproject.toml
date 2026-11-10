@@ -12,8 +12,8 @@ requires-python = ">=3.10"
 authors = [{ name = "Peter Pallaoro", email = "peter.pallaoro@tum.de" }]
 dependencies = [
     "logger @ git+https://github.com/Goldkugel/logger.git@v1.7.0",
-    "adapter @ git+https://github.com/Goldkugel/adapter.git@v1.5.2",
-    "embedder @ git+https://github.com/Goldkugel/embedder.git@v2.3.1",
+    "adapter @ git+https://github.com/Goldkugel/adapter.git@v1.6.0",
+    "embedder @ git+https://github.com/Goldkugel/embedder.git@v2.5.0",
     "model @ git+https://github.com/Goldkugel/model.git@v3.2.1",
     # 5.5.1 or newer: vLLM 0.19 excludes 5.0 to 5.5.0, which lack tokenizer
     # attributes vLLM reads ("Qwen2Tokenizer has no attribute
