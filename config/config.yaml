@@ -24,12 +24,16 @@ syntype:
   cosine_distance_std: 0.1225
   distance_evaluation_lower_bound: -4
   distance_evaluation_upper_bound: 4
+  # Distance between two thresholds tried.
+  distance_evaluation_step: 0.001
   # Per embedding model, evaluated as the model "<model> (distance)": a
   # normalised distance at or above the threshold is layperson, below expert.
   # SynTypeEval.py logs the value maximising the macro-F1 on the development
   # set ("Distance baseline").
   distance_thresholds:
     "SapBERT-from-PubMedBERT-fulltext": -0.216
+  # Bootstrap samples of the 95% intervals in the evaluation summary.
+  bootstrap_samples: 1000
   # The distance plots also without "test", which draws them always.
   force_draw_additional_plots: False
 adapter:
