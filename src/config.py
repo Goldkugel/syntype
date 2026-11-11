@@ -75,8 +75,8 @@ chainOfThoughtsStr      = "COT" if chainOfThoughts else "NoCOT"
 # Model Configuration
 # =============================================================================
 
-# None in the preparation run, the one given after the experiment, or all of
-# llm.model_id.
+# None in the preparation run (empty), the one given after the experiment, or
+# all of llm.model_id.
 modelIDs = []
 if experimentIndex is not None:
     modelIDs = sys.argv[2:3] or list(configurationFile["llm"]["model_id"])
@@ -93,9 +93,14 @@ distanceColumnPrePrefix   = "distance_"
 distanceColumnPrefix      = f"{distanceColumnPrePrefix}" + "{}_{}"
 
 distanceEvaluationLowerBound = syntypeConfig.distance_evaluation_lower_bound
-distanceEvaluationUpperBound  = syntypeConfig.distance_evaluation_upper_bound
-# The number of thresholds tried, one every 0.001 of the configured range.
-distanceEvaluationParts      = int((distanceEvaluationUpperBound - distanceEvaluationLowerBound) * 1000 + 1)
+distanceEvaluationUpperBound = syntypeConfig.distance_evaluation_upper_bound
+# The number of thresholds tried, one every distance_evaluation_step of the
+# configured range (rounded, as e.g. 8 / 0.001 is not exactly 8000).
+distanceEvaluationParts      = round((distanceEvaluationUpperBound - distanceEvaluationLowerBound)
+    / syntypeConfig.distance_evaluation_step) + 1
+
+# The bootstrap samples of the intervals in the evaluation summary.
+bootstrapSamples             = syntypeConfig.bootstrap_samples
 
 # The thresholds of the distance models of the evaluation.
 distanceThresholds           = syntypeConfig.distance_thresholds
@@ -106,7 +111,7 @@ cosineDistanceMean           = syntypeConfig.cosine_distance_mean
 cosineDistanceStd            = syntypeConfig.cosine_distance_std
 
 # =============================================================================
-# For Simplification
+# Formatting of the prompts and the log
 # =============================================================================
 
 quotationCharacter = "\""
@@ -132,7 +137,11 @@ classificationKey               = "classification"
 # another phenotype than their concept.
 synonymClasses = [exactSynonymClass, relatedSynonymClass]
 
+# An answer without a valid classification.
 undefinedSynonymType            = "undefined"
+
+# The confidence scale of the answers (see prompts/), 1 to 5.
+confidenceLevels = range(1, 6)
 
 # The types the LLM classifies synonyms into (see prompts/).
 synonymTypes = [expertSynonymType, laypersonSynonymType]
@@ -219,8 +228,7 @@ outputFolderNameClass    = "type"
 filesPrefixClass         = f"{outputFolderNameClass}_{testStr}_{configStr}"
 filesPrefixApproachClass = f"{filesPrefixClass}_{chainOfThoughtsStr}_{fewShotStr}"
 
-
-
+# The synonyms the runs of the experiment classify.
 inputFileClass                         = inputFileTask
 
 outputFileNameClassFormattedPrefix     = f"{filesPrefixApproachClass}_formatted"

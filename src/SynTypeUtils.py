@@ -2,7 +2,8 @@
 Helpers shared by the scripts of syntype: the transformed HPO in the format of
 the adapter package, the settings records that decide whether an output is
 outdated, reading and writing CSV files, parsing the answers of the LLMs,
-progress bars, the data summary and the development and evaluation set.
+the labels of the concepts, the data summary and the development and
+evaluation set.
 """
 
 import pandas       as pd
@@ -15,8 +16,6 @@ import textwrap
 
 from rich.table     import Table
 from rich.console   import Console
-from rich.progress  import Progress, BarColumn, TextColumn, TaskID
-from rich.progress  import TaskProgressColumn, TimeElapsedColumn
 
 sys.dont_write_bytecode = True
 
@@ -106,13 +105,13 @@ def outdated(output : str, inputs : list, settings : dict, log : bool = True) ->
     other settings; logs why, unless log is False.
     """
     if isOutdated(output, inputs):
-        if log: Logger().log(f"{os.path.basename(output)} is missing or older than " \
+        if log: Logger().log(f"{quote(os.path.basename(output))} is missing or older than " \
             f"{applyFormat([os.path.basename(i) for i in inputs])}.")
         return True
 
     changed = changedSettings(output, settings)
     if len(changed) > 0:
-        if log: Logger().log(f"{os.path.basename(output)} was made with other or unrecorded " \
+        if log: Logger().log(f"{quote(os.path.basename(output))} was made with other or unrecorded " \
             f"settings: {applyFormat(changed)}.")
         return True
 
@@ -171,73 +170,15 @@ embeddingModels = {
     for m in configurationFile["embedder"]["model_id"]
 }
 
-def getRows(
-    data: pd.DataFrame,
-    hpoID: str,
-    attribute=labelClass
-) -> pd.DataFrame:
+def labelsByConcept(data : pd.DataFrame) -> dict:
     """
-    Return all rows of the transformed HPO matching a given HPO ID and
-    attribute (a single attribute or several), or None.
+    The labels of every concept of a transformed HPO file, joined with ", "
+    (a concept may have several), e.g. to name the concept of a synonym in
+    the log; one pass over the data instead of a search per synonym.
     """
-    ret = data[data[idColumn] == hpoID]
-
-    if ret is not None and len(ret.index) > 0:
-        if isinstance(attribute, str):
-            ret = ret[ret[attributeColumn] == attribute]
-        else:
-            ret = ret[ret[attributeColumn].isin(attribute)]
-    else:
-        ret = None
-
-    return ret
-
-
-def getElements(
-    data: pd.DataFrame,
-    hpoID: str,
-    attribute=labelClass
-) -> list:
-    """
-    All values for a given HPO ID and attribute; an empty list if there are
-    none.
-    """
-    ret = getRows(data, hpoID, attribute)
-
-    if ret is not None and len(ret.index) > 0:
-        ret = ret[valueColumn].tolist()
-    else:
-        ret = []
-
-    return ret
-
-
-def newProgress() -> Progress:
-    """
-    Create a Rich progress bar with consistent formatting.
-    """
-    return Progress(
-        TextColumn("[progress.description]{task.description}"),
-        BarColumn(complete_style="cyan"),
-        TaskProgressColumn(),
-        TextColumn("ET:"),
-        TimeElapsedColumn(),
-        TextColumn("Elem.s: {task.completed}/{task.total}"),
-    )
-
-
-def newTask(
-    progress: Progress,
-    iterations: int,
-    text: str = "Task"
-) -> TaskID:
-    """
-    Add a new task to a Rich progress bar.
-    """
-    return progress.add_task(
-        text.ljust(40),
-        total=iterations
-    )
+    labels = data[data[attributeColumn] == labelClass]
+    return labels.groupby(idColumn, sort = False)[valueColumn].agg(
+        lambda values: ", ".join(str(v) for v in values)).to_dict()
 
 
 def exitIfFileNotExist(file: str) -> None:
@@ -245,7 +186,7 @@ def exitIfFileNotExist(file: str) -> None:
     Terminate the program if the specified file does not exist.
     """
     if not isFile(file):
-        Logger().error(f"{os.path.basename(file)} could not be found. Terminating.")
+        Logger().error(f"{quote(os.path.basename(file))} could not be found. Terminating.")
         sys.exit(1)
 
 
@@ -301,14 +242,30 @@ def printDataSummary(data: pd.DataFrame = None) -> None:
     console.print(table)
 
 
-        
+def parseConfidence(value) -> int | None:
+    """
+    The confidence of an answer as an integer of confidenceLevels, or None:
+    an integer, or a number or text with an integer value (4, 4.0, "4");
+    True, 4.5, "high" or a value outside the scale (e.g. 10 of an older
+    scale) are no valid confidence.
+    """
+    if isinstance(value, bool):
+        return None
+    try:
+        number = float(str(value).strip())
+    except ValueError:
+        return None
+    if not number.is_integer() or int(number) not in confidenceLevels:
+        return None
+    return int(number)
 
 def parseClassification(answer) -> tuple[str, int, str]:
     """
     Classification, confidence and rationale of an answer parsed by
     model.toJSON(). Classification and confidence are undefinedSynonymType
-    and -1 unless the answer has one of synonymTypes and an integer
-    confidence; the rationale is "" if the answer has none.
+    and -1 unless the answer has one of synonymTypes and a confidence of
+    confidenceLevels (see parseConfidence()); the rationale is "" if the
+    answer has none.
     """
     classification, confidence = undefinedSynonymType, -1
     rationale = ""
@@ -319,10 +276,7 @@ def parseClassification(answer) -> tuple[str, int, str]:
 
         if classificationKey in answer and confidenceColumn in answer:
             parsedClassification = str(answer[classificationKey]).strip().lower()
-            try:
-                parsedConfidence = int(answer[confidenceColumn])
-            except (TypeError, ValueError):
-                parsedConfidence = None
+            parsedConfidence     = parseConfidence(answer[confidenceColumn])
 
             if parsedClassification in synonymTypes and parsedConfidence is not None:
                 classification, confidence = parsedClassification, parsedConfidence
@@ -456,7 +410,7 @@ def writeDevelopmentSet() -> pd.DataFrame:
     otherRows   = (data[attributeColumn] == synonymAttribute) & ~types.isin(synonymTypes)
     evaluation  = data[~(drawnRows | otherRows)].reset_index(drop = True)
     l.log(f"Evaluation set: {len(evaluation.index)} of the {len(data.index)} rows of " \
-        f"{os.path.basename(outputFileTransformedFull)}.")
+        f"{quote(os.path.basename(outputFileTransformedFull))}.")
     l.log(f"Left out: {drawnRows.sum()} rows of the drawn synonyms, " \
         f"{(otherRows & ~drawnRows).sum()} of other gold types.")
     logSynonymCounts("Evaluation set", evaluation)

@@ -5,7 +5,8 @@ syntype:
   # instead of the evaluation set), few_shot, chain_of_thoughts, definition,
   # comment and structure (parents and children); a missing setting is off.
   experiments:
-    - {test: True, few_shot: True}
+    - {test: True, few_shot: True, chain_of_thoughts: False}
+    - {test: True, few_shot: True, chain_of_thoughts: True}
   # size_per_type expert and layperson synonyms each, drawn at random with the
   # seed, classified by runs with "test"; the other runs classify the rest
   # (hpo.evaluation.csv, only expert and layperson synonyms).
@@ -23,12 +24,16 @@ syntype:
   cosine_distance_std: 0.1225
   distance_evaluation_lower_bound: -4
   distance_evaluation_upper_bound: 4
+  # Distance between two thresholds tried.
+  distance_evaluation_step: 0.001
   # Per embedding model, evaluated as the model "<model> (distance)": a
   # normalised distance at or above the threshold is layperson, below expert.
   # SynTypeEval.py logs the value maximising the macro-F1 on the development
   # set ("Distance baseline").
   distance_thresholds:
     "SapBERT-from-PubMedBERT-fulltext": -0.216
+  # Bootstrap samples of the 95% intervals in the evaluation summary.
+  bootstrap_samples: 1000
   # The distance plots also without "test", which draws them always.
   force_draw_additional_plots: False
 adapter:
@@ -74,7 +79,7 @@ llm:
   seed: 2898231092
   temperature: 0.01
   top_p: 0.95
-  max_model_len: 8192
+  max_model_len: 16384
   max_num_batched_tokens: 16384
   # CUDA graphs, as vLLM used them before the switch to the model package.
   enforce_eager: false
@@ -85,7 +90,7 @@ llm:
   enable_thinking: null
   reasoning_start_tag: "<think>"
   reasoning_end_tag: "</think>"
-  max_tokens: 2048
+  max_tokens: 16384
   chunk_size: 500
   # Used by their index: 0 is the single prompt, 1 to 3 are the
   # chain-of-thoughts prompts, one per turn.

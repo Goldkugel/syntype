@@ -3,8 +3,7 @@ Pydantic schema of the "syntype" section of config/config.yaml and of its
 experiments, validated by config.py.
 """
 
-from pydantic import BaseModel, ConfigDict, Field
-from typing   import Literal
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 class ExperimentConfig(BaseModel):
     """
@@ -74,6 +73,8 @@ class SyntypeConfig(BaseModel):
     # thresholds tried.
     distance_evaluation_lower_bound: float      = -4
     distance_evaluation_upper_bound: float      = 4
+    # Distance between two thresholds tried.
+    distance_evaluation_step: float             = Field(default = 0.001, gt = 0)
 
     # The threshold of the normalised cosine distance per embedding model
     # (named as in the distance columns), evaluated as the model "<model>
@@ -81,5 +82,18 @@ class SyntypeConfig(BaseModel):
     # the best threshold on the development set.
     distance_thresholds: dict[str, float]       = {}
 
+    # Bootstrap samples of the 95% intervals in the evaluation summary.
+    bootstrap_samples: int                      = Field(default = 1000, gt = 0)
+
     # Draw the distance plots of the evaluation also without "test".
     force_draw_additional_plots: bool           = False
+
+    @model_validator(mode = "after")
+    def checkDistanceBounds(self) -> "SyntypeConfig":
+        """
+        The lower bound of the distance evaluation must be below the upper one.
+        """
+        if self.distance_evaluation_lower_bound >= self.distance_evaluation_upper_bound:
+            raise ValueError("distance_evaluation_lower_bound must be below " \
+                "distance_evaluation_upper_bound.")
+        return self
