@@ -5,38 +5,8 @@ syntype:
   # instead of the evaluation set), few_shot, chain_of_thoughts, definition,
   # comment and structure (parents and children); a missing setting is off.
   experiments:
-    - {test: False, few_shot: True,  chain_of_thoughts: False, definition: False, comment: False, structure: False}
-    - {test: False, few_shot: True,  chain_of_thoughts: False, definition: False, comment: False, structure: True}
-    - {test: False, few_shot: True,  chain_of_thoughts: False, definition: False, comment: True,  structure: False}
-    - {test: False, few_shot: True,  chain_of_thoughts: False, definition: False, comment: True,  structure: True}
-    - {test: False, few_shot: True,  chain_of_thoughts: False, definition: True,  comment: False, structure: False}
-    - {test: False, few_shot: True,  chain_of_thoughts: False, definition: True,  comment: False, structure: True}
-    - {test: False, few_shot: True,  chain_of_thoughts: False, definition: True,  comment: True,  structure: False}
-    - {test: False, few_shot: True,  chain_of_thoughts: False, definition: True,  comment: True,  structure: True}
-   # - {test: False, few_shot: True,  chain_of_thoughts: True,  definition: False, comment: False, structure: False}
-   # - {test: False, few_shot: True,  chain_of_thoughts: True,  definition: False, comment: False, structure: True}
-   # - {test: False, few_shot: True,  chain_of_thoughts: True,  definition: False, comment: True,  structure: False}
-   # - {test: False, few_shot: True,  chain_of_thoughts: True,  definition: False, comment: True,  structure: True}
-   # - {test: False, few_shot: True,  chain_of_thoughts: True,  definition: True,  comment: False, structure: False}
-   # - {test: False, few_shot: True,  chain_of_thoughts: True,  definition: True,  comment: False, structure: True}
-   # - {test: False, few_shot: True,  chain_of_thoughts: True,  definition: True,  comment: True,  structure: False}
-   # - {test: False, few_shot: True,  chain_of_thoughts: True,  definition: True,  comment: True,  structure: True}
-   # - {test: False, few_shot: False, chain_of_thoughts: False, definition: False, comment: False, structure: False}
-   # - {test: False, few_shot: False, chain_of_thoughts: False, definition: False, comment: False, structure: True}
-   # - {test: False, few_shot: False, chain_of_thoughts: False, definition: False, comment: True,  structure: False}
-   # - {test: False, few_shot: False, chain_of_thoughts: False, definition: False, comment: True,  structure: True}
-   # - {test: False, few_shot: False, chain_of_thoughts: False, definition: True,  comment: False, structure: False}
-   # - {test: False, few_shot: False, chain_of_thoughts: False, definition: True,  comment: False, structure: True}
-   # - {test: False, few_shot: False, chain_of_thoughts: False, definition: True,  comment: True,  structure: False}
-   # - {test: False, few_shot: False, chain_of_thoughts: False, definition: True,  comment: True,  structure: True}
-   # - {test: False, few_shot: False, chain_of_thoughts: True,  definition: False, comment: False, structure: False}
-   # - {test: False, few_shot: False, chain_of_thoughts: True,  definition: False, comment: False, structure: True}
-   # - {test: False, few_shot: False, chain_of_thoughts: True,  definition: False, comment: True,  structure: False}
-   # - {test: False, few_shot: False, chain_of_thoughts: True,  definition: False, comment: True,  structure: True}
-   # - {test: False, few_shot: False, chain_of_thoughts: True,  definition: True,  comment: False, structure: False}
-   # - {test: False, few_shot: False, chain_of_thoughts: True,  definition: True,  comment: False, structure: True}
-   # - {test: False, few_shot: False, chain_of_thoughts: True,  definition: True,  comment: True,  structure: False}
-   # - {test: False, few_shot: False, chain_of_thoughts: True,  definition: True,  comment: True,  structure: True}
+    - {test: True, few_shot: True, chain_of_thoughts: False}
+    - {test: True, few_shot: True, chain_of_thoughts: True}
   # size_per_type expert and layperson synonyms each, drawn at random with the
   # seed, classified by runs with "test"; the other runs classify the rest
   # (hpo.evaluation.csv, only expert and layperson synonyms).
