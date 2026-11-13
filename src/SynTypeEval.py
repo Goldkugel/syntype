@@ -3,8 +3,10 @@ Evaluates the merged classifications of an experiment, with the distance
 models of syntype.distance_thresholds as models of their own: a summary CSV
 (macro-F1, balanced accuracy, kappa, undefined answers, with bootstrap
 intervals) against the majority and distance baselines, confusion matrices,
-ROC curves, the confidence calibration of the LLMs, counts of the gold and
-classified types, and precision, recall and F1 per model and type. The
+ROC curves, the confidence calibration of the LLMs, the cross-model agreement
+(synonyms correct by 0, 1, ... LLMs) with the synonyms no LLM classified
+correctly, counts of the gold and classified types, and precision, recall and
+F1 per model and type. The
 distance threshold is chosen on the development set by macro-F1.
 
     python3 ./src/SynTypeEval.py <index>   (index in syntype.experiments)
@@ -364,6 +366,42 @@ with l.step("Evaluating the classifications"):
         l.log(f"  balanced accuracy {interval('balanced_accuracy')}, kappa {interval('kappa')}.")
     writeHugeCSV(pd.DataFrame(rows), outputFileClassSummary)
     l.log(f"{summarising} completed.")
+
+    # ------------------------------------------------------------------------------
+    # Cross-model agreement: per gold type, how many synonyms 0, 1, ... of the
+    # LLMs (not the baselines) classified correctly; an undefined answer
+    # counts as wrong. The synonyms no LLM classified correctly are listed as
+    # candidates for a review by the curators.
+    # ------------------------------------------------------------------------------
+
+    agreeing = f"Counting the agreement of the {len(llmSystems)} LLMs"
+    l.log(f"{agreeing}...")
+    correctCount = np.sum([predictions[system] == goldTypes for system in llmSystems], axis = 0)
+    modelCounts  = range(len(llmSystems) + 1)
+    agreement = []
+    for goldType in synonymTypes + ["total"]:
+        selected = np.ones(len(goldTypes), dtype = bool) if goldType == "total" else goldTypes == goldType
+        counts   = np.bincount(correctCount[selected], minlength = len(modelCounts))
+        for count in modelCounts:
+            agreement.append({goldTypeLabel : goldType, "models correct" : count,
+                "synonyms" : counts[count], "share" : counts[count] / max(selected.sum(), 1)})
+        l.log(f"{goldType} ({selected.sum()} synonyms), correct by 0-{len(llmSystems)} models: " + \
+            ", ".join(f"{counts[count]} ({100 * counts[count] / max(selected.sum(), 1):.0f}%)"
+            for count in modelCounts) + ".")
+    writeHugeCSV(pd.DataFrame(agreement), outputFileClassAgreement)
+
+    # The label of every concept, from the transformed HPO, if there is one.
+    labels = labelsByConcept(readCSV(outputFileTransformedFull)) if isFile(outputFileTransformedFull) else {}
+    misclassified = gold.loc[correctCount == 0, synonymKeys].copy()
+    misclassified.insert(1, labelClass, misclassified[idColumn].map(labels).fillna(""))
+    misclassified[goldTypeLabel] = goldTypes[correctCount == 0]
+    for system in llmSystems:
+        misclassified[system] = predictions[system][correctCount == 0]
+    writeHugeCSV(misclassified.sort_values([goldTypeLabel, idColumn]), outputFileClassMisclassified)
+    l.log(f"{len(misclassified.index)} synonyms no LLM classified correctly: " + ", ".join(
+        f"{count} {goldType}" for goldType, count in misclassified[goldTypeLabel].value_counts().items()) + \
+        f"; written to {quote(os.path.basename(outputFileClassMisclassified))}.")
+    l.log(f"{agreeing} completed.")
 
     # Confusion matrices of the models: gold type x answer (expert, layperson),
     # as counts and as shares of all synonyms of the gold type; undefined
