@@ -8,7 +8,7 @@ Written by the classification (`python3 ./src/SynTypeClassification.py <index>`)
 | `system` | The model |
 | `user1`, `answer` | The prompt and the answer (single prompt) |
 | `user1`, `assistant1`, `user2`, `assistant2`, `user3`, `answer` | The prompts and answers of the three turns (chain-of-thoughts) |
-| `classification`, `confidence` | The classification (`expert`, `layperson`, or `undefined` for an answer without a valid one) and its confidence (1 to 5, `-1` if undefined) parsed from the last answer; an answer without valid JSON, with another type or with a confidence outside 1 to 5 is `undefined` |
+| `classification`, `confidence` | The classification (`expert`, `layperson`, or `undefined` for an answer without a valid one) and its confidence (1 to 5, `-1` if undefined) parsed from the last answer; an answer that is no valid JSON (e.g. without its closing brace or with unescaped quotes in the rationale) is read from its last `"classification": ..., "confidence": ...` pair; an answer without such a pair, with another type (e.g. `both`) or with a confidence outside 1 to 5 is `undefined` |
 | `rationale` | The short explanation of the decision in the last answer (`""` if it has none) |
 
 The prompts and answers themselves are stored by the `model` package in its answer store (`data/tmp/`), from which an interrupted run resumes.

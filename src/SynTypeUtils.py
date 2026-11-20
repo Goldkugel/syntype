@@ -10,6 +10,7 @@ import pandas       as pd
 import numpy as np
 import ast
 import json
+import re
 import sys
 import os
 import textwrap
@@ -259,13 +260,18 @@ def parseConfidence(value) -> int | None:
         return None
     return int(number)
 
-def parseClassification(answer) -> tuple[str, int, str]:
+def parseClassification(answer, text : str = "") -> tuple[str, int, str]:
     """
     Classification, confidence and rationale of an answer parsed by
     model.toJSON(). Classification and confidence are undefinedSynonymType
     and -1 unless the answer has one of synonymTypes and a confidence of
     confidenceLevels (see parseConfidence()); the rationale is "" if the
     answer has none.
+
+    If the parsed answer has no valid classification, they are taken from
+    the answer `text` itself (parseClassificationText()), e.g. of a JSON
+    object without its closing brace or with unescaped quotes in the
+    rationale. Quotes around the type are ignored (see cleanClass()).
     """
     classification, confidence = undefinedSynonymType, -1
     rationale = ""
@@ -275,13 +281,60 @@ def parseClassification(answer) -> tuple[str, int, str]:
             rationale = str(answer[rationaleColumn]).strip()
 
         if classificationKey in answer and confidenceColumn in answer:
-            parsedClassification = str(answer[classificationKey]).strip().lower()
+            parsedClassification = cleanClass(answer[classificationKey])
             parsedConfidence     = parseConfidence(answer[confidenceColumn])
 
             if parsedClassification in synonymTypes and parsedConfidence is not None:
                 classification, confidence = parsedClassification, parsedConfidence
 
+    if classification == undefinedSynonymType and text:
+        found = parseClassificationText(text)
+        if found is not None:
+            classification, confidence, foundRationale = found
+            rationale = rationale or foundRationale
+
     return classification, confidence, rationale
+
+def cleanClass(value) -> str:
+    """
+    A classification in lower case, without the white space and quotes
+    around it: models copy the quotes of the output format of the prompts
+    ("'expert' or 'layperson'"), e.g. "'expert'" -> "expert".
+    """
+    return str(value).strip().strip("'\"`\u2018\u2019\u201c\u201d").strip().lower()
+
+def _lastMatch(pattern : str, text : str) -> re.Match | None:
+    """The last match of a pattern in a text, or None."""
+    matches = list(re.finditer(pattern, text, re.IGNORECASE | re.DOTALL))
+    return matches[-1] if len(matches) > 0 else None
+
+def parseClassificationText(text : str) -> tuple[str, int, str] | None:
+    """
+    Classification, confidence and rationale of an answer that is no valid
+    JSON, from its key-value pairs: the last "classification": "<type>"
+    followed by "confidence": <level> (quotes around the keys may be
+    missing, e.g. classification": "expert"; the type may be in single
+    quotes, e.g. "'expert'"), and the rationale after them
+    up to the end of its value, "" if there is none. The last pair counts,
+    as a model may first repeat the input or an example. None if the text
+    has no such pair or its type or confidence is not valid.
+    """
+    pair = _lastMatch(r"\"?" + classificationKey + r"\"?\s*:\s*\"?\s*'?(\w+)'?\s*\"?\s*,\s*\"?" +
+        confidenceColumn + r"\"?\s*:\s*\"?\s*(-?[\d.]+)", text)
+    if pair is None:
+        return None
+    classification = cleanClass(pair.group(1))
+    confidence     = parseConfidence(pair.group(2))
+    if classification not in synonymTypes or confidence is None:
+        return None
+    # The rationale follows the pair (see the output format of the prompts);
+    # its value runs to the quote before the closing brace, or without one
+    # to the last quote, so it may contain unescaped quotes.
+    key = re.match(r"\s*,\s*\"?" + rationaleColumn + r"\"?\s*:\s*\"", text[pair.end():],
+        re.IGNORECASE)
+    rest = text[pair.end():][key.end():] if key else ""
+    rationale = re.match(r"(.*?)\"\s*\}", rest, re.DOTALL) or re.match(r"(.*)\"", rest, re.DOTALL)
+    return classification, confidence, rationale.group(1).strip() if rationale else ""
 
 def quote(string : str) -> str:
     """
