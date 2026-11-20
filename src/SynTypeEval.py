@@ -390,6 +390,25 @@ with l.step("Evaluating the classifications"):
             for count in modelCounts) + ".")
     writeHugeCSV(pd.DataFrame(agreement), outputFileClassAgreement)
 
+    # Bar plot of the agreement: per number of LLMs, the synonyms of each gold
+    # type that many LLMs classified correctly.
+    plt.figure(figsize = (8, 5))
+    width = 0.8 / len(synonymTypes)
+    for index, goldType in enumerate(synonymTypes):
+        counts = np.bincount(correctCount[goldTypes == goldType], minlength = len(modelCounts))
+        bars = plt.bar(np.array(modelCounts) + (index - (len(synonymTypes) - 1) / 2) * width, counts,
+            width = width, color = typeColors[goldType], label = goldType)
+        plt.bar_label(bars, padding = 2, fontsize = 7)
+    plt.xticks(list(modelCounts))
+    plt.xlabel(f"Number of LLMs that classified the synonym correctly (of {len(llmSystems)})")
+    plt.ylabel("Synonyms")
+    plt.title("Cross-Model Agreement")
+    plt.legend(title = "Gold type")
+    plt.grid(axis = "y")
+    plt.tight_layout()
+    plt.savefig(outputFileClassAgreementPlot, dpi = 300, bbox_inches = "tight")
+    plt.close()
+
     # The label of every concept, from the transformed HPO, if there is one.
     labels = labelsByConcept(readCSV(outputFileTransformedFull)) if isFile(outputFileTransformedFull) else {}
     misclassified = gold.loc[correctCount == 0, synonymKeys].copy()

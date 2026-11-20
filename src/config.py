@@ -308,6 +308,7 @@ outputFileClassCalibration = outputFileClassEvaluationOf("calibration")
 # Per gold type, the synonyms classified correctly by 0, 1, ... LLMs, and the
 # synonyms no LLM classified correctly.
 outputFileClassAgreement     = outputFileClassEvaluationOf("agreement", csvFileFormat)
+outputFileClassAgreementPlot = outputFileClassEvaluationOf("agreement")
 outputFileClassMisclassified = outputFileClassEvaluationOf("misclassified_by_all", csvFileFormat)
 
 
