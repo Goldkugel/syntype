@@ -305,6 +305,10 @@ outputFileClassSummary     = outputFileClassEvaluationOf("summary", csvFileForma
 outputFileClassConfusion   = outputFileClassEvaluationOf("confusion_matrices")
 outputFileClassROC         = outputFileClassEvaluationOf("roc")
 outputFileClassCalibration = outputFileClassEvaluationOf("calibration")
+# Per gold type, the synonyms classified correctly by 0, 1, ... LLMs, and the
+# synonyms no LLM classified correctly.
+outputFileClassAgreement     = outputFileClassEvaluationOf("agreement", csvFileFormat)
+outputFileClassMisclassified = outputFileClassEvaluationOf("misclassified_by_all", csvFileFormat)
 
 
 # The Few-Shot examples, alternately layperson and expert, with their answer
